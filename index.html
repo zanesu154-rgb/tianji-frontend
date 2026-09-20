@@ -695,7 +695,7 @@
         <h3>赞助栈主</h3>
         <p style="color:#6a7c8b;margin-bottom:1.5rem;font-size:0.95rem;">感谢支持汉化工作 ✨</p>
         <div class="qr-img" id="qrImage">
-            <span>点击上传收款码</span>
+            <img src="https://ibb.co/4ZhTh7BW" alt="收款码">
         </div>
         <div class="modal-actions">
             <button class="btn" id="qrCloseBtn" style="background:#eef2f6;color:#2c3e50;">关闭</button>
@@ -1388,25 +1388,6 @@
                 document.getElementById('qrModal').classList.remove('show');
             });
 
-            // 收款码上传
-            const qrImg = document.getElementById('qrImage');
-            qrImg.addEventListener('click', () => {
-                const fileInput = document.createElement('input');
-                fileInput.type = 'file';
-                fileInput.accept = 'image/*';
-                fileInput.onchange = (e) => {
-                    const file = e.target.files[0];
-                    if (!file) return;
-                    const reader = new FileReader();
-                    reader.onload = (ev) => {
-                        qrImageSrc = ev.target.result;
-                        localStorage.setItem(QR_KEY, qrImageSrc);
-                        qrImg.innerHTML = `<img src="${qrImageSrc}" alt="收款码">`;
-                    };
-                    reader.readAsDataURL(file);
-                };
-                fileInput.click();
-            });
 
             // 登录
             document.getElementById('loginEntryBtn').addEventListener('click', () => {
