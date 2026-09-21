@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
@@ -10,11 +11,11 @@
     <meta name="author" content="栈主">
     <!-- 防暗黑模式闪烁 -->
     <script>
-        (function() {
+        (function () {
             try {
                 const t = localStorage.getItem('tianji_theme') || 'light';
                 document.documentElement.setAttribute('data-theme', t);
-            } catch (e) {}
+            } catch (e) { }
         })();
     </script>
     <style>
@@ -46,7 +47,7 @@
             --accent-text: #1d4e7a;
             --accent-border: #c2daf5;
             --shadow: 0 20px 40px -10px rgba(0, 20, 40, 0.15);
-            --shadow-soft: 0 2px 6px rgba(0,0,0,0.02);
+            --shadow-soft: 0 2px 6px rgba(0, 0, 0, 0.02);
             --scrollbar-track: #eef2f6;
             --scrollbar-thumb: #bdd3e6;
             --danger-bg: #fee2e2;
@@ -84,7 +85,7 @@
             --accent-text: #9bc4e0;
             --accent-border: #34506a;
             --shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
-            --shadow-soft: 0 2px 6px rgba(0,0,0,0.2);
+            --shadow-soft: 0 2px 6px rgba(0, 0, 0, 0.2);
             --scrollbar-track: #232830;
             --scrollbar-thumb: #3a4351;
             --danger-bg: #3d1f22;
@@ -101,6 +102,7 @@
             margin: 0;
             padding: 0;
         }
+
         body {
             background: var(--bg-page);
             color: var(--text-main);
@@ -111,6 +113,7 @@
             min-height: 100vh;
             transition: background 0.2s, color 0.2s;
         }
+
         .app {
             max-width: 900px;
             width: 100%;
@@ -122,6 +125,7 @@
             flex-direction: column;
             transition: background 0.2s;
         }
+
         h1 {
             font-size: 2rem;
             font-weight: 600;
@@ -150,14 +154,17 @@
             gap: 0.5rem;
             line-height: 1.5;
         }
+
         .announcement-icon {
             font-size: 1rem;
             flex-shrink: 0;
         }
+
         .announcement-text {
             flex: 1;
             word-break: break-word;
         }
+
         .announcement-close {
             background: transparent;
             border: none;
@@ -169,9 +176,11 @@
             line-height: 1;
             flex-shrink: 0;
         }
+
         .announcement-close:hover {
             opacity: 1;
         }
+
         .announcement-edit {
             background: transparent;
             border: none;
@@ -183,6 +192,7 @@
             line-height: 1;
             flex-shrink: 0;
         }
+
         .announcement-edit:hover {
             opacity: 1;
         }
@@ -198,12 +208,14 @@
             gap: 0.8rem;
             flex-wrap: wrap;
         }
+
         .top-left {
             display: flex;
             gap: 0.6rem;
             align-items: center;
             flex-wrap: wrap;
         }
+
         .sponsor-btn {
             background: #ffe9c7;
             border: none;
@@ -220,10 +232,12 @@
             transition: all 0.2s ease;
             border: 1px solid #ffd9a3;
         }
+
         .sponsor-btn:hover {
             background: #ffddb0;
             transform: scale(1.02);
         }
+
         .login-btn {
             background: var(--bg-tag);
             border: 1px solid var(--accent-border);
@@ -238,14 +252,17 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
+
         .login-btn:hover {
             background: var(--bg-hover);
         }
+
         .login-btn.admin {
             background: #d1fae5;
             border-color: #6ee7b7;
             color: #065f46;
         }
+
         .bili-btn {
             background: #ffe6f0;
             border: 1px solid #ffb3d1;
@@ -261,9 +278,11 @@
             transition: all 0.2s ease;
             text-decoration: none;
         }
+
         .bili-btn:hover {
             background: #ffd0e0;
         }
+
         /* 主题切换按钮 */
         .theme-btn {
             background: var(--bg-tag);
@@ -280,15 +299,18 @@
             flex-shrink: 0;
             color: var(--text-main);
         }
+
         .theme-btn:hover {
             background: var(--bg-hover);
         }
+
         .search-wrap {
             flex: 1;
             min-width: 180px;
             max-width: 320px;
             position: relative;
         }
+
         .search-input {
             width: 100%;
             padding: 0.7rem 1rem 0.7rem 2.5rem;
@@ -299,14 +321,17 @@
             color: var(--text-main);
             transition: 0.15s;
         }
+
         .search-input::placeholder {
             color: var(--text-light);
         }
+
         .search-input:focus {
             outline: 2px solid var(--accent-border);
             border-color: transparent;
             background: var(--bg-input);
         }
+
         .search-icon {
             position: absolute;
             left: 0.9rem;
@@ -316,6 +341,7 @@
             font-size: 0.9rem;
             pointer-events: none;
         }
+
         .search-clear {
             position: absolute;
             right: 0.6rem;
@@ -330,14 +356,17 @@
             display: none;
             line-height: 1;
         }
+
         .search-clear.visible {
             display: block;
         }
+
         .modules-container {
             display: flex;
             flex-direction: column;
             gap: 1rem;
         }
+
         .module {
             display: flex;
             flex-direction: column;
@@ -348,14 +377,19 @@
             flex-shrink: 0;
             transition: background 0.2s;
         }
-        .module:not(.module-expanded) .module-body {
+
+        .module-body {
             max-height: 260px;
             overflow-y: auto;
+            transition:
+                max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
         .module.module-expanded .module-body {
-            max-height: none;
-            overflow-y: visible;
+            max-height: 5000px;
+            overflow-y: auto;
         }
+
         .module-header {
             display: flex;
             align-items: center;
@@ -367,6 +401,7 @@
             user-select: none;
             transition: background 0.2s;
         }
+
         .module-title {
             font-size: 0.95rem;
             font-weight: 600;
@@ -376,10 +411,12 @@
             gap: 0.35rem;
             white-space: nowrap;
         }
+
         .module-title .emoji {
             font-size: 1rem;
             line-height: 1;
         }
+
         .module-title .badge {
             background: var(--accent-light);
             color: var(--accent-text);
@@ -388,6 +425,7 @@
             padding: 0.05rem 0.55rem;
             font-weight: 500;
         }
+
         .module-toggle {
             background: transparent;
             border: none;
@@ -399,9 +437,11 @@
             transition: 0.15s;
             line-height: 1;
         }
+
         .module-toggle:hover {
             background: var(--bg-hover);
         }
+
         .module-body {
             flex: 1;
             padding: 0.8rem 1rem;
@@ -411,17 +451,21 @@
             scrollbar-width: thin;
             min-height: 0;
         }
+
         .module-body::-webkit-scrollbar {
             width: 8px;
         }
+
         .module-body::-webkit-scrollbar-track {
             background: var(--scrollbar-track);
             border-radius: 20px;
         }
+
         .module-body::-webkit-scrollbar-thumb {
             background: var(--scrollbar-thumb);
             border-radius: 20px;
         }
+
         .bottom-bar {
             flex-shrink: 0;
             margin-top: 1rem;
@@ -433,17 +477,20 @@
             gap: 0.8rem;
             flex-wrap: wrap;
         }
+
         .bottom-left {
             display: flex;
             gap: 0.8rem;
             align-items: center;
             flex-wrap: wrap;
         }
+
         .bottom-right {
             display: flex;
             gap: 0.8rem;
             flex-wrap: wrap;
         }
+
         .btn {
             background: var(--accent-light);
             border: none;
@@ -459,23 +506,29 @@
             gap: 0.4rem;
             white-space: nowrap;
         }
+
         .btn:hover {
             background: var(--bg-hover);
         }
+
         .btn-primary {
             background: var(--accent);
             color: white;
         }
+
         .btn-primary:hover {
             background: var(--accent-hover);
         }
+
         .btn-danger {
             background: var(--danger-bg);
             color: var(--danger-text);
         }
+
         .btn-danger:hover {
             background: var(--danger-bg-hover);
         }
+
         .item {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -483,15 +536,18 @@
             box-shadow: var(--shadow-soft);
             transition: all 0.15s;
         }
+
         .item:hover {
             border-color: var(--scrollbar-thumb);
         }
+
         .item-top {
             display: flex;
             align-items: flex-start;
             padding: 0.6rem 0.9rem 0.3rem 0.9rem;
             gap: 0.5rem;
         }
+
         .status-icon {
             flex-shrink: 0;
             display: flex;
@@ -508,15 +564,19 @@
             border-radius: 4px;
             margin-top: 1px;
         }
+
         .status-icon:hover {
             background: var(--bg-hover);
         }
+
         .status-icon.done {
             color: #2e7d32;
         }
+
         .status-icon.in-progress {
             color: #b45309;
         }
+
         .item-name {
             flex: 1;
             font-weight: 500;
@@ -527,15 +587,18 @@
             line-height: 1.5;
             padding-top: 1px;
         }
+
         .item-name .orig {
             font-weight: 600;
             color: var(--text-orig);
         }
+
         .item-name .trans {
             color: var(--text-trans);
             font-weight: 400;
             margin-left: 0.1rem;
         }
+
         .item-bottom {
             display: flex;
             align-items: center;
@@ -543,6 +606,7 @@
             padding: 0 0.9rem 0.6rem 0.9rem;
             gap: 0.5rem;
         }
+
         .author-name {
             font-size: 0.82rem;
             color: var(--text-sub);
@@ -555,6 +619,7 @@
             text-overflow: ellipsis;
             flex-shrink: 0;
         }
+
         .edit-icon-btn {
             background: transparent;
             border: none;
@@ -571,10 +636,12 @@
             justify-content: center;
             flex-shrink: 0;
         }
+
         .edit-icon-btn:hover {
             background: var(--bg-hover);
             color: var(--text-sub);
         }
+
         .expand-btn {
             background: transparent;
             border: none;
@@ -592,22 +659,40 @@
             justify-content: center;
             flex-shrink: 0;
         }
+
         .expand-btn:hover {
             background: var(--bg-hover);
         }
+
         .item-details {
-            display: none;
-            padding: 0.7rem 0.9rem 1rem 0.9rem;
-            border-top: 1px dashed var(--border-input);
-            margin-top: 0.2rem;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            padding: 0 0.9rem;
+            margin-top: 0;
             background: var(--bg-module);
             border-radius: 0 0 18px 18px;
-            gap: 0.7rem;
-            flex-direction: column;
-        }
-        .item-details.show {
             display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+            border-top: 1px dashed transparent;
+            transition:
+                max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.22s ease,
+                padding 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+                margin-top 0.32s ease,
+                border-top-color 0.32s ease;
         }
+
+        .item-details.show {
+            max-height: 3000px;
+            /* 上限，够用即可；动画结束后由 JS 置为 none */
+            opacity: 1;
+            padding: 0.7rem 0.9rem 1rem 0.9rem;
+            margin-top: 0.2rem;
+            border-top-color: var(--border-input);
+        }
+
         .item-description {
             font-size: 0.85rem;
             color: var(--text-sub);
@@ -616,12 +701,14 @@
             white-space: pre-wrap;
             word-break: break-word;
         }
+
         .detail-row {
             display: flex;
             align-items: center;
             gap: 0.5rem;
             flex-wrap: wrap;
         }
+
         .detail-label {
             font-size: 0.8rem;
             color: var(--text-sub);
@@ -629,6 +716,7 @@
             font-weight: 500;
             flex-shrink: 0;
         }
+
         .detail-input {
             flex: 1;
             min-width: 160px;
@@ -640,10 +728,12 @@
             color: var(--text-main);
             transition: 0.15s;
         }
+
         .detail-input:focus {
             outline: 2px solid var(--accent-border);
             border-color: transparent;
         }
+
         .detail-readonly {
             flex: 1;
             min-width: 160px;
@@ -652,12 +742,15 @@
             word-break: break-all;
             padding: 0.45rem 0;
         }
+
         .btn-group {
             display: flex;
             gap: 0.4rem;
             flex-shrink: 0;
         }
-        .copy-btn, .open-btn {
+
+        .copy-btn,
+        .open-btn {
             background: var(--bg-tag);
             border: none;
             border-radius: 10px;
@@ -674,21 +767,26 @@
             flex-shrink: 0;
             text-decoration: none;
         }
-        .copy-btn:hover, .open-btn:hover {
+
+        .copy-btn:hover,
+        .open-btn:hover {
             background: var(--bg-hover);
         }
+
         .empty-msg {
             color: var(--text-light);
             font-size: 0.88rem;
             padding: 0.8rem 0.5rem;
             font-style: italic;
         }
+
         .loading {
             color: var(--text-light);
             font-size: 0.9rem;
             padding: 1rem;
             text-align: center;
         }
+
         /* 骨架屏 */
         .skeleton-item {
             background: var(--bg-card);
@@ -699,6 +797,7 @@
             flex-direction: column;
             gap: 0.6rem;
         }
+
         .skeleton-line {
             height: 14px;
             background: linear-gradient(90deg, var(--border-light) 25%, var(--border) 50%, var(--border-light) 75%);
@@ -706,24 +805,37 @@
             animation: shimmer 1.5s infinite;
             border-radius: 6px;
         }
+
         .skeleton-line.short {
             width: 60%;
         }
+
         @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
         }
+
         .hidden-file-input {
             display: none;
         }
+
         .trans-input {
             background: var(--bg-input);
             border: 1px solid #fcd34d;
         }
+
         .modal-overlay {
             display: none;
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(4px);
             align-items: center;
@@ -731,9 +843,11 @@
             z-index: 1000;
             padding: 1rem;
         }
+
         .modal-overlay.show {
             display: flex;
         }
+
         .modal-card {
             background: var(--bg-card);
             border-radius: 32px;
@@ -743,19 +857,30 @@
             box-shadow: 0 30px 50px rgba(0, 0, 0, 0.3);
             animation: pop 0.2s ease;
         }
+
         @keyframes pop {
-            0% { transform: scale(0.9); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+            0% {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
+
         .modal-card h3 {
             font-size: 1.3rem;
             color: var(--text-main);
             margin-bottom: 1.2rem;
             text-align: center;
         }
+
         .modal-field {
             margin-bottom: 1rem;
         }
+
         .modal-field label {
             display: block;
             font-size: 0.85rem;
@@ -763,6 +888,7 @@
             font-weight: 500;
             margin-bottom: 0.35rem;
         }
+
         .modal-field input,
         .modal-field textarea {
             width: 100%;
@@ -775,26 +901,31 @@
             transition: 0.15s;
             font-family: inherit;
         }
+
         .modal-field input:focus,
         .modal-field textarea:focus {
             outline: 2px solid var(--accent-border);
             border-color: transparent;
         }
+
         .modal-field textarea {
             resize: vertical;
             min-height: 80px;
             line-height: 1.5;
         }
+
         .modal-actions {
             display: flex;
             justify-content: space-between;
             gap: 0.6rem;
             margin-top: 1.5rem;
         }
+
         .modal-actions .btn {
             flex: 1;
             justify-content: center;
         }
+
         .qr-img {
             width: 220px;
             height: 220px;
@@ -814,19 +945,22 @@
             overflow: hidden;
             cursor: pointer;
         }
+
         .qr-img img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             border-radius: 18px;
         }
+
         .qr-img span {
             position: relative;
             z-index: 2;
-            background: rgba(255,255,255,0.8);
+            background: rgba(255, 255, 255, 0.8);
             padding: 0.2rem 1rem;
             border-radius: 40px;
         }
+
         .toast {
             position: fixed;
             bottom: 20px;
@@ -838,8 +972,9 @@
             border-radius: 40px;
             font-size: 0.9rem;
             z-index: 9999;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
+
         .drag-handle {
             flex-shrink: 0;
             cursor: grab;
@@ -852,489 +987,551 @@
             margin-top: 2px;
             letter-spacing: -2px;
         }
+
         .drag-handle:hover {
             background: var(--bg-hover);
             color: var(--text-muted);
         }
+
         .drag-handle:active {
             cursor: grabbing;
         }
+
         .item.dragging {
             opacity: 0.4;
         }
+
         .item.drag-over {
             border-color: var(--accent);
             box-shadow: 0 0 0 2px var(--accent-border);
         }
     </style>
 </head>
+
 <body>
-<div class="app" id="app">
-    <h1>🌌 天际译栈</h1>
+    <div class="app" id="app">
+        <h1>🌌 天际译栈</h1>
 
-    <!-- 公告栏 -->
-    <div class="announcement" id="announcementBar">
-        <span class="announcement-icon">📢</span>
-        <span class="announcement-text" id="announcementText">加载中...</span>
-        <button class="announcement-edit" id="announcementEditBtn" style="display:none;" title="编辑公告">✏️</button>
-        <button class="announcement-close" id="announcementClose" title="关闭">✕</button>
-    </div>
-
-    <div class="top-bar">
-        <div class="top-left">
-            <button class="sponsor-btn" id="sponsorBtn">
-                ☕ 请栈主喝一杯咖啡
-            </button>
-            <a class="bili-btn" href="https://space.bilibili.com/3546733697043003" target="_blank" rel="noopener noreferrer">
-                📺 B站主页
-            </a>
-            <button class="login-btn" id="loginEntryBtn">
-                🔐 管理员
-            </button>
-            <button class="theme-btn" id="themeToggleBtn" title="切换深色/浅色模式">🌙</button>
+        <!-- 公告栏 -->
+        <div class="announcement" id="announcementBar">
+            <span class="announcement-icon">📢</span>
+            <span class="announcement-text" id="announcementText">加载中...</span>
+            <button class="announcement-edit" id="announcementEditBtn" style="display:none;" title="编辑公告">✏️</button>
+            <button class="announcement-close" id="announcementClose" title="关闭">✕</button>
         </div>
-        <div class="search-wrap">
-            <span class="search-icon">🔍</span>
-            <input type="text" class="search-input" id="searchInput" placeholder="搜索附加包名 / 作者 / 简介...">
-            <button class="search-clear" id="searchClear">✕</button>
-        </div>
-    </div>
 
-    <div class="modules-container" id="modulesContainer">
-        <div class="module" id="pendingModule" style="display:none;">
-            <div class="module-header">
-                <div class="module-title">
-                    <span class="emoji">📋</span> 待汉化 / 汉化中 <span class="badge" id="pendingCount">0</span>
+        <div class="top-bar">
+            <div class="top-left">
+                <button class="sponsor-btn" id="sponsorBtn">
+                    ☕ 请栈主喝一杯咖啡
+                </button>
+                <a class="bili-btn" href="https://space.bilibili.com/3546733697043003" target="_blank"
+                    rel="noopener noreferrer">
+                    📺 B站主页
+                </a>
+                <button class="login-btn" id="loginEntryBtn">
+                    🔐 管理员
+                </button>
+                <button class="theme-btn" id="themeToggleBtn" title="切换深色/浅色模式">🌙</button>
+            </div>
+            <div class="search-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="searchInput" placeholder="搜索附加包名 / 作者 / 简介...">
+                <button class="search-clear" id="searchClear">✕</button>
+            </div>
+        </div>
+
+        <div class="modules-container" id="modulesContainer">
+            <div class="module" id="pendingModule" style="display:none;">
+                <div class="module-header">
+                    <div class="module-title">
+                        <span class="emoji">📋</span> 待汉化 / 汉化中 <span class="badge" id="pendingCount">0</span>
+                    </div>
+                    <button class="module-toggle" id="pendingToggle" data-module="pending" title="展开/收起">▼</button>
                 </div>
-                <button class="module-toggle" id="pendingToggle" data-module="pending" title="展开/收起">▼</button>
+                <div class="module-body" id="pendingList"></div>
             </div>
-            <div class="module-body" id="pendingList"></div>
-        </div>
 
-        <div class="module" id="doneModule">
-            <div class="module-header">
-                <div class="module-title">
-                    <span class="emoji">✅</span> 已汉化 <span class="badge" id="doneCount">0</span>
+            <div class="module" id="doneModule">
+                <div class="module-header">
+                    <div class="module-title">
+                        <span class="emoji">✅</span> 已汉化 <span class="badge" id="doneCount">0</span>
+                    </div>
+                    <button class="module-toggle" id="doneToggle" data-module="done" title="展开/收起">▼</button>
                 </div>
-                <button class="module-toggle" id="doneToggle" data-module="done" title="展开/收起">▼</button>
-            </div>
-            <div class="module-body" id="doneList">
-                <!-- 骨架屏 -->
-                <div class="skeleton-item"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div>
-                <div class="skeleton-item"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div>
-                <div class="skeleton-item"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="bottom-bar" id="adminToolbar" style="display:none;">
-        <div class="bottom-left">
-            <button class="btn btn-primary" id="importToggleBtn">➕ 导入项目</button>
-            <div id="importInputWrap" style="display:none;gap:0.6rem;align-items:center;flex-wrap:wrap;">
-                <input type="text" class="import-input" id="importInput" placeholder="英文(中文) | 作者" style="padding:0.7rem 1rem;border:1px solid var(--border-input);border-radius:30px;font-size:0.9rem;background:var(--bg-input);color:var(--text-main);">
-                <button class="btn" id="importConfirmBtn">确认</button>
+                <div class="module-body" id="doneList">
+                    <!-- 骨架屏 -->
+                    <div class="skeleton-item">
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line short"></div>
+                    </div>
+                    <div class="skeleton-item">
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line short"></div>
+                    </div>
+                    <div class="skeleton-item">
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line short"></div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="bottom-right">
-            <button class="btn" id="exportBtn">📤 导出</button>
-            <button class="btn" id="jsImportBtn">📥 JS 快速导入</button>
-            <input type="file" id="jsFileInput" class="hidden-file-input" accept=".js,.json,application/javascript">
+
+        <div class="bottom-bar" id="adminToolbar" style="display:none;">
+            <div class="bottom-left">
+                <button class="btn btn-primary" id="importToggleBtn">➕ 导入项目</button>
+                <div id="importInputWrap" style="display:none;gap:0.6rem;align-items:center;flex-wrap:wrap;">
+                    <input type="text" class="import-input" id="importInput" placeholder="英文(中文) | 作者"
+                        style="padding:0.7rem 1rem;border:1px solid var(--border-input);border-radius:30px;font-size:0.9rem;background:var(--bg-input);color:var(--text-main);">
+                    <button class="btn" id="importConfirmBtn">确认</button>
+                </div>
+            </div>
+            <div class="bottom-right">
+                <button class="btn" id="exportBtn">📤 导出</button>
+                <button class="btn" id="jsImportBtn">📥 JS 快速导入</button>
+                <input type="file" id="jsFileInput" class="hidden-file-input" accept=".js,.json,application/javascript">
+            </div>
         </div>
     </div>
-</div>
 
-<!-- 赞助收款码弹窗 -->
-<div class="modal-overlay" id="qrModal">
-    <div class="modal-card" style="text-align:center;">
-        <h3>赞助栈主</h3>
-        <p style="color:var(--text-light);margin-bottom:1.5rem;font-size:0.95rem;">感谢支持汉化工作 ✨</p>
-        <div class="qr-img" id="qrImage">
-            <img src="https://i.ibb.co/ksdn3z9x/b474dd3602b98b7ff04f68c056ad7b52.jpg" alt="Please~">
-        </div>
-        <div class="modal-actions">
-            <button class="btn" id="qrCloseBtn" style="background:var(--bg-tag);color:var(--text-main);">关闭</button>
-        </div>
-    </div>
-</div>
-
-<!-- 登录弹窗 -->
-<div class="modal-overlay" id="loginModal">
-    <div class="modal-card">
-        <h3>管理员登录</h3>
-        <div class="modal-field">
-            <label>用户名</label>
-            <input type="text" id="loginUsername" placeholder="用户名" autocomplete="off">
-        </div>
-        <div class="modal-field">
-            <label>密码</label>
-            <input type="password" id="loginPassword" autocomplete="new-password">
-        </div>
-        <div class="modal-actions">
-            <button class="btn" id="loginCancelBtn" style="background:var(--bg-tag);color:var(--text-main);">取消</button>
-            <button class="btn btn-primary" id="loginSubmitBtn">登录</button>
+    <!-- 赞助收款码弹窗 -->
+    <div class="modal-overlay" id="qrModal">
+        <div class="modal-card" style="text-align:center;">
+            <h3>赞助栈主</h3>
+            <p style="color:var(--text-light);margin-bottom:1.5rem;font-size:0.95rem;">感谢支持汉化工作 ✨</p>
+            <div class="qr-img" id="qrImage">
+                <img src="https://i.ibb.co/ksdn3z9x/b474dd3602b98b7ff04f68c056ad7b52.jpg" alt="Please~">
+            </div>
+            <div class="modal-actions">
+                <button class="btn" id="qrCloseBtn" style="background:var(--bg-tag);color:var(--text-main);">关闭</button>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- 编辑弹窗 -->
-<div class="modal-overlay" id="editModal">
-    <div class="modal-card">
-        <h3 id="editModalTitle">编辑附加包</h3>
-        <div class="modal-field">
-            <label>英文原名</label>
-            <input type="text" id="editOriginal" placeholder="英文原名">
-        </div>
-        <div class="modal-field" id="editTranslatedField">
-            <label>中文译名</label>
-            <input type="text" id="editTranslated" placeholder="中文译名">
-        </div>
-        <div class="modal-field">
-            <label>作者</label>
-            <input type="text" id="editAuthor" placeholder="佚名">
-        </div>
-        <div class="modal-field">
-            <label>简介</label>
-            <textarea id="editDescription" placeholder="输入附加包简介..."></textarea>
-        </div>
-        <div class="modal-actions">
-            <button class="btn btn-danger" id="editDeleteBtn">🗑️ 移除</button>
-            <button class="btn" id="editCancelBtn" style="background:var(--bg-tag);color:var(--text-main);">取消</button>
-            <button class="btn btn-primary" id="editSaveBtn">💾 保存</button>
+    <!-- 登录弹窗 -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-card">
+            <h3>管理员登录</h3>
+            <div class="modal-field">
+                <label>用户名</label>
+                <input type="text" id="loginUsername" placeholder="用户名" autocomplete="off">
+            </div>
+            <div class="modal-field">
+                <label>密码</label>
+                <input type="password" id="loginPassword" autocomplete="new-password">
+            </div>
+            <div class="modal-actions">
+                <button class="btn" id="loginCancelBtn"
+                    style="background:var(--bg-tag);color:var(--text-main);">取消</button>
+                <button class="btn btn-primary" id="loginSubmitBtn">登录</button>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- 公告编辑弹窗 -->
-<div class="modal-overlay" id="announcementModal">
-    <div class="modal-card">
-        <h3>编辑公告</h3>
-        <div class="modal-field">
-            <label>公告内容（支持多行）</label>
-            <textarea id="announcementInput" placeholder="输入公告内容..." style="min-height:120px;"></textarea>
-        </div>
-        <div class="modal-actions">
-            <button class="btn" id="announcementCancelBtn" style="background:var(--bg-tag);color:var(--text-main);">取消</button>
-            <button class="btn btn-primary" id="announcementSaveBtn">💾 保存</button>
+    <!-- 编辑弹窗 -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-card">
+            <h3 id="editModalTitle">编辑附加包</h3>
+            <div class="modal-field">
+                <label>英文原名</label>
+                <input type="text" id="editOriginal" placeholder="英文原名">
+            </div>
+            <div class="modal-field" id="editTranslatedField">
+                <label>中文译名</label>
+                <input type="text" id="editTranslated" placeholder="中文译名">
+            </div>
+            <div class="modal-field">
+                <label>作者</label>
+                <input type="text" id="editAuthor" placeholder="佚名">
+            </div>
+            <div class="modal-field">
+                <label>简介</label>
+                <textarea id="editDescription" placeholder="输入附加包简介..."></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-danger" id="editDeleteBtn">🗑️ 移除</button>
+                <button class="btn" id="editCancelBtn"
+                    style="background:var(--bg-tag);color:var(--text-main);">取消</button>
+                <button class="btn btn-primary" id="editSaveBtn">💾 保存</button>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-    (function() {
-        // ==================== 配置 ====================
-        const API_BASE = 'https://tianji-server-production-d7f3.up.railway.app/api';
-        const TOKEN_KEY = 'tianji_token';
-        const QR_KEY = 'tianji_qr_image';
-        const THEME_KEY = 'tianji_theme';
-        const CACHE_KEY = 'tianji_items_cache';
-        const CACHE_TTL = 5 * 60 * 1000; // 5 分钟
+    <!-- 公告编辑弹窗 -->
+    <div class="modal-overlay" id="announcementModal">
+        <div class="modal-card">
+            <h3>编辑公告</h3>
+            <div class="modal-field">
+                <label>公告内容（支持多行）</label>
+                <textarea id="announcementInput" placeholder="输入公告内容..." style="min-height:120px;"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn" id="announcementCancelBtn"
+                    style="background:var(--bg-tag);color:var(--text-main);">取消</button>
+                <button class="btn btn-primary" id="announcementSaveBtn">💾 保存</button>
+            </div>
+        </div>
+    </div>
 
-        // ==================== 状态 ====================
-        let items = [];
-        let qrImageSrc = localStorage.getItem(QR_KEY) || '';
-        let searchQuery = '';
-        let authToken = localStorage.getItem(TOKEN_KEY) || '';
-        let isAdmin = false;
-        let editingItemId = null;
+    <script>
+        (function () {
+            // ==================== 配置 ====================
+            const API_BASE = 'https://tianji-server-production-d7f3.up.railway.app/api';
+            const TOKEN_KEY = 'tianji_token';
+            const QR_KEY = 'tianji_qr_image';
+            const THEME_KEY = 'tianji_theme';
+            const CACHE_KEY = 'tianji_items_cache';
+            const CACHE_TTL = 5 * 60 * 1000; // 5 分钟
 
-        const moduleExpanded = {
-            pending: false,
-            done: false
-        };
+            // ==================== 状态 ====================
+            let items = [];
+            let qrImageSrc = localStorage.getItem(QR_KEY) || '';
+            let searchQuery = '';
+            let authToken = localStorage.getItem(TOKEN_KEY) || '';
+            let isAdmin = false;
+            let editingItemId = null;
 
-        const STATUS = {
-            TODO: 'todo',
-            DOING: 'doing',
-            DONE: 'done'
-        };
+            const moduleExpanded = {
+                pending: false,
+                done: false
+            };
 
-        // ==================== 主题切换 ====================
-        function applyTheme(theme) {
-            document.documentElement.setAttribute('data-theme', theme);
-            const btn = document.getElementById('themeToggleBtn');
-            if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
-            try { localStorage.setItem(THEME_KEY, theme); } catch (e) {}
-        }
+            const STATUS = {
+                TODO: 'todo',
+                DOING: 'doing',
+                DONE: 'done'
+            };
 
-        // ==================== 工具函数 ====================
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function showToast(text) {
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.textContent = text;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 1500);
-        }
-
-        function hasChinese(text) {
-            return /[\u4e00-\u9fa5]/.test(text);
-        }
-
-        function authHeaders() {
-            const h = { 'Content-Type': 'application/json' };
-            if (authToken) h['Authorization'] = 'Bearer ' + authToken;
-            return h;
-        }
-
-        // ==================== 数据缓存 ====================
-        function getCachedItems() {
-            try {
-                const raw = localStorage.getItem(CACHE_KEY);
-                if (!raw) return null;
-                const { data, timestamp } = JSON.parse(raw);
-                if (Date.now() - timestamp > CACHE_TTL) return null;
-                return data;
-            } catch (e) {
-                return null;
+            // ==================== 主题切换 ====================
+            function applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                const btn = document.getElementById('themeToggleBtn');
+                if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+                try { localStorage.setItem(THEME_KEY, theme); } catch (e) { }
             }
-        }
 
-        function setCachedItems(data) {
-            try {
-                localStorage.setItem(CACHE_KEY, JSON.stringify({
-                    data,
-                    timestamp: Date.now()
-                }));
-            } catch (e) {}
-        }
+            // ==================== 工具函数 ====================
+            function escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
 
-        function clearCache() {
-            try { localStorage.removeItem(CACHE_KEY); } catch (e) {}
-        }
+            function showToast(text) {
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.textContent = text;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 1500);
+            }
 
-        // ==================== API 调用 ====================
-        async function loadItems(useCache = true) {
-            // 管理员不用缓存，直接拉最新
-            if (!isAdmin && useCache) {
-                const cached = getCachedItems();
-                if (cached) {
-                    items = cached;
-                    render();
-                    // 后台静默刷新
-                    fetchFreshItems();
+            function hasChinese(text) {
+                return /[\u4e00-\u9fa5]/.test(text);
+            }
+
+            function authHeaders() {
+                const h = { 'Content-Type': 'application/json' };
+                if (authToken) h['Authorization'] = 'Bearer ' + authToken;
+                return h;
+            }
+
+            // ==================== 数据缓存 ====================
+            function getCachedItems() {
+                try {
+                    const raw = localStorage.getItem(CACHE_KEY);
+                    if (!raw) return null;
+                    const { data, timestamp } = JSON.parse(raw);
+                    if (Date.now() - timestamp > CACHE_TTL) return null;
+                    return data;
+                } catch (e) {
+                    return null;
+                }
+            }
+
+            function setCachedItems(data) {
+                try {
+                    localStorage.setItem(CACHE_KEY, JSON.stringify({
+                        data,
+                        timestamp: Date.now()
+                    }));
+                } catch (e) { }
+            }
+
+            function clearCache() {
+                try { localStorage.removeItem(CACHE_KEY); } catch (e) { }
+            }
+
+            // ==================== API 调用 ====================
+            async function loadItems(useCache = true) {
+                // 管理员不用缓存，直接拉最新
+                if (!isAdmin && useCache) {
+                    const cached = getCachedItems();
+                    if (cached) {
+                        items = cached;
+                        render();
+                        // 后台静默刷新
+                        fetchFreshItems();
+                        return;
+                    }
+                }
+
+                await fetchFreshItems();
+            }
+
+            async function fetchFreshItems() {
+                try {
+                    const url = isAdmin ? `${API_BASE}/items?all=1` : `${API_BASE}/items`;
+                    const res = await fetch(url, { headers: authHeaders() });
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    const rows = await res.json();
+                    items = rows.map(r => ({
+                        id: r.id,
+                        original: r.original,
+                        translated: r.translated,
+                        author: r.author,
+                        authorLink: r.author_link,
+                        translationLink: r.translation_link,
+                        originalLink: r.original_link,
+                        description: r.description,
+                        status: r.status,
+                        expanded: false
+                    }));
+                    if (!isAdmin) setCachedItems(items);
+                } catch (e) {
+                    console.error('加载失败', e);
+                    if (items.length === 0) {
+                        showToast('加载数据失败，请刷新重试');
+                    }
+                }
+            }
+
+            async function apiCreate(item) {
+                const res = await fetch(`${API_BASE}/items`, {
+                    method: 'POST',
+                    headers: authHeaders(),
+                    body: JSON.stringify(item)
+                });
+                if (!res.ok) throw new Error('创建失败');
+                clearCache();
+                return res.json();
+            }
+
+            async function apiUpdate(id, fields) {
+                const res = await fetch(`${API_BASE}/items/${id}`, {
+                    method: 'PUT',
+                    headers: authHeaders(),
+                    body: JSON.stringify(fields)
+                });
+                if (!res.ok) throw new Error('更新失败');
+                clearCache();
+                return res.json();
+            }
+
+            async function apiDelete(id) {
+                const res = await fetch(`${API_BASE}/items/${id}`, {
+                    method: 'DELETE',
+                    headers: authHeaders()
+                });
+                if (!res.ok) throw new Error('删除失败');
+                clearCache();
+            }
+
+            async function apiBatchCreate(list) {
+                const res = await fetch(`${API_BASE}/items/batch`, {
+                    method: 'POST',
+                    headers: authHeaders(),
+                    body: JSON.stringify(list)
+                });
+                if (!res.ok) throw new Error('批量导入失败');
+                clearCache();
+                return res.json();
+            }
+
+            async function apiReorder(list) {
+                const res = await fetch(`${API_BASE}/items/reorder`, {
+                    method: 'PUT',
+                    headers: authHeaders(),
+                    body: JSON.stringify(list)
+                });
+                if (!res.ok) throw new Error('排序失败');
+                clearCache();
+                return res.json();
+            }
+
+            async function apiBatchUpdate(list) {
+                const res = await fetch(`${API_BASE}/items/batch-update`, {
+                    method: 'PUT',
+                    headers: authHeaders(),
+                    body: JSON.stringify(list)
+                });
+                if (!res.ok) throw new Error('批量更新失败');
+                clearCache();
+                return res.json();
+            }
+
+            async function fetchAnnouncement() {
+                try {
+                    const res = await fetch(`${API_BASE}/settings/announcement`);
+                    const data = await res.json();
+                    document.getElementById('announcementText').textContent = data.value || '欢迎来到天际译栈！';
+                } catch (e) {
+                    document.getElementById('announcementText').textContent = '欢迎来到天际译栈！';
+                }
+            }
+
+            async function saveAnnouncement(value) {
+                const res = await fetch(`${API_BASE}/settings/announcement`, {
+                    method: 'PUT',
+                    headers: authHeaders(),
+                    body: JSON.stringify({ value })
+                });
+                if (!res.ok) throw new Error('保存失败');
+                return res.json();
+            }
+
+            // ==================== 渲染 ====================
+            function filterItems(list) {
+                if (!searchQuery) return list;
+                const q = searchQuery.toLowerCase();
+                return list.filter(item => {
+                    const orig = (item.original || '').toLowerCase();
+                    const trans = (item.translated || '').toLowerCase();
+                    const author = (item.author || '').toLowerCase();
+                    const desc = (item.description || '').toLowerCase();
+                    return orig.includes(q) || trans.includes(q) || author.includes(q) || desc.includes(q);
+                });
+            }
+
+            function render() {
+                const allPending = items.filter(i => i.status !== STATUS.DONE);
+                const doing = allPending.filter(i => i.status === STATUS.DOING);
+                const todo = allPending.filter(i => i.status !== STATUS.DOING);
+                const sortedPending = [...doing, ...todo];
+
+                const allDone = items.filter(i => i.status === STATUS.DONE);
+
+                const filteredPending = filterItems(sortedPending);
+                const filteredDone = filterItems(allDone);
+
+                document.getElementById('pendingCount').textContent = allPending.length;
+                document.getElementById('doneCount').textContent = allDone.length;
+
+                // 访客看不到待汉化模块
+                document.getElementById('pendingModule').style.display = isAdmin ? '' : 'none';
+
+                renderList('pendingList', filteredPending, false);
+                renderList('doneList', filteredDone, true);
+
+                updateModuleStyles();
+            }
+
+            function updateModuleStyles() {
+                const pendingModule = document.getElementById('pendingModule');
+                const doneModule = document.getElementById('doneModule');
+                const pendingToggle = document.getElementById('pendingToggle');
+                const doneToggle = document.getElementById('doneToggle');
+
+                // 处理待汉化模块
+                handleModuleToggle(pendingModule, pendingToggle, moduleExpanded.pending);
+                // 处理已汉化模块
+                handleModuleToggle(doneModule, doneToggle, moduleExpanded.done);
+            }
+
+            function handleModuleToggle(moduleEl, toggleBtn, expanded) {
+                const bodyEl = moduleEl.querySelector('.module-body');
+                if (!bodyEl) return;
+
+                if (expanded) {
+                    // 展开
+                    moduleEl.classList.add('module-expanded');
+                    toggleBtn.textContent = '▲';
+                    // 先量一下真实高度，赋给它作为动画终点
+                    const targetHeight = bodyEl.scrollHeight;
+                    bodyEl.style.maxHeight = targetHeight + 'px';
+                    // 动画结束后让它自适应
+                    clearTimeout(bodyEl._expandTimer);
+                    bodyEl._expandTimer = setTimeout(() => {
+                        if (moduleEl.classList.contains('module-expanded')) {
+                            bodyEl.style.maxHeight = 'none';
+                        }
+                    }, 370);
+                } else {
+                    // 收起
+                    // 如果当前是 none，先恢复成具体高度才能过渡
+                    if (bodyEl.style.maxHeight === 'none') {
+                        bodyEl.style.maxHeight = bodyEl.scrollHeight + 'px';
+                        void bodyEl.offsetHeight;
+                    }
+                    moduleEl.classList.remove('module-expanded');
+                    toggleBtn.textContent = '▼';
+                    // 移除 inline style，让 CSS 的 260px 生效
+                    bodyEl.style.maxHeight = '';
+                }
+            }
+
+            function renderList(containerId, list, isDoneSection) {
+                const container = document.getElementById(containerId);
+                if (!list.length) {
+                    let msg = searchQuery ? '没有匹配的搜索结果' : (isDoneSection ? '暂无已汉化项目' : '还没有项目');
+                    container.innerHTML = `<div class="empty-msg">${msg}</div>`;
                     return;
                 }
+
+                let html = '';
+                list.forEach(item => {
+                    const orig = item.original || '未知';
+                    const trans = item.translated || '';
+                    const authorDisplay = item.author || '佚名';
+                    const status = item.status || STATUS.TODO;
+                    const isDone = status === STATUS.DONE;
+                    const isDoing = status === STATUS.DOING;
+                    const expanded = item.expanded ? 'show' : '';
+
+                    let nameHtml = '';
+                    if (isDone && trans) {
+                        nameHtml = `<span class="orig">${escapeHtml(orig)}</span> <span class="trans">(${escapeHtml(trans)})</span>`;
+                    } else if (isDone && !trans) {
+                        nameHtml = `<span class="orig">${escapeHtml(orig)}</span> <span class="trans">(未填写中译名)</span>`;
+                    } else {
+                        nameHtml = `<span class="orig">${escapeHtml(orig)}</span>`;
+                    }
+
+                    let iconClass = '';
+                    let iconContent = '';
+                    if (isDone) {
+                        iconClass = 'done';
+                        iconContent = '✅';
+                    } else if (isDoing) {
+                        iconClass = 'in-progress';
+                        iconContent = '⏳';
+                    } else {
+                        iconClass = '';
+                        iconContent = '□';
+                    }
+
+
+                    html += `
+                    <div class="item" data-id="${item.id}">
+                        <div class="item-top">
+                            ${isAdmin ? `<span class="drag-handle" draggable="true" data-id="${item.id}" title="拖动排序">⋮⋮</span>` : ''}
+                            ${!isDone ? `<span class="status-icon ${iconClass}" data-action="cycle-status" data-id="${item.id}" title="点击切换状态">${iconContent}</span>` : ''}
+                            <div class="item-name">${nameHtml}</div>
+                        </div>
+                        <div class="item-bottom">
+                            <span class="author-name">${escapeHtml(authorDisplay)}</span>
+                            ${isAdmin ? `<button class="edit-icon-btn" data-action="edit-item" data-id="${item.id}" title="编辑">✏️</button>` : ''}
+                            <button class="expand-btn" data-action="expand" data-id="${item.id}">${item.expanded ? '▲' : '▼'}</button>
+                        </div>
+                        <div class="item-details" data-details-id="${item.id}"></div>
+                    </div>
+                `;
+                });
+                container.innerHTML = html;
             }
 
-            await fetchFreshItems();
-        }
-
-        async function fetchFreshItems() {
-            try {
-                const url = isAdmin ? `${API_BASE}/items?all=1` : `${API_BASE}/items`;
-                const res = await fetch(url, { headers: authHeaders() });
-                if (!res.ok) throw new Error('HTTP ' + res.status);
-                const rows = await res.json();
-                items = rows.map(r => ({
-                    id: r.id,
-                    original: r.original,
-                    translated: r.translated,
-                    author: r.author,
-                    authorLink: r.author_link,
-                    translationLink: r.translation_link,
-                    originalLink: r.original_link,
-                    description: r.description,
-                    status: r.status,
-                    expanded: false
-                }));
-                if (!isAdmin) setCachedItems(items);
-            } catch (e) {
-                console.error('加载失败', e);
-                if (items.length === 0) {
-                    showToast('加载数据失败，请刷新重试');
-                }
-            }
-        }
-
-        async function apiCreate(item) {
-            const res = await fetch(`${API_BASE}/items`, {
-                method: 'POST',
-                headers: authHeaders(),
-                body: JSON.stringify(item)
-            });
-            if (!res.ok) throw new Error('创建失败');
-            clearCache();
-            return res.json();
-        }
-
-        async function apiUpdate(id, fields) {
-            const res = await fetch(`${API_BASE}/items/${id}`, {
-                method: 'PUT',
-                headers: authHeaders(),
-                body: JSON.stringify(fields)
-            });
-            if (!res.ok) throw new Error('更新失败');
-            clearCache();
-            return res.json();
-        }
-
-        async function apiDelete(id) {
-            const res = await fetch(`${API_BASE}/items/${id}`, {
-                method: 'DELETE',
-                headers: authHeaders()
-            });
-            if (!res.ok) throw new Error('删除失败');
-            clearCache();
-        }
-
-        async function apiBatchCreate(list) {
-            const res = await fetch(`${API_BASE}/items/batch`, {
-                method: 'POST',
-                headers: authHeaders(),
-                body: JSON.stringify(list)
-            });
-            if (!res.ok) throw new Error('批量导入失败');
-            clearCache();
-            return res.json();
-        }
-
-        async function apiReorder(list) {
-            const res = await fetch(`${API_BASE}/items/reorder`, {
-                method: 'PUT',
-                headers: authHeaders(),
-                body: JSON.stringify(list)
-            });
-            if (!res.ok) throw new Error('排序失败');
-            clearCache();
-            return res.json();
-        }
-
-        async function apiBatchUpdate(list) {
-            const res = await fetch(`${API_BASE}/items/batch-update`, {
-                method: 'PUT',
-                headers: authHeaders(),
-                body: JSON.stringify(list)
-            });
-            if (!res.ok) throw new Error('批量更新失败');
-            clearCache();
-            return res.json();
-        }
-
-        async function fetchAnnouncement() {
-            try {
-                const res = await fetch(`${API_BASE}/settings/announcement`);
-                const data = await res.json();
-                document.getElementById('announcementText').textContent = data.value || '欢迎来到天际译栈！';
-            } catch (e) {
-                document.getElementById('announcementText').textContent = '欢迎来到天际译栈！';
-            }
-        }
-
-        async function saveAnnouncement(value) {
-            const res = await fetch(`${API_BASE}/settings/announcement`, {
-                method: 'PUT',
-                headers: authHeaders(),
-                body: JSON.stringify({ value })
-            });
-            if (!res.ok) throw new Error('保存失败');
-            return res.json();
-        }
-
-        // ==================== 渲染 ====================
-        function filterItems(list) {
-            if (!searchQuery) return list;
-            const q = searchQuery.toLowerCase();
-            return list.filter(item => {
-                const orig = (item.original || '').toLowerCase();
-                const trans = (item.translated || '').toLowerCase();
-                const author = (item.author || '').toLowerCase();
-                const desc = (item.description || '').toLowerCase();
-                return orig.includes(q) || trans.includes(q) || author.includes(q) || desc.includes(q);
-            });
-        }
-
-        function render() {
-            const allPending = items.filter(i => i.status !== STATUS.DONE);
-            const doing = allPending.filter(i => i.status === STATUS.DOING);
-            const todo = allPending.filter(i => i.status !== STATUS.DOING);
-            const sortedPending = [...doing, ...todo];
-
-            const allDone = items.filter(i => i.status === STATUS.DONE);
-
-            const filteredPending = filterItems(sortedPending);
-            const filteredDone = filterItems(allDone);
-
-            document.getElementById('pendingCount').textContent = allPending.length;
-            document.getElementById('doneCount').textContent = allDone.length;
-
-            // 访客看不到待汉化模块
-            document.getElementById('pendingModule').style.display = isAdmin ? '' : 'none';
-
-            renderList('pendingList', filteredPending, false);
-            renderList('doneList', filteredDone, true);
-
-            updateModuleStyles();
-        }
-
-        function updateModuleStyles() {
-            const pendingModule = document.getElementById('pendingModule');
-            const doneModule = document.getElementById('doneModule');
-            const pendingToggle = document.getElementById('pendingToggle');
-            const doneToggle = document.getElementById('doneToggle');
-
-            if (moduleExpanded.pending) {
-                pendingModule.classList.add('module-expanded');
-                pendingToggle.textContent = '▲';
-            } else {
-                pendingModule.classList.remove('module-expanded');
-                pendingToggle.textContent = '▼';
-            }
-
-            if (moduleExpanded.done) {
-                doneModule.classList.add('module-expanded');
-                doneToggle.textContent = '▲';
-            } else {
-                doneModule.classList.remove('module-expanded');
-                doneToggle.textContent = '▼';
-            }
-        }
-
-        function renderList(containerId, list, isDoneSection) {
-            const container = document.getElementById(containerId);
-            if (!list.length) {
-                let msg = searchQuery ? '没有匹配的搜索结果' : (isDoneSection ? '暂无已汉化项目' : '还没有项目');
-                container.innerHTML = `<div class="empty-msg">${msg}</div>`;
-                return;
-            }
-
-            let html = '';
-            list.forEach(item => {
-                const orig = item.original || '未知';
-                const trans = item.translated || '';
-                const authorDisplay = item.author || '佚名';
-                const status = item.status || STATUS.TODO;
-                const isDone = status === STATUS.DONE;
-                const isDoing = status === STATUS.DOING;
-                const expanded = item.expanded ? 'show' : '';
-
-                let nameHtml = '';
-                if (isDone && trans) {
-                    nameHtml = `<span class="orig">${escapeHtml(orig)}</span> <span class="trans">(${escapeHtml(trans)})</span>`;
-                } else if (isDone && !trans) {
-                    nameHtml = `<span class="orig">${escapeHtml(orig)}</span> <span class="trans">(未填写中译名)</span>`;
-                } else {
-                    nameHtml = `<span class="orig">${escapeHtml(orig)}</span>`;
-                }
-
-                let iconClass = '';
-                let iconContent = '';
-                if (isDone) {
-                    iconClass = 'done';
-                    iconContent = '✅';
-                } else if (isDoing) {
-                    iconClass = 'in-progress';
-                    iconContent = '⏳';
-                } else {
-                    iconClass = '';
-                    iconContent = '□';
-                }
-
+            function buildDetailsHtml(item) {
+                const isDone = item.status === STATUS.DONE;
                 let detailsHtml = '';
 
                 if (item.description) {
@@ -1355,667 +1552,727 @@
                         ? `<input type="text" class="detail-input" data-field="${field}" data-id="${item.id}" value="${escapeHtml(val)}" placeholder="https://...">`
                         : `<div class="detail-readonly">${val ? escapeHtml(val) : '<span style="color:var(--text-light);">未填写</span>'}</div>`;
                     detailsHtml += `
-                        <div class="detail-row">
-                            <span class="detail-label">${label}</span>
-                            ${readonlyHtml}
-                            <div class="btn-group">
-                                <button class="copy-btn" data-copy="${field}" data-id="${item.id}">📋 复制</button>
-                                <a class="open-btn" href="javascript:void(0)" data-action="open-link" data-id="${item.id}" data-field="${field}">🔗 跳转</a>
-                            </div>
-                        </div>
-                    `;
+            <div class="detail-row">
+                <span class="detail-label">${label}</span>
+                ${readonlyHtml}
+                <div class="btn-group">
+                    <button class="copy-btn" data-copy="${field}" data-id="${item.id}">📋 复制</button>
+                    <a class="open-btn" href="javascript:void(0)" data-action="open-link" data-id="${item.id}" data-field="${field}">🔗 跳转</a>
+                </div>
+            </div>
+        `;
                 });
 
-                html += `
-                    <div class="item" data-id="${item.id}">
-                        <div class="item-top">
-                            ${isAdmin ? `<span class="drag-handle" draggable="true" data-id="${item.id}" title="拖动排序">⋮⋮</span>` : ''}
-                            ${!isDone ? `<span class="status-icon ${iconClass}" data-action="cycle-status" data-id="${item.id}" title="点击切换状态">${iconContent}</span>` : ''}
-                            <div class="item-name">${nameHtml}</div>
-                        </div>
-                        <div class="item-bottom">
-                            <span class="author-name">${escapeHtml(authorDisplay)}</span>
-                            ${isAdmin ? `<button class="edit-icon-btn" data-action="edit-item" data-id="${item.id}" title="编辑">✏️</button>` : ''}
-                            <button class="expand-btn" data-action="expand" data-id="${item.id}">${item.expanded ? '▲' : '▼'}</button>
-                        </div>
-                        <div class="item-details ${expanded}">${detailsHtml}</div>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
-
-        // ==================== 操作 ====================
-        async function cycleStatus(id) {
-            if (!isAdmin) return;
-            const item = items.find(i => i.id === id);
-            if (!item) return;
-            const current = item.status || STATUS.TODO;
-
-            let newStatus;
-            if (current === STATUS.TODO) newStatus = STATUS.DOING;
-            else if (current === STATUS.DOING) newStatus = STATUS.DONE;
-            else newStatus = STATUS.TODO;
-
-            try {
-                await apiUpdate(id, { status: newStatus });
-                item.status = newStatus;
-                if (newStatus === STATUS.DONE && !item.translated) {
-                    item.expanded = true;
-                    setTimeout(() => openEditModal(id), 100);
-                } else {
-                    item.expanded = false;
-                }
-                render();
-            } catch (e) {
-                showToast('操作失败');
-            }
-        }
-
-        function toggleExpand(id) {
-            const item = items.find(i => i.id === id);
-            if (!item) return;
-            item.expanded = !item.expanded;
-            render();
-        }
-
-        // ==================== 编辑弹窗 ====================
-        function openEditModal(id) {
-            if (!isAdmin) return;
-            const item = items.find(i => i.id === id);
-            if (!item) return;
-            editingItemId = id;
-
-            document.getElementById('editOriginal').value = item.original || '';
-            document.getElementById('editTranslated').value = item.translated || '';
-            document.getElementById('editAuthor').value = item.author || '佚名';
-            document.getElementById('editDescription').value = item.description || '';
-
-            const isDone = item.status === STATUS.DONE;
-            document.getElementById('editTranslatedField').style.display = isDone ? 'block' : 'none';
-
-            document.getElementById('editModal').classList.add('show');
-            document.getElementById('editOriginal').focus();
-        }
-
-        function closeEditModal() {
-            document.getElementById('editModal').classList.remove('show');
-            editingItemId = null;
-        }
-
-        async function saveEditModal() {
-            if (!editingItemId) return;
-            const item = items.find(i => i.id === editingItemId);
-            if (!item) return;
-
-            const fields = {
-                original: document.getElementById('editOriginal').value.trim() || item.original,
-                author: document.getElementById('editAuthor').value.trim() || '佚名',
-                description: document.getElementById('editDescription').value.trim()
-            };
-            if (item.status === STATUS.DONE) {
-                fields.translated = document.getElementById('editTranslated').value.trim();
+                return detailsHtml;
             }
 
-            try {
-                await apiUpdate(editingItemId, fields);
-                Object.assign(item, fields);
-                closeEditModal();
-                render();
-                showToast('已保存');
-            } catch (e) {
-                showToast('保存失败');
-            }
-        }
-
-        async function deleteFromModal() {
-            if (!editingItemId) return;
-            const item = items.find(i => i.id === editingItemId);
-            if (!item) return;
-            if (!confirm(`确定要移除「${item.original}」吗？`)) return;
-
-            try {
-                await apiDelete(editingItemId);
-                items = items.filter(i => i.id !== editingItemId);
-                closeEditModal();
-                render();
-                showToast('已移除');
-            } catch (e) {
-                showToast('移除失败');
-            }
-        }
-
-        // ==================== 复制/跳转 ====================
-        function copyText(text) {
-            if (!text) { showToast('链接为空'); return; }
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(text).then(() => showToast('已复制')).catch(() => fallbackCopy(text));
-            } else {
-                fallbackCopy(text);
-            }
-        }
-
-        function fallbackCopy(text) {
-            const ta = document.createElement('textarea');
-            ta.value = text;
-            ta.style.position = 'fixed';
-            ta.style.opacity = '0';
-            document.body.appendChild(ta);
-            ta.select();
-            let ok = false;
-            try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
-            document.body.removeChild(ta);
-            if (ok) showToast('已复制');
-            else prompt('请手动复制:', text);
-        }
-
-        function openLink(id, field) {
-            const item = items.find(i => i.id === id);
-            if (!item) return;
-            let url = (item[field] || '').trim();
-            if (!url) { showToast('链接为空'); return; }
-            if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-            window.open(url, '_blank', 'noopener,noreferrer');
-        }
-
-        // ==================== 导入 ====================
-        async function importList() {
-            const input = document.getElementById('importInput');
-            const raw = input.value.trim();
-            if (!raw) return;
-
-            const lines = raw.split(/\n/).map(l => l.trim()).filter(l => l.length > 0);
-            const newItems = [];
-
-            lines.forEach(line => {
-                let author = '佚名';
-                let rest = line;
-                const pipeIdx = line.lastIndexOf('|');
-                if (pipeIdx !== -1) {
-                    author = line.slice(pipeIdx + 1).trim() || '佚名';
-                    rest = line.slice(0, pipeIdx).trim();
-                }
-
-                const match = rest.match(/^([^(（]+)[(（]([^)）]+)[)）]/);
-                let original = '', translated = '';
-                if (match) {
-                    original = match[1].trim();
-                    translated = match[2].trim();
-                } else {
-                    original = rest.trim();
-                }
-                if (!original) return;
-
-                if (items.some(i => i.original.toLowerCase() === original.toLowerCase())) return;
-
-                const status = (translated && hasChinese(translated)) ? STATUS.DONE : STATUS.TODO;
-                newItems.push({
-                    original,
-                    translated,
-                    author,
-                    status
-                });
-            });
-
-            if (newItems.length === 0) {
-                showToast('没有可导入的新项目');
-                return;
-            }
-
-            try {
-                await apiBatchCreate(newItems);
-                await loadItems(false);
-                render();
-                input.value = '';
-                document.getElementById('importInputWrap').style.display = 'none';
-                showToast(`成功导入 ${newItems.length} 条`);
-            } catch (e) {
-                showToast('导入失败');
-            }
-        }
-
-        // ==================== 导出 ====================
-        function exportData() {
-            const exportItems = items.map(item => ({
-                original: item.original,
-                translated: item.translated,
-                author: item.author,
-                authorLink: item.authorLink,
-                translationLink: item.translationLink,
-                originalLink: item.originalLink,
-                description: item.description || '',
-                status: item.status || STATUS.TODO
-            }));
-            const dataStr = `// 天际译栈 汉化数据导出\n// 导出时间: ${new Date().toLocaleString()}\nconst TRANSLATION_DATA = ${JSON.stringify(exportItems, null, 2)};\n`;
-            const blob = new Blob([dataStr], { type: 'application/javascript' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `天际译栈_汉化数据_${new Date().toISOString().slice(0, 10)}.js`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        // ==================== 登录 ====================
-        function updateLoginUI() {
-            const btn = document.getElementById('loginEntryBtn');
-            const toolbar = document.getElementById('adminToolbar');
-            const annEditBtn = document.getElementById('announcementEditBtn');
-
-            if (isAdmin) {
-                btn.textContent = '👤 管理员';
-                btn.classList.add('admin');
-                toolbar.style.display = '';
-                annEditBtn.style.display = '';
-            } else {
-                btn.textContent = '🔐 管理员登录';
-                btn.classList.remove('admin');
-                toolbar.style.display = 'none';
-                annEditBtn.style.display = 'none';
-            }
-        }
-
-        async function tryLogin() {
-            if (!authToken) return;
-            try {
-                const res = await fetch(`${API_BASE}/items?all=1`, {
-                    headers: authHeaders()
-                });
-                if (res.ok) {
-                    isAdmin = true;
-                } else {
-                    authToken = '';
-                    localStorage.removeItem(TOKEN_KEY);
-                }
-            } catch (e) {
-                // 网络错误，暂不处理
-            }
-            updateLoginUI();
-        }
-
-        function openLoginModal() {
-            document.getElementById('loginUsername').value = '';
-            document.getElementById('loginPassword').value = '';
-            document.getElementById('loginModal').classList.add('show');
-            document.getElementById('loginPassword').focus();
-        }
-
-        function closeLoginModal() {
-            document.getElementById('loginModal').classList.remove('show');
-        }
-
-        async function submitLogin() {
-            const username = document.getElementById('loginUsername').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            try {
-                const res = await fetch(`${API_BASE}/auth/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-                const data = await res.json();
-                if (data.token) {
-                    authToken = data.token;
-                    localStorage.setItem(TOKEN_KEY, authToken);
-                    isAdmin = true;
-                    closeLoginModal();
-                    updateLoginUI();
-                    await loadItems(false);
-                    render();
-                    showToast('登录成功');
-                } else {
-                    showToast(data.error || '登录失败');
-                }
-            } catch (e) {
-                showToast('网络错误');
-            }
-        }
-
-        function logout() {
-            authToken = '';
-            isAdmin = false;
-            localStorage.removeItem(TOKEN_KEY);
-            updateLoginUI();
-            loadItems(true).then(render);
-            showToast('已退出');
-        }
-
-        // ==================== 事件绑定 ====================
-        function setupEvents() {
-            const app = document.querySelector('.app');
-
-            // 主题切换
-            document.getElementById('themeToggleBtn').addEventListener('click', () => {
-                const current = document.documentElement.getAttribute('data-theme') || 'light';
-                applyTheme(current === 'dark' ? 'light' : 'dark');
-            });
-
-            // 公告栏关闭
-            const annBar = document.getElementById('announcementBar');
-            const annClosed = localStorage.getItem('tianji_announcement_closed');
-            if (annClosed === '1') {
-                annBar.style.display = 'none';
-            }
-            document.getElementById('announcementClose').addEventListener('click', () => {
-                annBar.style.display = 'none';
-                localStorage.setItem('tianji_announcement_closed', '1');
-            });
-
-            // 模块展开/收起
-            document.getElementById('pendingToggle').addEventListener('click', function() {
-                moduleExpanded.pending = !moduleExpanded.pending;
-                updateModuleStyles();
-            });
-            document.getElementById('doneToggle').addEventListener('click', function() {
-                moduleExpanded.done = !moduleExpanded.done;
-                updateModuleStyles();
-            });
-
-            // 搜索
-            const searchInput = document.getElementById('searchInput');
-            const searchClear = document.getElementById('searchClear');
-            searchInput.addEventListener('input', function() {
-                searchQuery = this.value.trim();
-                searchClear.classList.toggle('visible', !!searchQuery);
-                render();
-            });
-            searchClear.addEventListener('click', function() {
-                searchInput.value = '';
-                searchQuery = '';
-                searchClear.classList.remove('visible');
-                render();
-            });
-
-            // 事件委托
-            app.addEventListener('click', (e) => {
-                const statusIcon = e.target.closest('[data-action="cycle-status"]');
-                if (statusIcon) { cycleStatus(statusIcon.dataset.id); return; }
-
-                const expandBtn = e.target.closest('[data-action="expand"]');
-                if (expandBtn) { toggleExpand(expandBtn.dataset.id); return; }
-
-                const editBtn = e.target.closest('[data-action="edit-item"]');
-                if (editBtn) { openEditModal(editBtn.dataset.id); return; }
-
-                const copyBtn = e.target.closest('[data-copy]');
-                if (copyBtn) {
-                    const item = items.find(i => i.id === copyBtn.dataset.id);
-                    if (item) copyText(item[copyBtn.dataset.copy] || '');
-                    return;
-                }
-
-                const openBtn = e.target.closest('[data-action="open-link"]');
-                if (openBtn) {
-                    e.preventDefault();
-                    openLink(openBtn.dataset.id, openBtn.dataset.field);
-                    return;
-                }
-            });
-
-            // 链接输入（仅管理员，失焦时保存）
-            app.addEventListener('blur', async (e) => {
-                const input = e.target.closest('.detail-input');
-                if (!input || !isAdmin) return;
-                const id = input.dataset.id;
-                const field = input.dataset.field;
+            // ==================== 操作 ====================
+            async function cycleStatus(id) {
+                if (!isAdmin) return;
                 const item = items.find(i => i.id === id);
                 if (!item) return;
-                if (item[field] === input.value.trim()) return;
+                const current = item.status || STATUS.TODO;
+
+                let newStatus;
+                if (current === STATUS.TODO) newStatus = STATUS.DOING;
+                else if (current === STATUS.DOING) newStatus = STATUS.DONE;
+                else newStatus = STATUS.TODO;
+
                 try {
-                    await apiUpdate(id, { [field]: input.value.trim() });
-                    item[field] = input.value.trim();
+                    await apiUpdate(id, { status: newStatus });
+                    item.status = newStatus;
+
+                    // 重置详情状态（因为状态变了，详情内容可能不一样，需要重新注入）
+                    const itemEl = document.querySelector(`.item[data-id="${id}"]`);
+                    if (itemEl) {
+                        const detailsEl = itemEl.querySelector('.item-details');
+                        if (detailsEl) {
+                            detailsEl.classList.remove('show');
+                            detailsEl.style.maxHeight = '';
+                            detailsEl.innerHTML = '';
+                            delete detailsEl.dataset.loaded;
+                            clearTimeout(detailsEl._expandTimer);
+                            clearTimeout(detailsEl._collapseTimer);
+                        }
+                    }
+                    item.expanded = false;
+
+                    render();
+
+                    // 如果变成已汉化但没中译名，自动展开编辑弹窗
+                    if (newStatus === STATUS.DONE && !item.translated) {
+                        setTimeout(() => openEditModal(id), 100);
+                    }
+                } catch (e) {
+                    showToast('操作失败');
+                }
+            }
+
+            function toggleExpand(id) {
+                const item = items.find(i => i.id === id);
+                if (!item) return;
+
+                const itemEl = document.querySelector(`.item[data-id="${id}"]`);
+                if (!itemEl) return;
+                const detailsEl = itemEl.querySelector('.item-details');
+                if (!detailsEl) return;
+
+                const isOpening = !item.expanded;
+                item.expanded = isOpening;
+
+                if (isOpening) {
+                    // 1. 先注入内容（如果还没注入过）
+                    if (!detailsEl.dataset.loaded) {
+                        detailsEl.innerHTML = buildDetailsHtml(item);
+                        detailsEl.dataset.loaded = '1';
+                    }
+                    // 2. 触发动画：先让 max-height 有值，再在下一帧加 .show
+                    detailsEl.classList.remove('show');
+                    // 强制 reflow，确保 transition 能触发
+                    void detailsEl.offsetHeight;
+                    detailsEl.classList.add('show');
+
+                    // 3. 动画结束后把 max-height 设为 none，让内容自适应（避免超高内容被截断）
+                    clearTimeout(detailsEl._expandTimer);
+                    detailsEl._expandTimer = setTimeout(() => {
+                        if (detailsEl.classList.contains('show')) {
+                            detailsEl.style.maxHeight = 'none';
+                        }
+                    }, 350);
+                } else {
+                    // 收起：先把 max-height 从 none 恢复成具体值，才能过渡
+                    if (detailsEl.style.maxHeight === 'none') {
+                        detailsEl.style.maxHeight = detailsEl.scrollHeight + 'px';
+                        // 强制 reflow
+                        void detailsEl.offsetHeight;
+                    }
+                    detailsEl.style.maxHeight = '';
+                    detailsEl.classList.remove('show');
+
+                    // 收起动画结束后，可以清空内容释放 DOM（可选）
+                    clearTimeout(detailsEl._collapseTimer);
+                    detailsEl._collapseTimer = setTimeout(() => {
+                        if (!detailsEl.classList.contains('show')) {
+                            // 保留 dataset.loaded 状态，避免再次展开时重复注入
+                            // 如果想进一步省内存，这里可以清空 innerHTML 并删掉 data-loaded
+                        }
+                    }, 350);
+                }
+            }
+
+            // ==================== 编辑弹窗 ====================
+            function openEditModal(id) {
+                if (!isAdmin) return;
+                const item = items.find(i => i.id === id);
+                if (!item) return;
+                editingItemId = id;
+
+                document.getElementById('editOriginal').value = item.original || '';
+                document.getElementById('editTranslated').value = item.translated || '';
+                document.getElementById('editAuthor').value = item.author || '佚名';
+                document.getElementById('editDescription').value = item.description || '';
+
+                const isDone = item.status === STATUS.DONE;
+                document.getElementById('editTranslatedField').style.display = isDone ? 'block' : 'none';
+
+                document.getElementById('editModal').classList.add('show');
+                document.getElementById('editOriginal').focus();
+            }
+
+            function closeEditModal() {
+                document.getElementById('editModal').classList.remove('show');
+                editingItemId = null;
+            }
+
+            async function saveEditModal() {
+                if (!editingItemId) return;
+                const item = items.find(i => i.id === editingItemId);
+                if (!item) return;
+
+                const fields = {
+                    original: document.getElementById('editOriginal').value.trim() || item.original,
+                    author: document.getElementById('editAuthor').value.trim() || '佚名',
+                    description: document.getElementById('editDescription').value.trim()
+                };
+                if (item.status === STATUS.DONE) {
+                    fields.translated = document.getElementById('editTranslated').value.trim();
+                }
+
+                try {
+                    await apiUpdate(editingItemId, fields);
+                    Object.assign(item, fields);
+
+                    // 详情内容需要重新生成
+                    const itemEl = document.querySelector(`.item[data-id="${editingItemId}"]`);
+                    if (itemEl) {
+                        const detailsEl = itemEl.querySelector('.item-details');
+                        if (detailsEl) {
+                            detailsEl.classList.remove('show');
+                            detailsEl.style.maxHeight = '';
+                            detailsEl.innerHTML = '';
+                            delete detailsEl.dataset.loaded;
+                            clearTimeout(detailsEl._expandTimer);
+                        }
+                    }
+                    item.expanded = false;
+
+                    closeEditModal();
+                    render();
                     showToast('已保存');
-                } catch (err) {
+                } catch (e) {
                     showToast('保存失败');
                 }
-            }, true);
+            }
 
-            // ========== 拖拽排序（仅管理员） ==========
-            let dragSrcEl = null;
-
-            app.addEventListener('dragstart', (e) => {
-                if (!isAdmin) return;
-                const handle = e.target.closest('.drag-handle');
-                if (!handle) return;
-                const item = handle.closest('.item');
+            async function deleteFromModal() {
+                if (!editingItemId) return;
+                const item = items.find(i => i.id === editingItemId);
                 if (!item) return;
-                dragSrcEl = item;
-                item.classList.add('dragging');
-                e.dataTransfer.effectAllowed = 'move';
-            });
+                if (!confirm(`确定要移除「${item.original}」吗？`)) return;
 
-            app.addEventListener('dragover', (e) => {
-                if (!isAdmin || !dragSrcEl) return;
-                e.preventDefault();
-                const target = e.target.closest('.item');
-                if (!target || target === dragSrcEl) return;
-                target.classList.add('drag-over');
-            });
+                try {
+                    await apiDelete(editingItemId);
+                    items = items.filter(i => i.id !== editingItemId);
+                    closeEditModal();
+                    render();
+                    showToast('已移除');
+                } catch (e) {
+                    showToast('移除失败');
+                }
+            }
 
-            app.addEventListener('dragleave', (e) => {
-                const target = e.target.closest('.item');
-                if (target) target.classList.remove('drag-over');
-            });
+            // ==================== 复制/跳转 ====================
+            function copyText(text) {
+                if (!text) { showToast('链接为空'); return; }
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(() => showToast('已复制')).catch(() => fallbackCopy(text));
+                } else {
+                    fallbackCopy(text);
+                }
+            }
 
-            app.addEventListener('drop', async (e) => {
-                if (!isAdmin || !dragSrcEl) return;
-                e.preventDefault();
-                const target = e.target.closest('.item');
-                if (!target || target === dragSrcEl) return;
-                target.classList.remove('drag-over');
+            function fallbackCopy(text) {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                let ok = false;
+                try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+                document.body.removeChild(ta);
+                if (ok) showToast('已复制');
+                else prompt('请手动复制:', text);
+            }
 
-                const srcId = dragSrcEl.dataset.id;
-                const dstId = target.dataset.id;
-                if (!srcId || !dstId) return;
+            function openLink(id, field) {
+                const item = items.find(i => i.id === id);
+                if (!item) return;
+                let url = (item[field] || '').trim();
+                if (!url) { showToast('链接为空'); return; }
+                if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+                window.open(url, '_blank', 'noopener,noreferrer');
+            }
 
-                // 只允许同模块内排序
-                const srcDone = items.find(i => i.id === srcId)?.status === STATUS.DONE;
-                const dstDone = items.find(i => i.id === dstId)?.status === STATUS.DONE;
-                if (srcDone !== dstDone) {
-                    showToast('只能在同一个模块内排序');
-                    dragSrcEl.classList.remove('dragging');
-                    dragSrcEl = null;
+            // ==================== 导入 ====================
+            async function importList() {
+                const input = document.getElementById('importInput');
+                const raw = input.value.trim();
+                if (!raw) return;
+
+                const lines = raw.split(/\n/).map(l => l.trim()).filter(l => l.length > 0);
+                const newItems = [];
+
+                lines.forEach(line => {
+                    let author = '佚名';
+                    let rest = line;
+                    const pipeIdx = line.lastIndexOf('|');
+                    if (pipeIdx !== -1) {
+                        author = line.slice(pipeIdx + 1).trim() || '佚名';
+                        rest = line.slice(0, pipeIdx).trim();
+                    }
+
+                    const match = rest.match(/^([^(（]+)[(（]([^)）]+)[)）]/);
+                    let original = '', translated = '';
+                    if (match) {
+                        original = match[1].trim();
+                        translated = match[2].trim();
+                    } else {
+                        original = rest.trim();
+                    }
+                    if (!original) return;
+
+                    if (items.some(i => i.original.toLowerCase() === original.toLowerCase())) return;
+
+                    const status = (translated && hasChinese(translated)) ? STATUS.DONE : STATUS.TODO;
+                    newItems.push({
+                        original,
+                        translated,
+                        author,
+                        status
+                    });
+                });
+
+                if (newItems.length === 0) {
+                    showToast('没有可导入的新项目');
                     return;
                 }
 
-                // 更新本地 items 顺序
-                const allIds = items.map(i => i.id);
-                const srcIdx = allIds.indexOf(srcId);
-                const dstIdx = allIds.indexOf(dstId);
-                if (srcIdx === -1 || dstIdx === -1) return;
-
-                const [moved] = items.splice(srcIdx, 1);
-                items.splice(dstIdx, 0, moved);
-
-                // 构建批量排序数据
-                const reorderList = items.map((it, idx) => ({ id: it.id, sortOrder: idx }));
-
-                dragSrcEl.classList.remove('dragging');
-                dragSrcEl = null;
-                render();
-
                 try {
-                    await apiReorder(reorderList);
-                    showToast('排序已保存');
-                } catch (err) {
-                    showToast('排序保存失败');
+                    await apiBatchCreate(newItems);
                     await loadItems(false);
                     render();
+                    input.value = '';
+                    document.getElementById('importInputWrap').style.display = 'none';
+                    showToast(`成功导入 ${newItems.length} 条`);
+                } catch (e) {
+                    showToast('导入失败');
                 }
-            });
-
-            app.addEventListener('dragend', () => {
-                document.querySelectorAll('.item.dragging, .item.drag-over').forEach(el => {
-                    el.classList.remove('dragging', 'drag-over');
-                });
-                dragSrcEl = null;
-            });
-
-            // 赞助
-            document.getElementById('sponsorBtn').addEventListener('click', () => {
-                document.getElementById('qrModal').classList.add('show');
-            });
-            document.getElementById('qrCloseBtn').addEventListener('click', () => {
-                document.getElementById('qrModal').classList.remove('show');
-            });
-
-            // 登录
-            document.getElementById('loginEntryBtn').addEventListener('click', () => {
-                if (isAdmin) {
-                    if (confirm('已登录。要退出登录吗？')) logout();
-                } else {
-                    openLoginModal();
-                }
-            });
-            document.getElementById('loginSubmitBtn').addEventListener('click', submitLogin);
-            document.getElementById('loginCancelBtn').addEventListener('click', closeLoginModal);
-            document.getElementById('loginPassword').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') submitLogin();
-            });
-
-            // 编辑弹窗
-            document.getElementById('editSaveBtn').addEventListener('click', saveEditModal);
-            document.getElementById('editCancelBtn').addEventListener('click', closeEditModal);
-            document.getElementById('editDeleteBtn').addEventListener('click', deleteFromModal);
-
-            // 管理员工具栏
-            document.getElementById('importToggleBtn').addEventListener('click', () => {
-                const wrap = document.getElementById('importInputWrap');
-                const isHidden = wrap.style.display === 'none' || !wrap.style.display;
-                wrap.style.display = isHidden ? 'flex' : 'none';
-                if (isHidden) document.getElementById('importInput').focus();
-            });
-            document.getElementById('importConfirmBtn').addEventListener('click', importList);
-            document.getElementById('importInput').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') importList();
-            });
-            document.getElementById('exportBtn').addEventListener('click', exportData);
-            // JS 快速导入
-document.getElementById('jsImportBtn').addEventListener('click', () => {
-    document.getElementById('jsFileInput').click();
-});
-
-document.getElementById('jsFileInput').addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    e.target.value = '';
-
-    try {
-        const text = await file.text();
-        // 支持两种格式：const TRANSLATION_DATA = [...] 或直接 [...]
-        let data;
-        const match = text.match(/const\s+TRANSLATION_DATA\s*=\s*(\[[\s\S]*?\]);/);
-        if (match) {
-            data = JSON.parse(match[1]);
-        } else {
-            data = JSON.parse(text);
-        }
-        if (!Array.isArray(data)) throw new Error('不是数组');
-
-        // 过滤掉已存在的
-        const newItems = data.filter(it => {
-            if (!it.original) return false;
-            return !items.some(existing => existing.original.toLowerCase() === it.original.toLowerCase());
-        });
-
-        if (newItems.length === 0) {
-            showToast('没有新项目可导入');
-            return;
-        }
-
-        // 逐个转换字段名
-        const batch = newItems.map(it => ({
-            original: it.original,
-            translated: it.translated || '',
-            author: it.author || '佚名',
-            authorLink: it.authorLink || it.author_link || '',
-            translationLink: it.translationLink || it.translation_link || '',
-            originalLink: it.originalLink || it.original_link || '',
-            description: it.description || '',
-            status: it.status || 'todo'
-        }));
-
-        await apiBatchCreate(batch);
-        await loadItems(false);
-        render();
-        showToast(`成功导入 ${batch.length} 条`);
-    } catch (err) {
-        showToast('文件格式不正确：' + err.message);
-    }
-});
-            
-
-            // ========== 公告编辑 ==========
-document.getElementById('announcementEditBtn').addEventListener('click', () => {
-    const current = document.getElementById('announcementText').textContent;
-    document.getElementById('announcementInput').value = current;
-    document.getElementById('announcementModal').classList.add('show');
-    document.getElementById('announcementInput').focus();
-});
-
-document.getElementById('announcementCancelBtn').addEventListener('click', () => {
-    document.getElementById('announcementModal').classList.remove('show');
-});
-
-document.getElementById('announcementSaveBtn').addEventListener('click', async () => {
-    const value = document.getElementById('announcementInput').value.trim();
-    try {
-        await saveAnnouncement(value);
-        document.getElementById('announcementText').textContent = value || '欢迎来到天际译栈！';
-        document.getElementById('announcementModal').classList.remove('show');
-        showToast('公告已更新');
-    } catch (err) {
-        showToast('保存失败');
-    }
-});
-
-document.getElementById('announcementModal').addEventListener('click', (e) => {
-    if (e.target.id === 'announcementModal') {
-        document.getElementById('announcementModal').classList.remove('show');
-    }
-});
-
-            // 弹窗点外部关闭
-            ['qrModal', 'loginModal', 'editModal'].forEach(id => {
-                document.getElementById(id).addEventListener('click', (e) => {
-                    if (e.target.id === id) {
-                        document.getElementById(id).classList.remove('show');
-                    }
-                });
-            });
-        }
-
-        // ==================== 初始化 ====================
-        async function init() {
-            // 应用当前主题
-            const savedTheme = localStorage.getItem(THEME_KEY) || 'light';
-            applyTheme(savedTheme);
-
-            // 恢复收款码
-            if (qrImageSrc) {
-                document.getElementById('qrImage').innerHTML = `<img src="${qrImageSrc}" alt="收款码">`;
             }
 
-            await fetchAnnouncement();
+            // ==================== 导出 ====================
+            function exportData() {
+                const exportItems = items.map(item => ({
+                    original: item.original,
+                    translated: item.translated,
+                    author: item.author,
+                    authorLink: item.authorLink,
+                    translationLink: item.translationLink,
+                    originalLink: item.originalLink,
+                    description: item.description || '',
+                    status: item.status || STATUS.TODO
+                }));
+                const dataStr = `// 天际译栈 汉化数据导出\n// 导出时间: ${new Date().toLocaleString()}\nconst TRANSLATION_DATA = ${JSON.stringify(exportItems, null, 2)};\n`;
+                const blob = new Blob([dataStr], { type: 'application/javascript' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `天际译栈_汉化数据_${new Date().toISOString().slice(0, 10)}.js`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
 
-            // 检查登录状态
-            await tryLogin();
+            // ==================== 登录 ====================
+            function updateLoginUI() {
+                const btn = document.getElementById('loginEntryBtn');
+                const toolbar = document.getElementById('adminToolbar');
+                const annEditBtn = document.getElementById('announcementEditBtn');
 
-            // 加载数据（首次可用缓存）
-            await loadItems(true);
+                if (isAdmin) {
+                    btn.textContent = '👤 管理员';
+                    btn.classList.add('admin');
+                    toolbar.style.display = '';
+                    annEditBtn.style.display = '';
+                } else {
+                    btn.textContent = '🔐 管理员登录';
+                    btn.classList.remove('admin');
+                    toolbar.style.display = 'none';
+                    annEditBtn.style.display = 'none';
+                }
+            }
 
-            // 渲染
-            render();
-            updateLoginUI();
+            async function tryLogin() {
+                if (!authToken) return;
+                try {
+                    const res = await fetch(`${API_BASE}/items?all=1`, {
+                        headers: authHeaders()
+                    });
+                    if (res.ok) {
+                        isAdmin = true;
+                    } else {
+                        authToken = '';
+                        localStorage.removeItem(TOKEN_KEY);
+                    }
+                } catch (e) {
+                    // 网络错误，暂不处理
+                }
+                updateLoginUI();
+            }
 
-            // 绑定事件
-            setupEvents();
-        }
+            function openLoginModal() {
+                document.getElementById('loginUsername').value = '';
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('loginModal').classList.add('show');
+                document.getElementById('loginPassword').focus();
+            }
 
-        init();
-    })();
-</script>
+            function closeLoginModal() {
+                document.getElementById('loginModal').classList.remove('show');
+            }
+
+            async function submitLogin() {
+                const username = document.getElementById('loginUsername').value.trim();
+                const password = document.getElementById('loginPassword').value;
+                try {
+                    const res = await fetch(`${API_BASE}/auth/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, password })
+                    });
+                    const data = await res.json();
+                    if (data.token) {
+                        authToken = data.token;
+                        localStorage.setItem(TOKEN_KEY, authToken);
+                        isAdmin = true;
+                        closeLoginModal();
+                        updateLoginUI();
+                        await loadItems(false);
+                        render();
+                        showToast('登录成功');
+                    } else {
+                        showToast(data.error || '登录失败');
+                    }
+                } catch (e) {
+                    showToast('网络错误');
+                }
+            }
+
+            function logout() {
+                authToken = '';
+                isAdmin = false;
+                localStorage.removeItem(TOKEN_KEY);
+                updateLoginUI();
+                loadItems(true).then(render);
+                showToast('已退出');
+            }
+
+            // ==================== 事件绑定 ====================
+            function setupEvents() {
+                const app = document.querySelector('.app');
+
+                // 主题切换
+                document.getElementById('themeToggleBtn').addEventListener('click', () => {
+                    const current = document.documentElement.getAttribute('data-theme') || 'light';
+                    applyTheme(current === 'dark' ? 'light' : 'dark');
+                });
+
+                // 公告栏关闭
+                const annBar = document.getElementById('announcementBar');
+                const annClosed = localStorage.getItem('tianji_announcement_closed');
+                if (annClosed === '1') {
+                    annBar.style.display = 'none';
+                }
+                document.getElementById('announcementClose').addEventListener('click', () => {
+                    annBar.style.display = 'none';
+                    localStorage.setItem('tianji_announcement_closed', '1');
+                });
+
+                // 模块展开/收起
+                document.getElementById('pendingToggle').addEventListener('click', function () {
+                    moduleExpanded.pending = !moduleExpanded.pending;
+                    updateModuleStyles();
+                });
+                document.getElementById('doneToggle').addEventListener('click', function () {
+                    moduleExpanded.done = !moduleExpanded.done;
+                    updateModuleStyles();
+                });
+
+                // 搜索
+                const searchInput = document.getElementById('searchInput');
+                const searchClear = document.getElementById('searchClear');
+                searchInput.addEventListener('input', function () {
+                    searchQuery = this.value.trim();
+                    searchClear.classList.toggle('visible', !!searchQuery);
+                    render();
+                });
+                searchClear.addEventListener('click', function () {
+                    searchInput.value = '';
+                    searchQuery = '';
+                    searchClear.classList.remove('visible');
+                    render();
+                });
+
+                // 事件委托
+                app.addEventListener('click', (e) => {
+                    const statusIcon = e.target.closest('[data-action="cycle-status"]');
+                    if (statusIcon) { cycleStatus(statusIcon.dataset.id); return; }
+
+                    const expandBtn = e.target.closest('[data-action="expand"]');
+                    if (expandBtn) { toggleExpand(expandBtn.dataset.id); return; }
+
+                    const editBtn = e.target.closest('[data-action="edit-item"]');
+                    if (editBtn) { openEditModal(editBtn.dataset.id); return; }
+
+                    const copyBtn = e.target.closest('[data-copy]');
+                    if (copyBtn) {
+                        const item = items.find(i => i.id === copyBtn.dataset.id);
+                        if (item) copyText(item[copyBtn.dataset.copy] || '');
+                        return;
+                    }
+
+                    const openBtn = e.target.closest('[data-action="open-link"]');
+                    if (openBtn) {
+                        e.preventDefault();
+                        openLink(openBtn.dataset.id, openBtn.dataset.field);
+                        return;
+                    }
+                });
+
+                // 链接输入（仅管理员，失焦时保存）
+                app.addEventListener('blur', async (e) => {
+                    const input = e.target.closest('.detail-input');
+                    if (!input || !isAdmin) return;
+                    const id = input.dataset.id;
+                    const field = input.dataset.field;
+                    const item = items.find(i => i.id === id);
+                    if (!item) return;
+                    if (item[field] === input.value.trim()) return;
+                    try {
+                        await apiUpdate(id, { [field]: input.value.trim() });
+                        item[field] = input.value.trim();
+                        showToast('已保存');
+                    } catch (err) {
+                        showToast('保存失败');
+                    }
+                }, true);
+
+                // ========== 拖拽排序（仅管理员） ==========
+                let dragSrcEl = null;
+
+                app.addEventListener('dragstart', (e) => {
+                    if (!isAdmin) return;
+                    const handle = e.target.closest('.drag-handle');
+                    if (!handle) return;
+                    const item = handle.closest('.item');
+                    if (!item) return;
+                    dragSrcEl = item;
+                    item.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+
+                app.addEventListener('dragover', (e) => {
+                    if (!isAdmin || !dragSrcEl) return;
+                    e.preventDefault();
+                    const target = e.target.closest('.item');
+                    if (!target || target === dragSrcEl) return;
+                    target.classList.add('drag-over');
+                });
+
+                app.addEventListener('dragleave', (e) => {
+                    const target = e.target.closest('.item');
+                    if (target) target.classList.remove('drag-over');
+                });
+
+                app.addEventListener('drop', async (e) => {
+                    if (!isAdmin || !dragSrcEl) return;
+                    e.preventDefault();
+                    const target = e.target.closest('.item');
+                    if (!target || target === dragSrcEl) return;
+                    target.classList.remove('drag-over');
+
+                    const srcId = dragSrcEl.dataset.id;
+                    const dstId = target.dataset.id;
+                    if (!srcId || !dstId) return;
+
+                    // 只允许同模块内排序
+                    const srcDone = items.find(i => i.id === srcId)?.status === STATUS.DONE;
+                    const dstDone = items.find(i => i.id === dstId)?.status === STATUS.DONE;
+                    if (srcDone !== dstDone) {
+                        showToast('只能在同一个模块内排序');
+                        dragSrcEl.classList.remove('dragging');
+                        dragSrcEl = null;
+                        return;
+                    }
+
+                    // 更新本地 items 顺序
+                    const allIds = items.map(i => i.id);
+                    const srcIdx = allIds.indexOf(srcId);
+                    const dstIdx = allIds.indexOf(dstId);
+                    if (srcIdx === -1 || dstIdx === -1) return;
+
+                    const [moved] = items.splice(srcIdx, 1);
+                    items.splice(dstIdx, 0, moved);
+
+                    // 构建批量排序数据
+                    const reorderList = items.map((it, idx) => ({ id: it.id, sortOrder: idx }));
+
+                    dragSrcEl.classList.remove('dragging');
+                    dragSrcEl = null;
+                    render();
+
+                    try {
+                        await apiReorder(reorderList);
+                        showToast('排序已保存');
+                    } catch (err) {
+                        showToast('排序保存失败');
+                        await loadItems(false);
+                        render();
+                    }
+                });
+
+                app.addEventListener('dragend', () => {
+                    document.querySelectorAll('.item.dragging, .item.drag-over').forEach(el => {
+                        el.classList.remove('dragging', 'drag-over');
+                    });
+                    dragSrcEl = null;
+                });
+
+                // 赞助
+                document.getElementById('sponsorBtn').addEventListener('click', () => {
+                    document.getElementById('qrModal').classList.add('show');
+                });
+                document.getElementById('qrCloseBtn').addEventListener('click', () => {
+                    document.getElementById('qrModal').classList.remove('show');
+                });
+
+                // 登录
+                document.getElementById('loginEntryBtn').addEventListener('click', () => {
+                    if (isAdmin) {
+                        if (confirm('已登录。要退出登录吗？')) logout();
+                    } else {
+                        openLoginModal();
+                    }
+                });
+                document.getElementById('loginSubmitBtn').addEventListener('click', submitLogin);
+                document.getElementById('loginCancelBtn').addEventListener('click', closeLoginModal);
+                document.getElementById('loginPassword').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') submitLogin();
+                });
+
+                // 编辑弹窗
+                document.getElementById('editSaveBtn').addEventListener('click', saveEditModal);
+                document.getElementById('editCancelBtn').addEventListener('click', closeEditModal);
+                document.getElementById('editDeleteBtn').addEventListener('click', deleteFromModal);
+
+                // 管理员工具栏
+                document.getElementById('importToggleBtn').addEventListener('click', () => {
+                    const wrap = document.getElementById('importInputWrap');
+                    const isHidden = wrap.style.display === 'none' || !wrap.style.display;
+                    wrap.style.display = isHidden ? 'flex' : 'none';
+                    if (isHidden) document.getElementById('importInput').focus();
+                });
+                document.getElementById('importConfirmBtn').addEventListener('click', importList);
+                document.getElementById('importInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') importList();
+                });
+                document.getElementById('exportBtn').addEventListener('click', exportData);
+                // JS 快速导入
+                document.getElementById('jsImportBtn').addEventListener('click', () => {
+                    document.getElementById('jsFileInput').click();
+                });
+
+                document.getElementById('jsFileInput').addEventListener('change', async (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    e.target.value = '';
+
+                    try {
+                        const text = await file.text();
+                        // 支持两种格式：const TRANSLATION_DATA = [...] 或直接 [...]
+                        let data;
+                        const match = text.match(/const\s+TRANSLATION_DATA\s*=\s*(\[[\s\S]*?\]);/);
+                        if (match) {
+                            data = JSON.parse(match[1]);
+                        } else {
+                            data = JSON.parse(text);
+                        }
+                        if (!Array.isArray(data)) throw new Error('不是数组');
+
+                        // 过滤掉已存在的
+                        const newItems = data.filter(it => {
+                            if (!it.original) return false;
+                            return !items.some(existing => existing.original.toLowerCase() === it.original.toLowerCase());
+                        });
+
+                        if (newItems.length === 0) {
+                            showToast('没有新项目可导入');
+                            return;
+                        }
+
+                        // 逐个转换字段名
+                        const batch = newItems.map(it => ({
+                            original: it.original,
+                            translated: it.translated || '',
+                            author: it.author || '佚名',
+                            authorLink: it.authorLink || it.author_link || '',
+                            translationLink: it.translationLink || it.translation_link || '',
+                            originalLink: it.originalLink || it.original_link || '',
+                            description: it.description || '',
+                            status: it.status || 'todo'
+                        }));
+
+                        await apiBatchCreate(batch);
+                        await loadItems(false);
+                        render();
+                        showToast(`成功导入 ${batch.length} 条`);
+                    } catch (err) {
+                        showToast('文件格式不正确：' + err.message);
+                    }
+                });
+
+
+                // ========== 公告编辑 ==========
+                document.getElementById('announcementEditBtn').addEventListener('click', () => {
+                    const current = document.getElementById('announcementText').textContent;
+                    document.getElementById('announcementInput').value = current;
+                    document.getElementById('announcementModal').classList.add('show');
+                    document.getElementById('announcementInput').focus();
+                });
+
+                document.getElementById('announcementCancelBtn').addEventListener('click', () => {
+                    document.getElementById('announcementModal').classList.remove('show');
+                });
+
+                document.getElementById('announcementSaveBtn').addEventListener('click', async () => {
+                    const value = document.getElementById('announcementInput').value.trim();
+                    try {
+                        await saveAnnouncement(value);
+                        document.getElementById('announcementText').textContent = value || '欢迎来到天际译栈！';
+                        document.getElementById('announcementModal').classList.remove('show');
+                        showToast('公告已更新');
+                    } catch (err) {
+                        showToast('保存失败');
+                    }
+                });
+
+                document.getElementById('announcementModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'announcementModal') {
+                        document.getElementById('announcementModal').classList.remove('show');
+                    }
+                });
+
+                // 弹窗点外部关闭
+                ['qrModal', 'loginModal', 'editModal'].forEach(id => {
+                    document.getElementById(id).addEventListener('click', (e) => {
+                        if (e.target.id === id) {
+                            document.getElementById(id).classList.remove('show');
+                        }
+                    });
+                });
+            }
+
+            // ==================== 初始化 ====================
+            async function init() {
+                // 应用当前主题
+                const savedTheme = localStorage.getItem(THEME_KEY) || 'light';
+                applyTheme(savedTheme);
+
+                // 恢复收款码
+                if (qrImageSrc) {
+                    document.getElementById('qrImage').innerHTML = `<img src="${qrImageSrc}" alt="收款码">`;
+                }
+
+                await fetchAnnouncement();
+
+                // 检查登录状态
+                await tryLogin();
+
+                // 加载数据（首次可用缓存）
+                await loadItems(true);
+
+                // 渲染
+                render();
+                updateLoginUI();
+
+                // 绑定事件
+                setupEvents();
+            }
+
+            init();
+        })();
+    </script>
 </body>
+
 </html>
