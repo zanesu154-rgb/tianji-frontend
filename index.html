@@ -1088,7 +1088,7 @@
             </div>
             <div class="bottom-right">
                 <button class="btn" id="exportBtn">📤 导出</button>
-                <button class="btn" id="jsImportBtn">📥 JS 快速导入</button>
+                <button class="btn" id="jsImportBtn">📥 导入</button>
                 <input type="file" id="jsFileInput" class="hidden-file-input" accept=".js,.json,application/javascript">
             </div>
         </div>
@@ -2160,24 +2160,47 @@
 
                     try {
                         const text = await file.text();
-                        // 支持两种格式：const TRANSLATION_DATA = [...] 或直接 [...]
+                        // 去掉 BOM
+                        const cleanText = text.replace(/^\uFEFF/, '');
+
                         let data;
-                        const match = text.match(/const\s+TRANSLATION_DATA\s*=\s*(\[[\s\S]*?\]);/);
+                        // 1. 尝试匹配 const TRANSLATION_DATA = [...] 带分号
+                        let match = cleanText.match(/const\s+TRANSLATION_DATA\s*=\s*(\[[\s\S]*?\]);/);
+                        // 2. 尝试匹配不带分号的
+                        if (!match) {
+                            match = cleanText.match(/const\s+TRANSLATION_DATA\s*=\s*(\[[\s\S]*?\])/);
+                        }
                         if (match) {
-                            data = JSON.parse(match[1]);
+                            // 用 Function 构造器来解析 JS 对象字面量（比 JSON.parse 宽松）
+                            try {
+                                data = JSON.parse(match[1]);
+                            } catch (jsonErr) {
+                                // 如果 JSON.parse 失败，用 Function 解析 JS 语法
+                                data = (new Function('return ' + match[1]))();
+                            }
                         } else {
-                            data = JSON.parse(text);
+                            // 尝试直接当 JSON 数组解析
+                            try {
+                                data = JSON.parse(cleanText);
+                            } catch (jsonErr) {
+                                // 再试试当 JS 表达式解析
+                                data = (new Function('return ' + cleanText))();
+                            }
                         }
                         if (!Array.isArray(data)) throw new Error('不是数组');
 
+                        // 过滤掉 original 为空的条目
+                        const validItems = data.filter(it => it.original && it.original.trim());
+
                         // 过滤掉已存在的
-                        const newItems = data.filter(it => {
-                            if (!it.original) return false;
-                            return !items.some(existing => existing.original.toLowerCase() === it.original.toLowerCase());
+                        const newItems = validItems.filter(it => {
+                            return !items.some(existing =>
+                                existing.original.toLowerCase() === it.original.toLowerCase()
+                            );
                         });
 
                         if (newItems.length === 0) {
-                            showToast('没有新项目可导入');
+                            showToast('没有新项目可导入（可能都已存在或 original 为空）');
                             return;
                         }
 
