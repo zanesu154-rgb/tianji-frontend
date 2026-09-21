@@ -172,6 +172,20 @@
         .announcement-close:hover {
             opacity: 1;
         }
+        .announcement-edit {
+            background: transparent;
+            border: none;
+            color: inherit;
+            opacity: 0.6;
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 0 0.2rem;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+        .announcement-edit:hover {
+            opacity: 1;
+        }
 
         .top-bar {
             flex-shrink: 0;
@@ -826,6 +840,32 @@
             z-index: 9999;
             box-shadow: 0 8px 16px rgba(0,0,0,0.2);
         }
+        .drag-handle {
+            flex-shrink: 0;
+            cursor: grab;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            line-height: 1;
+            padding: 2px 4px;
+            border-radius: 4px;
+            user-select: none;
+            margin-top: 2px;
+            letter-spacing: -2px;
+        }
+        .drag-handle:hover {
+            background: var(--bg-hover);
+            color: var(--text-muted);
+        }
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+        .item.dragging {
+            opacity: 0.4;
+        }
+        .item.drag-over {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent-border);
+        }
     </style>
 </head>
 <body>
@@ -835,7 +875,8 @@
     <!-- 公告栏 -->
     <div class="announcement" id="announcementBar">
         <span class="announcement-icon">📢</span>
-        <span class="announcement-text" id="announcementText">欢迎来到天际译栈！</span>
+        <span class="announcement-text" id="announcementText">加载中...</span>
+        <button class="announcement-edit" id="announcementEditBtn" style="display:none;" title="编辑公告">✏️</button>
         <button class="announcement-close" id="announcementClose" title="关闭">✕</button>
     </div>
 
@@ -896,7 +937,8 @@
         </div>
         <div class="bottom-right">
             <button class="btn" id="exportBtn">📤 导出</button>
-            <button class="btn" id="logoutBtn">🚪 退出登录</button>
+            <button class="btn" id="jsImportBtn">📥 JS 快速导入</button>
+            <input type="file" id="jsFileInput" class="hidden-file-input" accept=".js,.json,application/javascript">
         </div>
     </div>
 </div>
@@ -958,6 +1000,21 @@
             <button class="btn btn-danger" id="editDeleteBtn">🗑️ 移除</button>
             <button class="btn" id="editCancelBtn" style="background:var(--bg-tag);color:var(--text-main);">取消</button>
             <button class="btn btn-primary" id="editSaveBtn">💾 保存</button>
+        </div>
+    </div>
+</div>
+
+<!-- 公告编辑弹窗 -->
+<div class="modal-overlay" id="announcementModal">
+    <div class="modal-card">
+        <h3>编辑公告</h3>
+        <div class="modal-field">
+            <label>公告内容（支持多行）</label>
+            <textarea id="announcementInput" placeholder="输入公告内容..." style="min-height:120px;"></textarea>
+        </div>
+        <div class="modal-actions">
+            <button class="btn" id="announcementCancelBtn" style="background:var(--bg-tag);color:var(--text-main);">取消</button>
+            <button class="btn btn-primary" id="announcementSaveBtn">💾 保存</button>
         </div>
     </div>
 </div>
@@ -1137,6 +1194,48 @@
             return res.json();
         }
 
+        async function apiReorder(list) {
+            const res = await fetch(`${API_BASE}/items/reorder`, {
+                method: 'PUT',
+                headers: authHeaders(),
+                body: JSON.stringify(list)
+            });
+            if (!res.ok) throw new Error('排序失败');
+            clearCache();
+            return res.json();
+        }
+
+        async function apiBatchUpdate(list) {
+            const res = await fetch(`${API_BASE}/items/batch-update`, {
+                method: 'PUT',
+                headers: authHeaders(),
+                body: JSON.stringify(list)
+            });
+            if (!res.ok) throw new Error('批量更新失败');
+            clearCache();
+            return res.json();
+        }
+
+        async function fetchAnnouncement() {
+            try {
+                const res = await fetch(`${API_BASE}/settings/announcement`);
+                const data = await res.json();
+                document.getElementById('announcementText').textContent = data.value || '欢迎来到天际译栈！';
+            } catch (e) {
+                document.getElementById('announcementText').textContent = '欢迎来到天际译栈！';
+            }
+        }
+
+        async function saveAnnouncement(value) {
+            const res = await fetch(`${API_BASE}/settings/announcement`, {
+                method: 'PUT',
+                headers: authHeaders(),
+                body: JSON.stringify({ value })
+            });
+            if (!res.ok) throw new Error('保存失败');
+            return res.json();
+        }
+
         // ==================== 渲染 ====================
         function filterItems(list) {
             if (!searchQuery) return list;
@@ -1270,6 +1369,7 @@
                 html += `
                     <div class="item" data-id="${item.id}">
                         <div class="item-top">
+                            ${isAdmin ? `<span class="drag-handle" draggable="true" data-id="${item.id}" title="拖动排序">⋮⋮</span>` : ''}
                             ${!isDone ? `<span class="status-icon ${iconClass}" data-action="cycle-status" data-id="${item.id}" title="点击切换状态">${iconContent}</span>` : ''}
                             <div class="item-name">${nameHtml}</div>
                         </div>
@@ -1502,14 +1602,18 @@
         function updateLoginUI() {
             const btn = document.getElementById('loginEntryBtn');
             const toolbar = document.getElementById('adminToolbar');
+            const annEditBtn = document.getElementById('announcementEditBtn');
+
             if (isAdmin) {
                 btn.textContent = '👤 管理员';
                 btn.classList.add('admin');
                 toolbar.style.display = '';
+                annEditBtn.style.display = '';
             } else {
                 btn.textContent = '🔐 管理员登录';
                 btn.classList.remove('admin');
                 toolbar.style.display = 'none';
+                annEditBtn.style.display = 'none';
             }
         }
 
@@ -1668,6 +1772,87 @@
                 }
             }, true);
 
+            // ========== 拖拽排序（仅管理员） ==========
+            let dragSrcEl = null;
+
+            app.addEventListener('dragstart', (e) => {
+                if (!isAdmin) return;
+                const handle = e.target.closest('.drag-handle');
+                if (!handle) return;
+                const item = handle.closest('.item');
+                if (!item) return;
+                dragSrcEl = item;
+                item.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+            });
+
+            app.addEventListener('dragover', (e) => {
+                if (!isAdmin || !dragSrcEl) return;
+                e.preventDefault();
+                const target = e.target.closest('.item');
+                if (!target || target === dragSrcEl) return;
+                target.classList.add('drag-over');
+            });
+
+            app.addEventListener('dragleave', (e) => {
+                const target = e.target.closest('.item');
+                if (target) target.classList.remove('drag-over');
+            });
+
+            app.addEventListener('drop', async (e) => {
+                if (!isAdmin || !dragSrcEl) return;
+                e.preventDefault();
+                const target = e.target.closest('.item');
+                if (!target || target === dragSrcEl) return;
+                target.classList.remove('drag-over');
+
+                const srcId = dragSrcEl.dataset.id;
+                const dstId = target.dataset.id;
+                if (!srcId || !dstId) return;
+
+                // 只允许同模块内排序
+                const srcDone = items.find(i => i.id === srcId)?.status === STATUS.DONE;
+                const dstDone = items.find(i => i.id === dstId)?.status === STATUS.DONE;
+                if (srcDone !== dstDone) {
+                    showToast('只能在同一个模块内排序');
+                    dragSrcEl.classList.remove('dragging');
+                    dragSrcEl = null;
+                    return;
+                }
+
+                // 更新本地 items 顺序
+                const allIds = items.map(i => i.id);
+                const srcIdx = allIds.indexOf(srcId);
+                const dstIdx = allIds.indexOf(dstId);
+                if (srcIdx === -1 || dstIdx === -1) return;
+
+                const [moved] = items.splice(srcIdx, 1);
+                items.splice(dstIdx, 0, moved);
+
+                // 构建批量排序数据
+                const reorderList = items.map((it, idx) => ({ id: it.id, sortOrder: idx }));
+
+                dragSrcEl.classList.remove('dragging');
+                dragSrcEl = null;
+                render();
+
+                try {
+                    await apiReorder(reorderList);
+                    showToast('排序已保存');
+                } catch (err) {
+                    showToast('排序保存失败');
+                    await loadItems(false);
+                    render();
+                }
+            });
+
+            app.addEventListener('dragend', () => {
+                document.querySelectorAll('.item.dragging, .item.drag-over').forEach(el => {
+                    el.classList.remove('dragging', 'drag-over');
+                });
+                dragSrcEl = null;
+            });
+
             // 赞助
             document.getElementById('sponsorBtn').addEventListener('click', () => {
                 document.getElementById('qrModal').classList.add('show');
@@ -1707,7 +1892,90 @@
                 if (e.key === 'Enter') importList();
             });
             document.getElementById('exportBtn').addEventListener('click', exportData);
-            document.getElementById('logoutBtn').addEventListener('click', logout);
+            // JS 快速导入
+document.getElementById('jsImportBtn').addEventListener('click', () => {
+    document.getElementById('jsFileInput').click();
+});
+
+document.getElementById('jsFileInput').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    e.target.value = '';
+
+    try {
+        const text = await file.text();
+        // 支持两种格式：const TRANSLATION_DATA = [...] 或直接 [...]
+        let data;
+        const match = text.match(/const\s+TRANSLATION_DATA\s*=\s*(\[[\s\S]*?\]);/);
+        if (match) {
+            data = JSON.parse(match[1]);
+        } else {
+            data = JSON.parse(text);
+        }
+        if (!Array.isArray(data)) throw new Error('不是数组');
+
+        // 过滤掉已存在的
+        const newItems = data.filter(it => {
+            if (!it.original) return false;
+            return !items.some(existing => existing.original.toLowerCase() === it.original.toLowerCase());
+        });
+
+        if (newItems.length === 0) {
+            showToast('没有新项目可导入');
+            return;
+        }
+
+        // 逐个转换字段名
+        const batch = newItems.map(it => ({
+            original: it.original,
+            translated: it.translated || '',
+            author: it.author || '佚名',
+            authorLink: it.authorLink || it.author_link || '',
+            translationLink: it.translationLink || it.translation_link || '',
+            originalLink: it.originalLink || it.original_link || '',
+            description: it.description || '',
+            status: it.status || 'todo'
+        }));
+
+        await apiBatchCreate(batch);
+        await loadItems(false);
+        render();
+        showToast(`成功导入 ${batch.length} 条`);
+    } catch (err) {
+        showToast('文件格式不正确：' + err.message);
+    }
+});
+            
+
+            // ========== 公告编辑 ==========
+document.getElementById('announcementEditBtn').addEventListener('click', () => {
+    const current = document.getElementById('announcementText').textContent;
+    document.getElementById('announcementInput').value = current;
+    document.getElementById('announcementModal').classList.add('show');
+    document.getElementById('announcementInput').focus();
+});
+
+document.getElementById('announcementCancelBtn').addEventListener('click', () => {
+    document.getElementById('announcementModal').classList.remove('show');
+});
+
+document.getElementById('announcementSaveBtn').addEventListener('click', async () => {
+    const value = document.getElementById('announcementInput').value.trim();
+    try {
+        await saveAnnouncement(value);
+        document.getElementById('announcementText').textContent = value || '欢迎来到天际译栈！';
+        document.getElementById('announcementModal').classList.remove('show');
+        showToast('公告已更新');
+    } catch (err) {
+        showToast('保存失败');
+    }
+});
+
+document.getElementById('announcementModal').addEventListener('click', (e) => {
+    if (e.target.id === 'announcementModal') {
+        document.getElementById('announcementModal').classList.remove('show');
+    }
+});
 
             // 弹窗点外部关闭
             ['qrModal', 'loginModal', 'editModal'].forEach(id => {
@@ -1729,6 +1997,8 @@
             if (qrImageSrc) {
                 document.getElementById('qrImage').innerHTML = `<img src="${qrImageSrc}" alt="收款码">`;
             }
+
+            await fetchAnnouncement();
 
             // 检查登录状态
             await tryLogin();
