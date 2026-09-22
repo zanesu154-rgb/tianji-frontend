@@ -375,6 +375,82 @@
             transition: background 0.2s;
         }
 
+        .module-header-right {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .archive-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: var(--bg-tag);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.3rem 0.7rem;
+            font-size: 0.78rem;
+            color: var(--text-sub);
+            cursor: pointer;
+            transition: 0.15s;
+            font-family: inherit;
+        }
+
+        .archive-btn:hover {
+            background: var(--bg-hover);
+        }
+
+        .archive-arrow {
+            font-size: 0.6rem;
+            opacity: 0.6;
+        }
+
+        /* 归档菜单 */
+        .archive-menu {
+            display: none;
+            position: absolute;
+            min-width: 120px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 20, 40, 0.12);
+            padding: 6px;
+            z-index: 200;
+            animation: menuPop 0.18s ease;
+        }
+
+        [data-theme="dark"] .archive-menu {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .archive-menu.show {
+            display: block;
+        }
+
+        .archive-menu-item {
+            width: 100%;
+            background: transparent;
+            border: none;
+            padding: 0.5rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            cursor: pointer;
+            text-align: left;
+            transition: background 0.12s;
+            font-family: inherit;
+        }
+
+        .archive-menu-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .archive-menu-item.active {
+            background: var(--accent-light);
+            color: var(--accent-text);
+            font-weight: 500;
+        }
+
         .module-title {
             font-size: 0.95rem;
             font-weight: 600;
@@ -1333,6 +1409,14 @@
             </div>
         </div>
 
+        <div class="archive-menu" id="archiveMenu">
+            <button class="archive-menu-item active" data-category="all">全部</button>
+            <button class="archive-menu-item" data-category="addon">附加包</button>
+            <button class="archive-menu-item" data-category="texture">材质包</button>
+            <button class="archive-menu-item" data-category="shader">光影</button>
+            <button class="archive-menu-item" data-category="map">地图</button>
+        </div>
+
         <div class="modules-container" id="modulesContainer">
             <div class="module" id="pendingModule" style="display:none;">
                 <div class="module-header">
@@ -1347,9 +1431,15 @@
             <div class="module" id="doneModule">
                 <div class="module-header">
                     <div class="module-title">
-                        <span class="emoji">✅</span> 已汉化 <span class="badge" id="doneCount">0</span>
+                        <span class="emoji">✅</span> 展示区 <span class="badge" id="doneCount">0</span>
                     </div>
-                    <button class="module-toggle" id="doneToggle" data-module="done" title="展开/收起">▼</button>
+                    <div class="module-header-right">
+                        <button class="archive-btn" id="archiveBtn" title="筛选">
+                            <span class="archive-btn-label" id="archiveBtnLabel">全部</span>
+                            <span class="archive-arrow">▼</span>
+                        </button>
+                        <button class="module-toggle" id="doneToggle" data-module="done" title="展开/收起">▼</button>
+                    </div>
                 </div>
                 <div class="module-body" id="doneList">
                     <!-- 骨架屏 -->
@@ -1437,6 +1527,16 @@
                 <input type="text" id="editAuthor" placeholder="佚名">
             </div>
             <div class="modal-field">
+                <label>分类</label>
+                <select id="editCategory"
+                    style="width:100%;padding:0.6rem 0.9rem;border:1px solid var(--border-input);border-radius:12px;font-size:0.9rem;background:var(--bg-input);color:var(--text-main);font-family:inherit;">
+                    <option value="addon">附加包</option>
+                    <option value="texture">材质包</option>
+                    <option value="shader">光影</option>
+                    <option value="map">地图</option>
+                </select>
+            </div>
+            <div class="modal-field">
                 <label>简介</label>
                 <textarea id="editDescription" placeholder="输入附加包简介..."></textarea>
             </div>
@@ -1521,6 +1621,7 @@
             let isAdmin = false;
             let currentUsername = localStorage.getItem('tianji_username') || '';   // ← 加这里
             let editingItemId = null;
+            let currentCategory = 'all';   // ⭐ 加这里
 
             const moduleExpanded = {
                 pending: false,
@@ -1662,6 +1763,7 @@
                         originalLink: r.original_link,
                         description: r.description,
                         status: r.status,
+                        category: r.category || 'addon',   // ⭐
                         expanded: false
                     }));
                     if (!isAdmin) setCachedItems(items);
@@ -1863,6 +1965,26 @@
                 });
             }
 
+            function filterDoneItems(list) {
+                let result = list;
+                // 先按分类筛选
+                if (currentCategory && currentCategory !== 'all') {
+                    result = result.filter(item => (item.category || 'addon') === currentCategory);
+                }
+                // 再按搜索关键词筛选
+                if (searchQuery) {
+                    const q = searchQuery.toLowerCase();
+                    result = result.filter(item => {
+                        const orig = (item.original || '').toLowerCase();
+                        const trans = (item.translated || '').toLowerCase();
+                        const author = (item.author || '').toLowerCase();
+                        const desc = (item.description || '').toLowerCase();
+                        return orig.includes(q) || trans.includes(q) || author.includes(q) || desc.includes(q);
+                    });
+                }
+                return result;
+            }
+
             function render() {
                 const allPending = items.filter(i => i.status !== STATUS.DONE);
                 const doing = allPending.filter(i => i.status === STATUS.DOING);
@@ -1871,8 +1993,8 @@
 
                 const allDone = items.filter(i => i.status === STATUS.DONE);
 
-                const filteredPending = filterItems(sortedPending);
-                const filteredDone = filterItems(allDone);
+                const filteredPending = filterItems(sortedPending);       // 待汉化：只搜索
+                const filteredDone = filterDoneItems(allDone);             // 已汉化：搜索 + 分类
 
                 document.getElementById('pendingCount').textContent = allPending.length;
                 document.getElementById('doneCount').textContent = allDone.length;
@@ -2131,6 +2253,7 @@
                 document.getElementById('editTranslated').value = item.translated || '';
                 document.getElementById('editAuthor').value = item.author || '佚名';
                 document.getElementById('editDescription').value = item.description || '';
+                document.getElementById('editCategory').value = item.category || 'addon';
 
                 const isDone = item.status === STATUS.DONE;
                 document.getElementById('editTranslatedField').style.display = isDone ? 'block' : 'none';
@@ -2152,7 +2275,8 @@
                 const fields = {
                     original: document.getElementById('editOriginal').value.trim() || item.original,
                     author: document.getElementById('editAuthor').value.trim() || '佚名',
-                    description: document.getElementById('editDescription').value.trim()
+                    description: document.getElementById('editDescription').value.trim(),
+                    category: document.getElementById('editCategory').value   // ⭐
                 };
                 if (item.status === STATUS.DONE) {
                     fields.translated = document.getElementById('editTranslated').value.trim();
@@ -2303,7 +2427,8 @@
                     translationLink: item.translationLink,
                     originalLink: item.originalLink,
                     description: item.description || '',
-                    status: item.status || STATUS.TODO
+                    status: item.status || STATUS.TODO,
+                    category: item.category || 'addon'   // ⭐
                 }));
                 const dataStr = `// 天际译栈 汉化数据导出\n// 导出时间: ${new Date().toLocaleString()}\nconst TRANSLATION_DATA = ${JSON.stringify(exportItems, null, 2)};\n`;
                 const blob = new Blob([dataStr], { type: 'application/javascript' });
@@ -2447,6 +2572,53 @@
                     resizeTimer = setTimeout(() => {
                         checkAnnouncementOverflow();
                     }, 200);
+                });
+
+                // ========== 归档菜单 ==========
+                const archiveBtn = document.getElementById('archiveBtn');
+                const archiveMenu = document.getElementById('archiveMenu');
+                const archiveBtnLabel = document.getElementById('archiveBtnLabel');
+
+                archiveBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    // 定位菜单到按钮下方
+                    const rect = archiveBtn.getBoundingClientRect();
+                    archiveMenu.style.position = 'fixed';
+                    archiveMenu.style.top = (rect.bottom + 6) + 'px';
+                    archiveMenu.style.left = rect.left + 'px';
+                    archiveMenu.classList.toggle('show');
+                });
+
+                archiveMenu.querySelectorAll('.archive-menu-item').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const cat = btn.dataset.category;
+                        currentCategory = cat;
+
+                        // 更新按钮文字
+                        const labelMap = {
+                            all: '全部',
+                            addon: '附加包',
+                            texture: '材质包',
+                            shader: '光影',
+                            map: '地图'
+                        };
+                        archiveBtnLabel.textContent = labelMap[cat] || '全部';
+
+                        // 更新菜单高亮
+                        archiveMenu.querySelectorAll('.archive-menu-item').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+
+                        archiveMenu.classList.remove('show');
+                        render();
+                    });
+                });
+
+                // 点击其他区域关闭
+                document.addEventListener('click', (e) => {
+                    if (!archiveMenu.contains(e.target) && e.target !== archiveBtn) {
+                        archiveMenu.classList.remove('show');
+                    }
                 });
 
                 // ========== 顶栏滚动隐藏/显示 ==========
@@ -2798,7 +2970,8 @@
                             translationLink: it.translationLink || it.translation_link || '',
                             originalLink: it.originalLink || it.original_link || '',
                             description: it.description || '',
-                            status: it.status || 'todo'
+                            status: it.status || 'todo',
+                            category: it.category || 'addon'   // ⭐
                         }));
 
                         await apiBatchCreate(batch);
