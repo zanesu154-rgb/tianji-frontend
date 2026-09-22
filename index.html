@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>天际译栈 - 我的世界基岩版附加包汉化分享</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌌</text></svg>">
     <!-- SEO -->
     <meta name="description" content="天际译栈是栈主整理的 Minecraft 基岩版附加包汉化列表，包含光影、材质包、地图、附加包等资源。">
     <meta name="keywords" content="我的世界,基岩版,附加包,汉化,光影,材质包,地图,Minecraft">
@@ -1760,8 +1762,12 @@
                 const track = document.getElementById('announcementTrack');
                 if (!track) return;
 
-                // 每条公告渲染成：外层 div + 内层 span
-                track.innerHTML = announcementList
+                // 如果只有 1 条，不需要复制
+                const list = announcementList.length > 1
+                    ? [...announcementList, announcementList[0]]   // ← 末尾复制第一条
+                    : [...announcementList];
+
+                track.innerHTML = list
                     .map(text => `<div class="announcement-text"><span>${escapeHtml(text)}</span></div>`)
                     .join('');
 
@@ -1771,7 +1777,7 @@
                 void track.offsetHeight;
                 track.style.transition = '';
 
-                // 渲染完后，检测每条是否超长，决定是否滚动
+                // 渲染完后检测超长
                 requestAnimationFrame(() => {
                     checkAnnouncementOverflow();
                 });
@@ -1812,20 +1818,26 @@
                     const track = document.getElementById('announcementTrack');
                     if (!track) return;
 
-                    announcementIndex++;
-                    if (announcementIndex >= announcementList.length) {
-                        // 滚到最后一条后，回到第一条（无动画）
-                        track.style.transition = 'none';
-                        track.style.transform = 'translateY(0)';
-                        announcementIndex = 0;
-                        void track.offsetHeight;
-                        track.style.transition = '';
-                        return;
-                    }
+                    const items = track.querySelectorAll('.announcement-text');
+                    if (!items.length) return;
 
-                    const lineHeight = track.firstElementChild?.offsetHeight || 21;
+                    const lineHeight = items[0].offsetHeight || 21;
+                    announcementIndex++;
+
+                    // 滚到刚复制出的"假的第一条"
+                    track.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
                     track.style.transform = `translateY(-${announcementIndex * lineHeight}px)`;
-                }, 4000);  // 每 4 秒切换
+
+                    // 到达假第一条后，无动画重置回真第一条
+                    if (announcementIndex >= announcementList.length) {
+                        setTimeout(() => {
+                            track.style.transition = 'none';
+                            track.style.transform = 'translateY(0)';
+                            announcementIndex = 0;
+                            void track.offsetHeight;   // 强制 reflow
+                        }, 620);   // 等滚动动画结束（600ms + 一点余量）
+                    }
+                }, 4000);   // 每条显示 4 秒
             }
 
             async function saveAnnouncement(value) {
