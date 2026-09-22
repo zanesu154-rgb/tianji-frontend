@@ -402,24 +402,30 @@
 
         /* 归档菜单 */
         .archive-menu {
-            display: none;
+            display: block;
             position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            /* 靠右侧，朝内展开 */
             min-width: 120px;
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0, 20, 40, 0.12);
             padding: 6px;
-            z-index: 200;
-            animation: menuPop 0.18s ease;
-        }
-
-        [data-theme="dark"] .archive-menu {
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            /* 收起状态 */
+            opacity: 0;
+            transform: translateY(-6px) scaleY(0.96);
+            transform-origin: top right;
+            pointer-events: none;
+            transition: opacity 0.18s ease, transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .archive-menu.show {
-            display: block;
+            opacity: 1;
+            transform: translateY(0) scaleY(1);
+            pointer-events: auto;
         }
 
         .archive-menu-item {
@@ -1404,14 +1410,6 @@
             </div>
         </div>
 
-        <div class="archive-menu" id="archiveMenu">
-            <button class="archive-menu-item active" data-category="all">全部</button>
-            <button class="archive-menu-item" data-category="addon">附加包</button>
-            <button class="archive-menu-item" data-category="texture">材质包</button>
-            <button class="archive-menu-item" data-category="shader">光影</button>
-            <button class="archive-menu-item" data-category="map">地图</button>
-        </div>
-
         <div class="modules-container" id="modulesContainer">
             <div class="module" id="pendingModule" style="display:none;">
                 <div class="module-header">
@@ -1428,12 +1426,21 @@
                     <div class="module-title">
                         <span class="emoji">✅</span> 展示区 <span class="badge" id="doneCount">0</span>
                     </div>
-                    <div class="module-header-right">
+                    <div class="module-header-right" style="position: relative;">
                         <button class="archive-btn" id="archiveBtn" title="筛选">
                             <span class="archive-btn-label" id="archiveBtnLabel">全部</span>
                             <span class="archive-arrow">▼</span>
                         </button>
                         <button class="module-toggle" id="doneToggle" data-module="done" title="展开/收起">▼</button>
+
+                        <!-- ⭐ 归档菜单移到这里 -->
+                        <div class="archive-menu" id="archiveMenu">
+                            <button class="archive-menu-item active" data-category="all">全部</button>
+                            <button class="archive-menu-item" data-category="addon">附加包</button>
+                            <button class="archive-menu-item" data-category="texture">材质包</button>
+                            <button class="archive-menu-item" data-category="shader">光影</button>
+                            <button class="archive-menu-item" data-category="map">地图</button>
+                        </div>
                     </div>
                 </div>
                 <div class="module-body" id="doneList">
@@ -2650,11 +2657,7 @@
 
                 archiveBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    // 定位菜单到按钮下方
-                    const rect = archiveBtn.getBoundingClientRect();
-                    archiveMenu.style.position = 'fixed';
-                    archiveMenu.style.top = (rect.bottom + 6) + 'px';
-                    archiveMenu.style.left = rect.left + 'px';
+                    // 菜单相对按钮，位置由 CSS 控制，不用 JS 算坐标
                     archiveMenu.classList.toggle('show');
                 });
 
@@ -2664,7 +2667,6 @@
                         const cat = btn.dataset.category;
                         currentCategory = cat;
 
-                        // 更新按钮文字
                         const labelMap = {
                             all: '全部',
                             addon: '附加包',
@@ -2674,7 +2676,6 @@
                         };
                         archiveBtnLabel.textContent = labelMap[cat] || '全部';
 
-                        // 更新菜单高亮
                         archiveMenu.querySelectorAll('.archive-menu-item').forEach(b => b.classList.remove('active'));
                         btn.classList.add('active');
 
@@ -2689,6 +2690,11 @@
                         archiveMenu.classList.remove('show');
                     }
                 });
+
+                // 滚动时关闭菜单（防止它悬浮错位）
+                window.addEventListener('scroll', () => {
+                    archiveMenu.classList.remove('show');
+                }, { passive: true });
 
                 // ========== 顶栏滚动隐藏/显示 ==========
                 (function setupTopNavScroll() {
