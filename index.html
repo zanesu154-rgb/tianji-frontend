@@ -148,9 +148,28 @@
             flex-shrink: 0;
         }
 
-        .announcement-text {
+        .announcement-viewport {
             flex: 1;
+            overflow: hidden;
+            height: 1.5em;
+            /* 单行高度 */
+            position: relative;
+        }
+
+        .announcement-track {
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .announcement-track .announcement-text {
+            height: 1.5em;
+            line-height: 1.5;
             word-break: break-word;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
         }
 
         .announcement-close {
@@ -1078,18 +1097,26 @@
         }
 
         .menu-dropdown {
-            display: none;
+            display: block;
             position: absolute;
             top: calc(100% + 8px);
             right: 0;
             min-width: 180px;
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 14px;
+            border-radius: 4px;
+            /* ← 矩形：圆角很小 */
             box-shadow: 0 10px 30px rgba(0, 20, 40, 0.12);
             padding: 6px;
             z-index: 200;
-            animation: menuPop 0.18s ease;
+            /* ↓ 收起状态 */
+            opacity: 0;
+            transform: translateY(-8px) scaleY(0.96);
+            transform-origin: top right;
+            pointer-events: none;
+            transition:
+                opacity 0.2s ease,
+                transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         [data-theme="dark"] .menu-dropdown {
@@ -1097,7 +1124,9 @@
         }
 
         .menu-dropdown.show {
-            display: block;
+            opacity: 1;
+            transform: translateY(0) scaleY(1);
+            pointer-events: auto;
         }
 
         @keyframes menuPop {
@@ -1263,7 +1292,12 @@
         <!-- 公告栏 -->
         <div class="announcement" id="announcementBar">
             <span class="announcement-icon">📢</span>
-            <span class="announcement-text" id="announcementText">加载中...</span>
+            <div class="announcement-viewport" id="announcementViewport">
+                <div class="announcement-track" id="announcementTrack">
+                    <!-- JS 动态填充 -->
+                    <div class="announcement-text">加载中...</div>
+                </div>
+            </div>
             <button class="announcement-edit" id="announcementEditBtn" style="display:none;" title="编辑公告">✏️</button>
             <button class="announcement-close" id="announcementClose" title="关闭">✕</button>
         </div>
@@ -1680,14 +1714,64 @@
                 return res.json();
             }
 
+            let announcementList = [];
+            let announcementIndex = 0;
+            let announcementTimer = null;
+
             async function fetchAnnouncement() {
                 try {
                     const res = await fetch(`${API_BASE}/settings/announcement`);
                     const data = await res.json();
-                    document.getElementById('announcementText').textContent = data.value || '欢迎来到天际译栈！';
+                    // 按换行拆分，过滤空行
+                    const raw = (data.value || '欢迎来到天际译栈！').toString();
+                    announcementList = raw.split(/\n/).map(s => s.trim()).filter(s => s.length > 0);
+                    if (announcementList.length === 0) {
+                        announcementList = ['欢迎来到天际译栈！'];
+                    }
                 } catch (e) {
-                    document.getElementById('announcementText').textContent = '欢迎来到天际译栈！';
+                    announcementList = ['欢迎来到天际译栈！'];
                 }
+                renderAnnouncement();
+                startAnnouncementRotate();
+            }
+
+            function renderAnnouncement() {
+                const track = document.getElementById('announcementTrack');
+                if (!track) return;
+                // 只渲染一轮，循环时用 transform 回到顶部
+                track.innerHTML = announcementList
+                    .map(text => `<div class="announcement-text">${escapeHtml(text)}</div>`)
+                    .join('');
+                announcementIndex = 0;
+                track.style.transition = 'none';
+                track.style.transform = 'translateY(0)';
+                // 让浏览器重排一次
+                void track.offsetHeight;
+                track.style.transition = '';
+            }
+
+            function startAnnouncementRotate() {
+                if (announcementTimer) clearInterval(announcementTimer);
+                if (announcementList.length <= 1) return;
+
+                announcementTimer = setInterval(() => {
+                    const track = document.getElementById('announcementTrack');
+                    if (!track) return;
+
+                    announcementIndex++;
+                    if (announcementIndex >= announcementList.length) {
+                        // 滚到最后一条后，回到第一条（无动画）
+                        track.style.transition = 'none';
+                        track.style.transform = 'translateY(0)';
+                        announcementIndex = 0;
+                        void track.offsetHeight;
+                        track.style.transition = '';
+                        return;
+                    }
+
+                    const lineHeight = track.firstElementChild?.offsetHeight || 21;
+                    track.style.transform = `translateY(-${announcementIndex * lineHeight}px)`;
+                }, 4000);  // 每 4 秒切换
             }
 
             async function saveAnnouncement(value) {
@@ -2654,7 +2738,7 @@
 
                 // ========== 公告编辑 ==========
                 document.getElementById('announcementEditBtn').addEventListener('click', () => {
-                    const current = document.getElementById('announcementText').textContent;
+                    const current = announcementList.join('\n');
                     document.getElementById('announcementInput').value = current;
                     document.getElementById('announcementModal').classList.add('show');
                     document.getElementById('announcementInput').focus();
@@ -2668,7 +2752,11 @@
                     const value = document.getElementById('announcementInput').value.trim();
                     try {
                         await saveAnnouncement(value);
-                        document.getElementById('announcementText').textContent = value || '欢迎来到天际译栈！';
+                        // 重新加载公告列表并刷新轮播
+                        const lines = value.split(/\n/).map(s => s.trim()).filter(s => s.length > 0);
+                        announcementList = lines.length > 0 ? lines : ['欢迎来到天际译栈！'];
+                        renderAnnouncement();
+                        startAnnouncementRotate();
                         document.getElementById('announcementModal').classList.remove('show');
                         showToast('公告已更新');
                     } catch (err) {
