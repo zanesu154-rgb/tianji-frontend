@@ -292,63 +292,6 @@
             background: var(--bg-hover);
         }
 
-        .search-wrap {
-            flex: 1;
-            min-width: 180px;
-            max-width: 320px;
-            position: relative;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 0.7rem 1rem 0.7rem 2.5rem;
-            border: 1px solid var(--border-input);
-            border-radius: 40px;
-            font-size: 0.9rem;
-            background: var(--bg-search);
-            color: var(--text-main);
-            transition: 0.15s;
-        }
-
-        .search-input::placeholder {
-            color: var(--text-light);
-        }
-
-        .search-input:focus {
-            outline: 2px solid var(--accent-border);
-            border-color: transparent;
-            background: var(--bg-input);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 0.9rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-light);
-            font-size: 0.9rem;
-            pointer-events: none;
-        }
-
-        .search-clear {
-            position: absolute;
-            right: 0.6rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: transparent;
-            border: none;
-            color: var(--text-light);
-            cursor: pointer;
-            font-size: 1rem;
-            padding: 0.2rem;
-            display: none;
-            line-height: 1;
-        }
-
-        .search-clear.visible {
-            display: block;
-        }
-
         .modules-container {
             display: flex;
             flex-direction: column;
@@ -1063,7 +1006,6 @@
             box-shadow: 0 2px 12px rgba(0, 20, 40, 0.04);
         }
 
-        /* 下滑隐藏 */
         .top-nav.hidden {
             transform: translateY(-100%);
             box-shadow: none;
@@ -1107,7 +1049,171 @@
         .top-nav-right {
             display: flex;
             align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* 图标按钮（🔍 🌙 ☰） */
+        .nav-icon-btn {
+            background: transparent;
+            border: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-main);
+            transition: background 0.15s;
+        }
+
+        .nav-icon-btn:hover {
+            background: var(--bg-hover);
+        }
+
+        /* 下拉菜单 */
+        .menu-wrap {
+            position: relative;
+        }
+
+        .menu-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            min-width: 180px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0, 20, 40, 0.12);
+            padding: 6px;
+            z-index: 200;
+            animation: menuPop 0.18s ease;
+        }
+
+        [data-theme="dark"] .menu-dropdown {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .menu-dropdown.show {
+            display: block;
+        }
+
+        @keyframes menuPop {
+            0% {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .menu-item {
+            width: 100%;
+            background: transparent;
+            border: none;
+            padding: 0.6rem 0.8rem;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            color: var(--text-main);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
             gap: 0.6rem;
+            text-align: left;
+            transition: background 0.12s;
+            font-family: inherit;
+        }
+
+        .menu-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .menu-item-icon {
+            font-size: 1rem;
+            line-height: 1;
+            width: 18px;
+            display: inline-flex;
+            justify-content: center;
+        }
+
+        .menu-badge {
+            margin-left: auto;
+            font-size: 0.68rem;
+            background: var(--bg-tag);
+            color: var(--text-light);
+            padding: 0.1rem 0.45rem;
+            border-radius: 20px;
+        }
+
+        /* ============ 搜索面板 ============ */
+        .search-panel {
+            max-height: 0;
+            overflow: hidden;
+            background: var(--bg-card);
+            border-bottom: 1px solid transparent;
+            transition: max-height 0.28s cubic-bezier(0.4, 0, 0.2, 1), border-bottom-color 0.28s;
+        }
+
+        .search-panel.show {
+            max-height: 90px;
+            border-bottom-color: var(--border-light);
+        }
+
+        .search-panel-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0.6rem 1.2rem 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+        }
+
+        .search-panel-icon {
+            position: absolute;
+            left: 1.7rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            pointer-events: none;
+        }
+
+        .search-panel-input {
+            width: 100%;
+            padding: 0.7rem 2.5rem 0.7rem 2.5rem;
+            border: 1px solid var(--border-input);
+            border-radius: 40px;
+            font-size: 0.9rem;
+            background: var(--bg-search);
+            color: var(--text-main);
+            transition: 0.15s;
+            font-family: inherit;
+        }
+
+        .search-panel-input::placeholder {
+            color: var(--text-light);
+        }
+
+        .search-panel-input:focus {
+            outline: 2px solid var(--accent-border);
+            border-color: transparent;
+            background: var(--bg-input);
+        }
+
+        .search-panel-clear {
+            position: absolute;
+            right: 1.8rem;
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.2rem;
+            line-height: 1;
         }
     </style>
 </head>
@@ -1124,10 +1230,31 @@
                 <h1 class="top-nav-title">天际译栈</h1>
             </div>
             <div class="top-nav-right">
-                <button class="theme-btn" id="themeToggleBtn" title="切换深色/浅色模式">🌙</button>
-                <button class="login-btn" id="loginEntryBtn">
-                    🔐 登录
-                </button>
+                <button class="nav-icon-btn" id="searchToggleBtn" title="搜索">🔍</button>
+                <button class="nav-icon-btn" id="themeToggleBtn" title="切换主题">🌙</button>
+                <div class="menu-wrap">
+                    <button class="nav-icon-btn" id="menuToggleBtn" title="菜单">☰</button>
+                    <div class="menu-dropdown" id="menuDropdown">
+                        <button class="menu-item" id="menuLoginBtn">
+                            <span class="menu-item-icon">👤</span>
+                            <span id="menuLoginText">注册 / 登录</span>
+                        </button>
+                        <button class="menu-item" id="menuMessageBtn">
+                            <span class="menu-item-icon">📬</span>
+                            <span>消息</span>
+                            <span class="menu-badge">未装</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 搜索面板：点击 🔍 后从下方滑出 -->
+        <div class="search-panel" id="searchPanel">
+            <div class="search-panel-inner">
+                <span class="search-panel-icon">🔍</span>
+                <input type="text" class="search-panel-input" id="searchInput" placeholder="搜索附加包名 / 作者 / 简介...">
+                <button class="search-panel-clear" id="searchClear" style="display:none;">✕</button>
             </div>
         </div>
     </header>
@@ -1146,11 +1273,6 @@
                 <button class="sponsor-btn" id="sponsorBtn">
                     ☕ 请栈主喝一杯咖啡
                 </button>
-            </div>
-            <div class="search-wrap">
-                <span class="search-icon">🔍</span>
-                <input type="text" class="search-input" id="searchInput" placeholder="搜索附加包名 / 作者 / 简介...">
-                <button class="search-clear" id="searchClear">✕</button>
             </div>
         </div>
 
@@ -2047,19 +2169,19 @@
 
             // ==================== 登录 ====================
             function updateLoginUI() {
-                const btn = document.getElementById('loginEntryBtn');
                 const toolbar = document.getElementById('adminToolbar');
                 const annEditBtn = document.getElementById('announcementEditBtn');
+                const loginText = document.getElementById('menuLoginText');
+                const loginIcon = document.querySelector('#menuLoginBtn .menu-item-icon');
 
                 if (isAdmin) {
-                    // ⭐ 登录后显示用户名
-                    btn.textContent = '👤 ' + (currentUsername || '管理员');
-                    btn.classList.add('admin');
+                    loginText.textContent = currentUsername || '管理员';
+                    loginIcon.textContent = '🚪';   // 退出图标
                     toolbar.style.display = '';
                     if (annEditBtn) annEditBtn.style.display = '';
                 } else {
-                    btn.textContent = '🔐 登录';
-                    btn.classList.remove('admin');
+                    loginText.textContent = '注册 / 登录';
+                    loginIcon.textContent = '👤';
                     toolbar.style.display = 'none';
                     if (annEditBtn) annEditBtn.style.display = 'none';
                 }
@@ -2234,19 +2356,49 @@
                     updateModuleStyles();
                 });
 
-                // 搜索
+                // ========== 搜索面板 ==========
+                const searchPanel = document.getElementById('searchPanel');
+                const searchToggleBtn = document.getElementById('searchToggleBtn');
                 const searchInput = document.getElementById('searchInput');
                 const searchClear = document.getElementById('searchClear');
+
+                searchToggleBtn.addEventListener('click', () => {
+                    const isOpen = searchPanel.classList.contains('show');
+                    if (isOpen) {
+                        searchPanel.classList.remove('show');
+                    } else {
+                        searchPanel.classList.add('show');
+                        setTimeout(() => searchInput.focus(), 280);
+                    }
+                });
+
                 searchInput.addEventListener('input', function () {
                     searchQuery = this.value.trim();
-                    searchClear.classList.toggle('visible', !!searchQuery);
+                    searchClear.style.display = searchQuery ? 'block' : 'none';
                     render();
                 });
+
                 searchClear.addEventListener('click', function () {
                     searchInput.value = '';
                     searchQuery = '';
-                    searchClear.classList.remove('visible');
+                    searchClear.style.display = 'none';
                     render();
+                });
+
+                // ========== 下拉菜单 ==========
+                const menuToggleBtn = document.getElementById('menuToggleBtn');
+                const menuDropdown = document.getElementById('menuDropdown');
+
+                menuToggleBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    menuDropdown.classList.toggle('show');
+                });
+
+                // 点击其他地方关闭菜单
+                document.addEventListener('click', (e) => {
+                    if (!menuDropdown.contains(e.target) && e.target !== menuToggleBtn) {
+                        menuDropdown.classList.remove('show');
+                    }
                 });
 
                 // 事件委托
@@ -2382,14 +2534,23 @@
                     document.getElementById('qrModal').classList.remove('show');
                 });
 
-                // 登录
-                document.getElementById('loginEntryBtn').addEventListener('click', () => {
+                // ========== 菜单：登录/退出 ==========
+                document.getElementById('menuLoginBtn').addEventListener('click', () => {
+                    menuDropdown.classList.remove('show');
                     if (isAdmin) {
                         if (confirm('已登录。要退出登录吗？')) logout();
                     } else {
                         openLoginModal();
                     }
                 });
+
+                // 消息按钮（未装）
+                document.getElementById('menuMessageBtn').addEventListener('click', () => {
+                    menuDropdown.classList.remove('show');
+                    showToast('消息功能未装，敬请期待～');
+                });
+
+
                 document.getElementById('loginSubmitBtn').addEventListener('click', submitLogin);
                 document.getElementById('loginCancelBtn').addEventListener('click', closeLoginModal);
                 document.getElementById('loginPassword').addEventListener('keypress', (e) => {
