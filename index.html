@@ -165,11 +165,32 @@
         .announcement-track .announcement-text {
             height: 1.5em;
             line-height: 1.5;
-            word-break: break-word;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
             display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 文字内容包一层，用于滚动 */
+        .announcement-track .announcement-text>span {
+            display: inline-block;
+            white-space: nowrap;
+            will-change: transform;
+        }
+
+        /* 只有当内容宽度超出容器时才添加滚动动画 */
+        .announcement-track .announcement-text.scrolling>span {
+            animation: marquee 12s linear infinite;
+        }
+
+        @keyframes marquee {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
         }
 
         .announcement-close {
@@ -1738,16 +1759,49 @@
             function renderAnnouncement() {
                 const track = document.getElementById('announcementTrack');
                 if (!track) return;
-                // 只渲染一轮，循环时用 transform 回到顶部
+
+                // 每条公告渲染成：外层 div + 内层 span
                 track.innerHTML = announcementList
-                    .map(text => `<div class="announcement-text">${escapeHtml(text)}</div>`)
+                    .map(text => `<div class="announcement-text"><span>${escapeHtml(text)}</span></div>`)
                     .join('');
+
                 announcementIndex = 0;
                 track.style.transition = 'none';
                 track.style.transform = 'translateY(0)';
-                // 让浏览器重排一次
                 void track.offsetHeight;
                 track.style.transition = '';
+
+                // 渲染完后，检测每条是否超长，决定是否滚动
+                requestAnimationFrame(() => {
+                    checkAnnouncementOverflow();
+                });
+            }
+
+            function checkAnnouncementOverflow() {
+                const viewport = document.getElementById('announcementViewport');
+                const items = document.querySelectorAll('#announcementTrack .announcement-text');
+                if (!viewport || !items.length) return;
+
+                const viewportWidth = viewport.clientWidth;
+
+                items.forEach(el => {
+                    const span = el.querySelector('span');
+                    if (!span) return;
+
+                    // 先重置滚动状态
+                    el.classList.remove('scrolling');
+                    span.textContent = span.textContent; // 保持内容
+
+                    // 量一下实际文字宽度
+                    const textWidth = span.scrollWidth;
+
+                    if (textWidth > viewportWidth) {
+                        // 超长：复制一份内容，实现无缝滚动
+                        const original = span.textContent;
+                        span.textContent = original + '\u00A0\u00A0\u00A0\u00A0' + original;
+                        el.classList.add('scrolling');
+                    }
+                });
             }
 
             function startAnnouncementRotate() {
@@ -2373,6 +2427,15 @@
                         link.click();
                     });
                 }, true);
+
+                // ========== 窗口 resize 时重新检测公告 ==========
+                let resizeTimer = null;
+                window.addEventListener('resize', () => {
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(() => {
+                        checkAnnouncementOverflow();
+                    }, 200);
+                });
 
                 // ========== 顶栏滚动隐藏/显示 ==========
                 (function setupTopNavScroll() {
