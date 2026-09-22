@@ -181,18 +181,13 @@
         }
 
         /* 只有当内容宽度超出容器时才添加滚动动画 */
-        .announcement-track .announcement-text.scrolling>span {
-            animation: marquee 12s linear infinite;
-        }
-
-        @keyframes marquee {
-            0% {
-                transform: translateX(0);
-            }
-
-            100% {
-                transform: translateX(-50%);
-            }
+        /* 滚动由 JS 控制，不再用 CSS animation */
+        .announcement-track .announcement-text>span {
+            display: inline-block;
+            white-space: nowrap;
+            will-change: transform;
+            transition: transform 0.1s linear;
+            /* JS 每帧更新，这里只做兜底 */
         }
 
         .announcement-close {
@@ -1839,15 +1834,16 @@
                 return res.json();
             }
 
+            // ==================== 公告轮播 ====================
             let announcementList = [];
             let announcementIndex = 0;
             let announcementTimer = null;
+            let announcementRafId = null;
 
             async function fetchAnnouncement() {
                 try {
                     const res = await fetch(`${API_BASE}/settings/announcement`);
                     const data = await res.json();
-                    // 按换行拆分，过滤空行
                     const raw = (data.value || '欢迎来到天际译栈！').toString();
                     announcementList = raw.split(/\n/).map(s => s.trim()).filter(s => s.length > 0);
                     if (announcementList.length === 0) {
@@ -1864,25 +1860,25 @@
                 const track = document.getElementById('announcementTrack');
                 if (!track) return;
 
-                // 如果只有 1 条，不需要复制
-                const list = announcementList.length > 1
-                    ? [...announcementList, announcementList[0]]   // ← 末尾复制第一条
-                    : [...announcementList];
-
-                track.innerHTML = list
+                track.innerHTML = announcementList
                     .map(text => `<div class="announcement-text"><span>${escapeHtml(text)}</span></div>`)
                     .join('');
 
                 announcementIndex = 0;
+                resetTrackPosition();
+                // 检测每条是否超长
+                requestAnimationFrame(() => {
+                    checkAnnouncementOverflow();
+                });
+            }
+
+            function resetTrackPosition() {
+                const track = document.getElementById('announcementTrack');
+                if (!track) return;
                 track.style.transition = 'none';
                 track.style.transform = 'translateY(0)';
                 void track.offsetHeight;
                 track.style.transition = '';
-
-                // 渲染完后检测超长
-                requestAnimationFrame(() => {
-                    checkAnnouncementOverflow();
-                });
             }
 
             function checkAnnouncementOverflow() {
@@ -1890,56 +1886,117 @@
                 const items = document.querySelectorAll('#announcementTrack .announcement-text');
                 if (!viewport || !items.length) return;
 
-                const viewportWidth = viewport.clientWidth;
+                // 视口宽度要扣掉右侧编辑/关闭按钮宽度（约 40px）
+                const reservedRight = 44;
+                const viewportWidth = viewport.clientWidth - reservedRight;
 
                 items.forEach(el => {
                     const span = el.querySelector('span');
                     if (!span) return;
-
-                    // 先重置滚动状态
                     el.classList.remove('scrolling');
-                    span.textContent = span.textContent; // 保持内容
-
-                    // 量一下实际文字宽度
+                    el.dataset.overflow = '0';
+                    // 量实际宽度
                     const textWidth = span.scrollWidth;
-
                     if (textWidth > viewportWidth) {
-                        // 超长：复制一份内容，实现无缝滚动
-                        const original = span.textContent;
-                        span.textContent = original + '\u00A0\u00A0\u00A0\u00A0' + original;
-                        el.classList.add('scrolling');
+                        el.dataset.overflow = '1';
+                        el.dataset.textWidth = textWidth;
                     }
                 });
             }
 
-            function startAnnouncementRotate() {
-                if (announcementTimer) clearInterval(announcementTimer);
-                if (announcementList.length <= 1) return;
+            // 单条公告展示：停顿 → 滚动 → 停顿 → 下一条
+            function playAnnouncement(index) {
+                const track = document.getElementById('announcementTrack');
+                if (!track) return;
+                const items = track.querySelectorAll('.announcement-text');
+                if (!items.length) return;
 
-                announcementTimer = setInterval(() => {
-                    const track = document.getElementById('announcementTrack');
-                    if (!track) return;
+                // 先把当前条目滚到对应位置
+                const lineHeight = items[0].offsetHeight || 21;
+                track.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                track.style.transform = `translateY(-${index * lineHeight}px)`;
 
-                    const items = track.querySelectorAll('.announcement-text');
-                    if (!items.length) return;
+                const el = items[index];
+                if (!el) return;
+                const span = el.querySelector('span');
+                if (!span) return;
 
-                    const lineHeight = items[0].offsetHeight || 21;
-                    announcementIndex++;
+                // 重置 span 位置
+                span.style.transition = 'none';
+                span.style.transform = 'translateX(0)';
+                void span.offsetHeight;
 
-                    // 滚到刚复制出的"假的第一条"
-                    track.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-                    track.style.transform = `translateY(-${announcementIndex * lineHeight}px)`;
+                const isOverflow = el.dataset.overflow === '1';
 
-                    // 到达假第一条后，无动画重置回真第一条
-                    if (announcementIndex >= announcementList.length) {
-                        setTimeout(() => {
-                            track.style.transition = 'none';
-                            track.style.transform = 'translateY(0)';
-                            announcementIndex = 0;
-                            void track.offsetHeight;   // 强制 reflow
-                        }, 620);   // 等滚动动画结束（600ms + 一点余量）
+                // 停顿 2 秒
+                announcementTimer = setTimeout(() => {
+                    if (!isOverflow) {
+                        // 不超长，直接进下一条
+                        nextAnnouncement(index);
+                        return;
                     }
-                }, 4000);   // 每条显示 4 秒
+
+                    // 超长：滚动
+                    const viewport = document.getElementById('announcementViewport');
+                    const reservedRight = 44;
+                    const visibleWidth = viewport.clientWidth - reservedRight;
+                    const textWidth = span.scrollWidth;
+                    const scrollDistance = textWidth - visibleWidth;
+
+                    if (scrollDistance <= 0) {
+                        nextAnnouncement(index);
+                        return;
+                    }
+
+                    // 滚动速度：35 px/秒（可根据需要调整，数值越小越慢）
+                    const SPEED = 35;
+                    const duration = (scrollDistance / SPEED) * 1000;
+
+                    span.style.transition = `transform ${duration}ms linear`;
+                    span.style.transform = `translateX(-${scrollDistance}px)`;
+
+                    // 滚动结束后等待 2 秒，切下一条
+                    announcementTimer = setTimeout(() => {
+                        nextAnnouncement(index);
+                    }, duration + 2000);
+                }, 2000);
+            }
+
+            function nextAnnouncement(currentIndex) {
+                const next = currentIndex + 1;
+                if (next >= announcementList.length) {
+                    // 回到第一条
+                    announcementIndex = 0;
+                    // 无动画回到顶部
+                    const track = document.getElementById('announcementTrack');
+                    if (track) {
+                        track.style.transition = 'none';
+                        track.style.transform = 'translateY(0)';
+                        void track.offsetHeight;
+                    }
+                    // 重置所有 span
+                    document.querySelectorAll('#announcementTrack .announcement-text > span').forEach(sp => {
+                        sp.style.transition = 'none';
+                        sp.style.transform = 'translateX(0)';
+                    });
+                    // 稍等一下再开始播第一条
+                    setTimeout(() => {
+                        playAnnouncement(0);
+                    }, 100);
+                } else {
+                    playAnnouncement(next);
+                }
+            }
+
+            function startAnnouncementRotate() {
+                if (announcementTimer) clearTimeout(announcementTimer);
+                if (announcementRafId) cancelAnimationFrame(announcementRafId);
+                if (announcementList.length === 0) return;
+
+                // 延迟一点等 DOM 就绪
+                setTimeout(() => {
+                    playAnnouncement(0);
+                }, 200);
             }
 
             async function saveAnnouncement(value) {
@@ -2396,8 +2453,7 @@
                         original,
                         translated,
                         author,
-                        status,
-                        category: 'addon'
+                        status
                     });
                 });
 
@@ -2668,14 +2724,14 @@
                     }, { passive: true });
                 })();
                 // 公告栏关闭
+                // 公告栏关闭（仅本次会话有效，刷新后重新出现）
                 const annBar = document.getElementById('announcementBar');
-                const annClosed = localStorage.getItem('tianji_announcement_closed');
+                const annClosed = sessionStorage.getItem('tianji_announcement_closed');
                 if (annClosed === '1') {
                     annBar.style.display = 'none';
                 }
                 document.getElementById('announcementClose').addEventListener('click', () => {
                     annBar.style.display = 'none';
-                    localStorage.setItem('tianji_announcement_closed', '1');
                 });
 
                 // 模块展开/收起
