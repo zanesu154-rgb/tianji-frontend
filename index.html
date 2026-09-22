@@ -1860,13 +1860,17 @@
                 const track = document.getElementById('announcementTrack');
                 if (!track) return;
 
-                track.innerHTML = announcementList
+                // 末尾复制第一条，实现 A-B-C-A 无缝循环
+                const list = announcementList.length > 1
+                    ? [...announcementList, announcementList[0]]
+                    : [...announcementList];
+
+                track.innerHTML = list
                     .map(text => `<div class="announcement-text"><span>${escapeHtml(text)}</span></div>`)
                     .join('');
 
                 announcementIndex = 0;
                 resetTrackPosition();
-                // 检测每条是否超长
                 requestAnimationFrame(() => {
                     checkAnnouncementOverflow();
                 });
@@ -1964,25 +1968,33 @@
 
             function nextAnnouncement(currentIndex) {
                 const next = currentIndex + 1;
+                const track = document.getElementById('announcementTrack');
+                if (!track) return;
+                const items = track.querySelectorAll('.announcement-text');
+                if (!items.length) return;
+
+                const lineHeight = items[0].offsetHeight || 21;
+
                 if (next >= announcementList.length) {
-                    // 回到第一条
-                    announcementIndex = 0;
-                    // 无动画回到顶部
-                    const track = document.getElementById('announcementTrack');
-                    if (track) {
+                    // 到达假 A：先平滑滚过去
+                    track.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                    track.style.transform = `translateY(-${next * lineHeight}px)`;
+
+                    // 动画结束后无动画重置回真 A
+                    setTimeout(() => {
                         track.style.transition = 'none';
                         track.style.transform = 'translateY(0)';
                         void track.offsetHeight;
-                    }
-                    // 重置所有 span
-                    document.querySelectorAll('#announcementTrack .announcement-text > span').forEach(sp => {
-                        sp.style.transition = 'none';
-                        sp.style.transform = 'translateX(0)';
-                    });
-                    // 稍等一下再开始播第一条
-                    setTimeout(() => {
-                        playAnnouncement(0);
-                    }, 100);
+
+                        document.querySelectorAll('#announcementTrack .announcement-text > span').forEach(sp => {
+                            sp.style.transition = 'none';
+                            sp.style.transform = 'translateX(0)';
+                        });
+
+                        setTimeout(() => {
+                            playAnnouncement(0);
+                        }, 150);
+                    }, 520);
                 } else {
                     playAnnouncement(next);
                 }
