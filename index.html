@@ -106,7 +106,8 @@
         body {
             background: var(--bg-page);
             color: var(--text-main);
-            padding: 2rem 1rem;
+            padding: 5rem 1rem 2rem;
+            /* 顶部从 2rem 改成 5rem，留出导航栏高度 */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -120,25 +121,12 @@
             background: var(--bg-card);
             border-radius: 28px;
             box-shadow: var(--shadow);
-            padding: 1.8rem 1.8rem 2rem;
+            padding: 1.5rem 1.8rem 2rem;
             display: flex;
             flex-direction: column;
             transition: background 0.2s;
         }
 
-        h1 {
-            font-size: 2rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            color: var(--text-main);
-            margin-bottom: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            border-left: 6px solid #3b7a9e;
-            padding-left: 1rem;
-            flex-shrink: 0;
-        }
 
         /* ==================== 公告栏 ==================== */
         .announcement {
@@ -1005,13 +993,146 @@
             border-color: var(--accent);
             box-shadow: 0 0 0 2px var(--accent-border);
         }
+
+        /* ============ 底部 footer ============ */
+        .site-footer {
+            margin-top: 1.5rem;
+            padding: 1.5rem 1rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+            text-align: center;
+        }
+
+        .footer-bili {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.65rem 1.5rem;
+            background: #ffe6f0;
+            border: 1px solid #ffb3d1;
+            border-radius: 60px;
+            color: #d63384;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .footer-bili:hover {
+            background: #ffd0e0;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(214, 51, 132, 0.15);
+        }
+
+        .bili-icon {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        .footer-copy {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        [data-theme="dark"] .footer-bili {
+            background: #3d1f2c;
+            border-color: #5c2f43;
+            color: #ff9ec8;
+        }
+
+        [data-theme="dark"] .footer-bili:hover {
+            background: #4a2535;
+            box-shadow: 0 4px 12px rgba(255, 158, 200, 0.1);
+        }
+
+        /* ============ 顶部固定导航栏 ============ */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 100;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-light);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+            transform: translateY(0);
+            box-shadow: 0 2px 12px rgba(0, 20, 40, 0.04);
+        }
+
+        /* 下滑隐藏 */
+        .top-nav.hidden {
+            transform: translateY(-100%);
+            box-shadow: none;
+        }
+
+        [data-theme="dark"] .top-nav {
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+            border-bottom-color: var(--border);
+        }
+
+        .top-nav-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1.2rem;
+        }
+
+        .top-nav-left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .top-nav-logo {
+            font-size: 1.3rem;
+            line-height: 1;
+        }
+
+        .top-nav-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-main);
+            letter-spacing: 0.5px;
+            margin: 0;
+            border: none;
+            padding: 0;
+        }
+
+        .top-nav-right {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
     </style>
 </head>
 
-<body>
-    <div class="app" id="app">
-        <h1>🌌 天际译栈</h1>
 
+
+<body>
+    <!-- 顶部导航栏 -->
+
+    <header class="top-nav">
+        <div class="top-nav-inner">
+            <div class="top-nav-left">
+                <span class="top-nav-logo">🌌</span>
+                <h1 class="top-nav-title">天际译栈</h1>
+            </div>
+            <div class="top-nav-right">
+                <button class="theme-btn" id="themeToggleBtn" title="切换深色/浅色模式">🌙</button>
+                <button class="login-btn" id="loginEntryBtn">
+                    🔐 登录
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="app" id="app"> <!-- ⭐ 加这一行 -->
         <!-- 公告栏 -->
         <div class="announcement" id="announcementBar">
             <span class="announcement-icon">📢</span>
@@ -1025,14 +1146,6 @@
                 <button class="sponsor-btn" id="sponsorBtn">
                     ☕ 请栈主喝一杯咖啡
                 </button>
-                <a class="bili-btn" href="https://space.bilibili.com/3546733697043003" target="_blank"
-                    rel="noopener noreferrer">
-                    📺 B站主页
-                </a>
-                <button class="login-btn" id="loginEntryBtn">
-                    🔐 管理员
-                </button>
-                <button class="theme-btn" id="themeToggleBtn" title="切换深色/浅色模式">🌙</button>
             </div>
             <div class="search-wrap">
                 <span class="search-icon">🔍</span>
@@ -1173,6 +1286,44 @@
         </div>
     </div>
 
+    <footer class="site-footer">
+        <a class="footer-bili" href="https://space.bilibili.com/3546733697043003" target="_blank"
+            rel="noopener noreferrer">
+            <svg class="bili-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path
+                    d="M17.813 4.653h.854c1.51.054 2.769.578 3.773 1.574 1.004.995 1.524 2.249 1.56 3.76v7.36c-.036 1.51-.556 2.769-1.56 3.773s-2.262 1.524-3.773 1.56H5.333c-1.51-.036-2.769-.556-3.773-1.56S.036 18.858 0 17.347v-7.36c.036-1.511.556-2.765 1.56-3.76 1.004-.996 2.262-1.52 3.773-1.574h.774l-1.174-1.12a1.234 1.234 0 0 1-.373-.906c0-.356.124-.658.373-.907l.027-.027c.267-.249.573-.373.92-.373.347 0 .653.124.92.373L9.653 4.44c.071.071.134.142.187.213h4.267a.836.836 0 0 1 .16-.213l2.853-2.747c.267-.249.573-.373.92-.373.347 0 .662.151.929.4.267.249.391.551.391.907 0 .355-.124.657-.373.906zM5.333 7.24c-.746.018-1.373.276-1.88.773-.506.498-.769 1.13-.786 1.894v7.52c.017.764.28 1.395.786 1.893.507.498 1.134.756 1.88.773h13.334c.746-.017 1.373-.275 1.88-.773.506-.498.769-1.129.786-1.893v-7.52c-.017-.765-.28-1.396-.786-1.894-.507-.497-1.134-.755-1.88-.773zM8 11.107c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c0-.373.129-.689.386-.947.258-.257.574-.386.947-.386zm8 0c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c.017-.391.15-.711.4-.96.249-.249.56-.373.933-.373Z" />
+            </svg>
+            栈主的B站主页
+        </a>
+        <div class="footer-copy">© 2026 天际译栈 · 我的世界基岩版汉化分享</div>
+    </footer>
+
+    <!-- 外部链接风险提醒 -->
+    <div class="modal-overlay" id="externalWarningModal">
+        <div class="modal-card">
+            <div style="text-align:center;">
+                <div style="font-size:2.5rem;margin-bottom:0.4rem;">⚠️</div>
+                <h3>即将离开本站</h3>
+                <p style="color:var(--text-light);font-size:0.88rem;margin-bottom:1rem;">
+                    您即将访问外部链接，请注意保护个人隐私和信息安全
+                </p>
+            </div>
+            <div class="modal-field">
+                <label style="font-size:0.8rem;">目标链接</label>
+                <div style="display:flex;gap:0.4rem;align-items:center;">
+                    <input type="text" id="externalWarningUrl" readonly style="font-size:0.85rem;">
+                    <button class="copy-btn" id="externalWarningCopy" style="white-space:nowrap;">📋 复制</button>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn" id="externalWarningCancel"
+                    style="background:var(--bg-tag);color:var(--text-main);">✕ 返回</button>
+                <button class="btn btn-primary" id="externalWarningConfirm">继续访问 →</button>
+            </div>
+        </div>
+    </div>
+
+
     <script>
         (function () {
             // ==================== 配置 ====================
@@ -1189,6 +1340,7 @@
             let searchQuery = '';
             let authToken = localStorage.getItem(TOKEN_KEY) || '';
             let isAdmin = false;
+            let currentUsername = localStorage.getItem('tianji_username') || '';   // ← 加这里
             let editingItemId = null;
 
             const moduleExpanded = {
@@ -1224,6 +1376,42 @@
                 toast.textContent = text;
                 document.body.appendChild(toast);
                 setTimeout(() => toast.remove(), 1500);
+            }
+
+            // ==================== 外部链接风险提醒 ====================
+            function showExternalWarning(url, onConfirm) {
+                const modal = document.getElementById('externalWarningModal');
+                const urlInput = document.getElementById('externalWarningUrl');
+                const confirmBtn = document.getElementById('externalWarningConfirm');
+                const cancelBtn = document.getElementById('externalWarningCancel');
+                const copyBtn = document.getElementById('externalWarningCopy');
+
+                urlInput.value = url;
+                modal.classList.add('show');
+
+                // 用 cloneNode 替换，清掉旧的事件监听，避免多次绑定
+                const newConfirm = confirmBtn.cloneNode(true);
+                confirmBtn.parentNode.replaceChild(newConfirm, confirmBtn);
+                newConfirm.addEventListener('click', () => {
+                    modal.classList.remove('show');
+                    if (onConfirm) onConfirm();
+                });
+
+                const newCancel = cancelBtn.cloneNode(true);
+                cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
+                newCancel.addEventListener('click', () => {
+                    modal.classList.remove('show');
+                });
+
+                const newCopy = copyBtn.cloneNode(true);
+                copyBtn.parentNode.replaceChild(newCopy, copyBtn);
+                newCopy.addEventListener('click', () => {
+                    copyText(url);
+                });
+
+                modal.onclick = (e) => {
+                    if (e.target === modal) modal.classList.remove('show');
+                };
             }
 
             function hasChinese(text) {
@@ -1771,7 +1959,10 @@
                 let url = (item[field] || '').trim();
                 if (!url) { showToast('链接为空'); return; }
                 if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-                window.open(url, '_blank', 'noopener,noreferrer');
+                // 走风险提醒
+                showExternalWarning(url, () => {
+                    window.open(url, '_blank', 'noopener,noreferrer');
+                });
             }
 
             // ==================== 导入 ====================
@@ -1861,15 +2052,16 @@
                 const annEditBtn = document.getElementById('announcementEditBtn');
 
                 if (isAdmin) {
-                    btn.textContent = '👤 管理员';
+                    // ⭐ 登录后显示用户名
+                    btn.textContent = '👤 ' + (currentUsername || '管理员');
                     btn.classList.add('admin');
                     toolbar.style.display = '';
-                    annEditBtn.style.display = '';
+                    if (annEditBtn) annEditBtn.style.display = '';
                 } else {
-                    btn.textContent = '🔐 管理员登录';
+                    btn.textContent = '🔐 登录';
                     btn.classList.remove('admin');
                     toolbar.style.display = 'none';
-                    annEditBtn.style.display = 'none';
+                    if (annEditBtn) annEditBtn.style.display = 'none';
                 }
             }
 
@@ -1914,7 +2106,9 @@
                     const data = await res.json();
                     if (data.token) {
                         authToken = data.token;
+                        currentUsername = data.username || username;  // ⭐ 记录用户名
                         localStorage.setItem(TOKEN_KEY, authToken);
+                        localStorage.setItem('tianji_username', currentUsername);  // ⭐ 持久化
                         isAdmin = true;
                         closeLoginModal();
                         updateLoginUI();
@@ -1932,7 +2126,9 @@
             function logout() {
                 authToken = '';
                 isAdmin = false;
+                currentUsername = '';  // ⭐
                 localStorage.removeItem(TOKEN_KEY);
+                localStorage.removeItem('tianji_username');  // ⭐
                 updateLoginUI();
                 loadItems(true).then(render);
                 showToast('已退出');
@@ -1948,6 +2144,75 @@
                     applyTheme(current === 'dark' ? 'light' : 'dark');
                 });
 
+                // ========== 外部链接风险提醒 ==========
+                document.addEventListener('click', (e) => {
+                    const link = e.target.closest('a[target="_blank"]');
+                    if (!link) return;
+                    const href = link.href || '';
+                    // 同域链接不拦截
+                    try {
+                        const url = new URL(href);
+                        if (url.hostname === location.hostname) return;
+                    } catch (err) {
+                        return;
+                    }
+                    // 已经确认过的直接放行
+                    if (link.dataset.confirmed === '1') {
+                        delete link.dataset.confirmed;
+                        return;
+                    }
+                    e.preventDefault();
+                    showExternalWarning(href, () => {
+                        link.dataset.confirmed = '1';
+                        link.click();
+                    });
+                }, true);
+
+                // ========== 顶栏滚动隐藏/显示 ==========
+                (function setupTopNavScroll() {
+                    const topNav = document.querySelector('.top-nav');
+                    if (!topNav) return;
+
+                    let lastScrollY = window.scrollY;
+                    let ticking = false;
+                    const THRESHOLD = 8;       // 滚动多少像素才触发（防止抖动）
+                    const TOP_OFFSET = 60;     // 页面顶部多少像素内始终显示
+
+                    function onScroll() {
+                        const currentY = window.scrollY;
+
+                        // 页面靠近顶部时始终显示
+                        if (currentY <= TOP_OFFSET) {
+                            topNav.classList.remove('hidden');
+                            lastScrollY = currentY;
+                            return;
+                        }
+
+                        const delta = currentY - lastScrollY;
+
+                        if (Math.abs(delta) < THRESHOLD) return;
+
+                        if (delta > 0) {
+                            // 向下滚动 → 隐藏
+                            topNav.classList.add('hidden');
+                        } else {
+                            // 向上滚动 → 显示
+                            topNav.classList.remove('hidden');
+                        }
+
+                        lastScrollY = currentY;
+                    }
+
+                    window.addEventListener('scroll', () => {
+                        if (!ticking) {
+                            window.requestAnimationFrame(() => {
+                                onScroll();
+                                ticking = false;
+                            });
+                            ticking = true;
+                        }
+                    }, { passive: true });
+                })();
                 // 公告栏关闭
                 const annBar = document.getElementById('announcementBar');
                 const annClosed = localStorage.getItem('tianji_announcement_closed');
@@ -2271,6 +2536,8 @@
                 // 应用当前主题
                 const savedTheme = localStorage.getItem(THEME_KEY) || 'light';
                 applyTheme(savedTheme);
+
+                currentUsername = localStorage.getItem('tianji_username') || '';
 
                 // 恢复收款码
                 if (qrImageSrc) {
