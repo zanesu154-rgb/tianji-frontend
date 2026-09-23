@@ -1659,6 +1659,44 @@
                 flex: 1 1 100%;
             }
         }
+
+        /* ==================== 登录/注册 Tab ==================== */
+        .auth-tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 1.5rem;
+            background: var(--bg-tag);
+            border-radius: 12px;
+            padding: 4px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            font-weight: 500;
+        }
+
+        .auth-tab:hover {
+            color: var(--text-main);
+        }
+
+        .auth-tab.active {
+            background: var(--bg-card);
+            color: var(--accent-text);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        }
+
+        [data-theme="dark"] .auth-tab.active {
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
     </style>
 </head>
 
@@ -1912,22 +1950,50 @@
         </div>
     </div>
 
-    <!-- 登录弹窗 -->
+    <!-- 登录 / 注册弹窗 -->
     <div class="modal-overlay" id="loginModal">
         <div class="modal-card">
-            <h3>管理员登录</h3>
-            <div class="modal-field">
-                <label>用户名</label>
-                <input type="text" id="loginUsername" placeholder="用户名" autocomplete="off">
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">登录</button>
+                <button class="auth-tab" data-tab="register">注册</button>
             </div>
-            <div class="modal-field">
-                <label>密码</label>
-                <input type="password" id="loginPassword" autocomplete="new-password">
+
+            <!-- 登录表单 -->
+            <div class="auth-panel" id="panel-login">
+                <div class="modal-field">
+                    <label>用户名</label>
+                    <input type="text" id="loginUsername" placeholder="用户名" autocomplete="off">
+                </div>
+                <div class="modal-field">
+                    <label>密码</label>
+                    <input type="password" id="loginPassword" autocomplete="current-password">
+                </div>
+                <div class="modal-actions">
+                    <button class="btn" id="loginCancelBtn"
+                        style="background:var(--bg-tag);color:var(--text-main);">取消</button>
+                    <button class="btn btn-primary" id="loginSubmitBtn">登录</button>
+                </div>
             </div>
-            <div class="modal-actions">
-                <button class="btn" id="loginCancelBtn"
-                    style="background:var(--bg-tag);color:var(--text-main);">取消</button>
-                <button class="btn btn-primary" id="loginSubmitBtn">登录</button>
+
+            <!-- 注册表单 -->
+            <div class="auth-panel" id="panel-register" style="display:none;">
+                <div class="modal-field">
+                    <label>用户名</label>
+                    <input type="text" id="registerUsername" placeholder="2-20 个字符，支持中英文" autocomplete="off">
+                </div>
+                <div class="modal-field">
+                    <label>密码</label>
+                    <input type="password" id="registerPassword" placeholder="至少 6 位" autocomplete="new-password">
+                </div>
+                <div class="modal-field">
+                    <label>确认密码</label>
+                    <input type="password" id="registerConfirm" placeholder="再次输入密码" autocomplete="new-password">
+                </div>
+                <div class="modal-actions">
+                    <button class="btn" id="registerCancelBtn"
+                        style="background:var(--bg-tag);color:var(--text-main);">取消</button>
+                    <button class="btn btn-primary" id="registerSubmitBtn">注册</button>
+                </div>
             </div>
         </div>
     </div>
@@ -2036,6 +2102,7 @@
         let authToken = localStorage.getItem(TOKEN_KEY) || '';
         let isAdmin = false;
         let currentUsername = localStorage.getItem('tianji_username') || '';   // ← 加这里
+        let currentRole = localStorage.getItem('tianji_role') || '';   // ⭐
         let editingItemId = null;
         let currentCategory = 'all';   // ⭐ 加这里
 
@@ -2939,13 +3006,15 @@
             const loginText = document.getElementById('menuLoginText');
             const loginIcon = document.querySelector('#menuLoginBtn .menu-item-icon');
 
-            if (isAdmin) {
-                loginText.textContent = currentUsername || '管理员';
-                loginIcon.textContent = '👤';   // 图标改回"用户"，不是退出
-                toolbar.style.display = '';
-                if (annEditBtn) annEditBtn.style.display = '';
+            if (authToken && currentUsername) {
+                // 登录后显示用户名 + 角色标识
+                loginText.textContent = currentUsername + (currentRole === 'admin' ? ' (管理员)' : '');
+                loginIcon.textContent = '👤';
+                // 只有管理员才显示管理工具栏和公告编辑
+                toolbar.style.display = isAdmin ? '' : 'none';
+                if (annEditBtn) annEditBtn.style.display = isAdmin ? '' : 'none';
             } else {
-                loginText.textContent = '注册 / 登录';
+                loginText.textContent = '登录 / 注册';
                 loginIcon.textContent = '👤';
                 toolbar.style.display = 'none';
                 if (annEditBtn) annEditBtn.style.display = 'none';
@@ -2955,14 +3024,21 @@
         async function tryLogin() {
             if (!authToken) return;
             try {
-                const res = await fetch(`${API_BASE}/items?all=1`, {
+                const res = await fetch(`${API_BASE}/users/me`, {
                     headers: authHeaders()
                 });
                 if (res.ok) {
-                    isAdmin = true;
+                    const data = await res.json();
+                    currentUsername = data.username;
+                    currentRole = data.role;
+                    isAdmin = data.role === 'admin';
+                    localStorage.setItem('tianji_username', currentUsername);
+                    localStorage.setItem('tianji_role', currentRole);
                 } else {
                     authToken = '';
+                    currentRole = '';
                     localStorage.removeItem(TOKEN_KEY);
+                    localStorage.removeItem('tianji_role');
                 }
             } catch (e) {
                 // 网络错误，暂不处理
@@ -2970,20 +3046,38 @@
             updateLoginUI();
         }
 
+        // ==================== 登录 / 注册 ====================
         function openLoginModal() {
             document.getElementById('loginUsername').value = '';
             document.getElementById('loginPassword').value = '';
+            document.getElementById('registerUsername').value = '';
+            document.getElementById('registerPassword').value = '';
+            document.getElementById('registerConfirm').value = '';
+            // 默认显示登录 tab
+            switchAuthTab('login');
             document.getElementById('loginModal').classList.add('show');
-            document.getElementById('loginPassword').focus();
+            setTimeout(() => document.getElementById('loginUsername').focus(), 100);
         }
 
         function closeLoginModal() {
             document.getElementById('loginModal').classList.remove('show');
         }
 
+        function switchAuthTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(t => {
+                t.classList.toggle('active', t.dataset.tab === tab);
+            });
+            document.getElementById('panel-login').style.display = tab === 'login' ? '' : 'none';
+            document.getElementById('panel-register').style.display = tab === 'register' ? '' : 'none';
+        }
+
         async function submitLogin() {
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value;
+            if (!username || !password) {
+                showToast('请填写用户名和密码');
+                return;
+            }
             try {
                 const res = await fetch(`${API_BASE}/users/login`, {
                     method: 'POST',
@@ -2993,17 +3087,66 @@
                 const data = await res.json();
                 if (data.token) {
                     authToken = data.token;
-                    currentUsername = data.username || username;  // ⭐ 记录用户名
+                    currentUsername = data.username || username;
+                    currentRole = data.role || 'user';   // ⭐ 记录角色
                     localStorage.setItem(TOKEN_KEY, authToken);
-                    localStorage.setItem('tianji_username', currentUsername);  // ⭐ 持久化
-                    isAdmin = true;
+                    localStorage.setItem('tianji_username', currentUsername);
+                    localStorage.setItem('tianji_role', currentRole);
+                    isAdmin = currentRole === 'admin';
                     closeLoginModal();
                     updateLoginUI();
                     await loadItems(false);
                     render();
-                    showToast('登录成功');
+                    showToast(currentRole === 'admin' ? '管理员登录成功' : '登录成功');
                 } else {
                     showToast(data.error || '登录失败');
+                }
+            } catch (e) {
+                showToast('网络错误');
+            }
+        }
+
+        async function submitRegister() {
+            const username = document.getElementById('registerUsername').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirm = document.getElementById('registerConfirm').value;
+
+            if (!username || !password || !confirm) {
+                showToast('请填写完整');
+                return;
+            }
+            if (password !== confirm) {
+                showToast('两次输入的密码不一致');
+                return;
+            }
+            if (password.length < 6) {
+                showToast('密码至少 6 位');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/users/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
+                if (data.token) {
+                    // 注册成功 = 自动登录
+                    authToken = data.token;
+                    currentUsername = data.username || username;
+                    currentRole = data.role || 'user';
+                    localStorage.setItem(TOKEN_KEY, authToken);
+                    localStorage.setItem('tianji_username', currentUsername);
+                    localStorage.setItem('tianji_role', currentRole);
+                    isAdmin = currentRole === 'admin';
+                    closeLoginModal();
+                    updateLoginUI();
+                    await loadItems(false);
+                    render();
+                    showToast('注册成功，已自动登录');
+                } else {
+                    showToast(data.error || '注册失败');
                 }
             } catch (e) {
                 showToast('网络错误');
@@ -3014,11 +3157,13 @@
             authToken = '';
             isAdmin = false;
             currentUsername = '';
+            currentRole = '';
             localStorage.removeItem(TOKEN_KEY);
             localStorage.removeItem('tianji_username');
+            localStorage.removeItem('tianji_role');
             updateLoginUI();
             loadItems(true).then(render);
-            showPage('home');   // ⭐ 退出后回到主页
+            showPage('home');
             showToast('已退出');
         }
 
@@ -3067,21 +3212,22 @@
                 document.getElementById('accountUsername').value = currentUsername || '';
             });
 
-            // 修改密码（暂未接后端）
-            document.getElementById('savePasswordBtn').addEventListener('click', () => {
-                const oldPwd = document.getElementById('accountOldPassword').value;
-                const newPwd = document.getElementById('accountNewPassword').value;
-                const confirmPwd = document.getElementById('accountConfirmPassword').value;
+            // ========== 登录/注册弹窗 ==========
+            document.getElementById('loginSubmitBtn').addEventListener('click', submitLogin);
+            document.getElementById('loginCancelBtn').addEventListener('click', closeLoginModal);
+            document.getElementById('loginPassword').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') submitLogin();
+            });
 
-                if (!oldPwd || !newPwd || !confirmPwd) { showToast('请填写完整'); return; }
-                if (newPwd !== confirmPwd) { showToast('两次输入的新密码不一致'); return; }
-                if (newPwd.length < 6) { showToast('新密码至少 6 位'); return; }
+            document.getElementById('registerSubmitBtn').addEventListener('click', submitRegister);
+            document.getElementById('registerCancelBtn').addEventListener('click', closeLoginModal);
+            document.getElementById('registerConfirm').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') submitRegister();
+            });
 
-                // TODO: 后期接入后端接口
-                showToast('密码修改功能未装，敬请期待');
-                document.getElementById('accountOldPassword').value = '';
-                document.getElementById('accountNewPassword').value = '';
-                document.getElementById('accountConfirmPassword').value = '';
+            // 切换 tab
+            document.querySelectorAll('.auth-tab').forEach(tab => {
+                tab.addEventListener('click', () => switchAuthTab(tab.dataset.tab));
             });
 
             // ========== 外部链接风险提醒 ==========
@@ -3434,8 +3580,8 @@
             // ========== 菜单：登录/退出 ==========
             document.getElementById('menuLoginBtn').addEventListener('click', () => {
                 menuDropdown.classList.remove('show');
-                if (isAdmin) {
-                    showPage('account');   // ⭐ 登录后进账户中心
+                if (authToken && currentUsername) {    // ⭐ 判断是否登录
+                    showPage('account');
                 } else {
                     openLoginModal();
                 }
@@ -3640,7 +3786,7 @@
                     const input = document.getElementById('accountUsername');
                     if (input) input.value = currentUsername || '';
                     const roleEl = document.getElementById('accountRole');
-                    if (roleEl) roleEl.textContent = isAdmin ? '管理员' : '访客';
+                    if (roleEl) roleEl.textContent = currentRole === 'admin' ? '管理员' : '普通用户';
 
                     if (location.hash !== '#account') {
                         history.replaceState(null, '', '#account');
@@ -3720,7 +3866,7 @@
                 const input = document.getElementById('accountUsername');
                 if (input) input.value = currentUsername || '';
                 const roleEl = document.getElementById('accountRole');
-                if (roleEl) roleEl.textContent = isAdmin ? '管理员' : '访客';
+                if (roleEl) roleEl.textContent = currentRole === 'admin' ? '管理员' : '普通用户';
 
                 currentPage = 'account';
             } else {
