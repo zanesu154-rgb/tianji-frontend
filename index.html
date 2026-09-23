@@ -1366,6 +1366,17 @@
             line-height: 1;
         }
 
+        /* 隐藏 input[type=search] 的原生清除按钮 */
+        input[type="search"]::-webkit-search-cancel-button,
+        input[type="search"]::-webkit-search-decoration {
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input[type="search"] {
+            -moz-appearance: textfield;
+        }
+
         /* ==================== 账户中心 ==================== */
         #pageAccount {
             width: 100%;
@@ -1762,7 +1773,7 @@
             <div class="search-panel-inner">
                 <span class="search-panel-icon">🔍</span>
                 <input type="search" class="search-panel-input" id="searchInput" placeholder="搜索附加包名 / 作者 / 简介..."
-                    autocomplete="off" name="q">
+                    autocomplete="off" name="search-q" readonly>
                 <button class="search-panel-clear" id="searchClear" style="display:none;">✕</button>
             </div>
         </div>
@@ -4012,6 +4023,14 @@
 
             // 绑定事件
             setupEvents();
+
+            // 延迟移除搜索框的 readonly（防止浏览器自动填充）
+            const searchInputEl = document.getElementById('searchInput');
+            if (searchInputEl) {
+                setTimeout(() => {
+                    searchInputEl.removeAttribute('readonly');
+                }, 100);
+            }
 
             // ⭐ 初始页面状态（无动画直接设置）
             const pageHome = document.getElementById('pageHome');
