@@ -1747,11 +1747,11 @@
                             <span class="menu-item-icon">👤</span>
                             <span id="menuLoginText">注册 / 登录</span>
                         </button>
-                        <button class="menu-item" id="menuMessageBtn">
-                            <span class="menu-item-icon">📬</span>
-                            <span>消息</span>
-                            <span class="menu-badge">未装</span>
-                        </button>
+                        <a class="menu-item" id="menuToolBtn" href="https://zanesu154-rgb.github.io/tianji-turn-addon/"
+                            target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
+                            <span class="menu-item-icon">🛠️</span>
+                            <span>汉化工具</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -3383,18 +3383,27 @@
                 const link = e.target.closest('a[target="_blank"]');
                 if (!link) return;
                 const href = link.href || '';
-                // 同域链接不拦截
-                try {
-                    const url = new URL(href);
-                    if (url.hostname === location.hostname) return;
-                } catch (err) {
-                    return;
-                }
-                // 已经确认过的直接放行
+
+                // 已确认过的直接放行
                 if (link.dataset.confirmed === '1') {
                     delete link.dataset.confirmed;
                     return;
                 }
+
+                // 同域链接不拦截
+                try {
+                    const url = new URL(href);
+                    if (url.hostname === location.hostname) return;
+
+                    // ⭐ 白名单：自己的其他站点不拦截
+                    const WHITELIST = [
+                        'zanesu154-rgb.github.io'   // 包括 tianji-frontend、tianji-turn-addon 等
+                    ];
+                    if (WHITELIST.includes(url.hostname)) return;
+                } catch (err) {
+                    return;
+                }
+
                 e.preventDefault();
                 showExternalWarning(href, () => {
                     link.dataset.confirmed = '1';
@@ -3735,11 +3744,6 @@
                 }
             });
 
-            // 消息按钮（未装）
-            document.getElementById('menuMessageBtn').addEventListener('click', () => {
-                menuDropdown.classList.remove('show');
-                showToast('消息功能未装，敬请期待～');
-            });
 
 
             document.getElementById('loginSubmitBtn').addEventListener('click', submitLogin);
