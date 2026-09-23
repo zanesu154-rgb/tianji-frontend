@@ -1697,6 +1697,31 @@
         [data-theme="dark"] .auth-tab.active {
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
         }
+
+        /* ==================== 账户中心 - 危险操作 ==================== */
+        .account-danger-box {
+            border: 1px solid var(--danger-bg-hover);
+            background: var(--danger-bg);
+            border-radius: 14px;
+            padding: 1.2rem 1.4rem;
+        }
+
+        .account-danger-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--danger-text);
+            margin-bottom: 0.6rem;
+        }
+
+        .account-danger-desc {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            line-height: 1.6;
+        }
+
+        .account-danger-box .account-field-row input {
+            background: var(--bg-card);
+        }
     </style>
 </head>
 
@@ -1883,6 +1908,7 @@
             </aside>
 
             <main class="account-main">
+                <!-- 个人资料 -->
                 <section class="account-section" id="section-profile">
                     <h2>个人资料</h2>
                     <div class="account-field">
@@ -1891,39 +1917,61 @@
                             <input type="text" id="accountUsername" placeholder="用户名">
                             <button class="btn btn-primary" id="saveUsernameBtn">保存</button>
                         </div>
-                        <div class="account-hint">修改用户名后需要重新登录才生效。</div>
+                        <div class="account-hint">修改用户名需要输入当前密码。</div>
                     </div>
                     <div class="account-field">
                         <label>当前登录身份</label>
-                        <div class="account-readonly" id="accountRole">管理员</div>
+                        <div class="account-readonly" id="accountRole">普通用户</div>
                     </div>
                 </section>
 
+                <!-- 安全设置 -->
                 <section class="account-section" id="section-security" style="display:none;">
                     <h2>安全设置</h2>
                     <div class="account-field">
                         <label>当前密码</label>
-                        <input type="password" id="accountOldPassword" placeholder="当前密码">
+                        <input type="password" id="accountOldPassword" placeholder="当前密码"
+                            autocomplete="current-password">
                     </div>
                     <div class="account-field">
                         <label>新密码</label>
-                        <input type="password" id="accountNewPassword" placeholder="新密码">
+                        <input type="password" id="accountNewPassword" placeholder="新密码（至少 6 位）"
+                            autocomplete="new-password">
                     </div>
                     <div class="account-field">
                         <label>确认新密码</label>
-                        <input type="password" id="accountConfirmPassword" placeholder="再次输入新密码">
+                        <input type="password" id="accountConfirmPassword" placeholder="再次输入新密码"
+                            autocomplete="new-password">
                     </div>
-                    <button class="btn btn-primary" id="savePasswordBtn">保存</button>
+                    <button class="btn btn-primary" id="savePasswordBtn">保存密码</button>
                 </section>
 
+                <!-- 消息 -->
                 <section class="account-section" id="section-messages" style="display:none;">
                     <h2>消息</h2>
                     <div class="account-empty">消息功能未装，敬请期待～</div>
                 </section>
 
+                <!-- 我的投稿 -->
                 <section class="account-section" id="section-my-submissions" style="display:none;">
                     <h2>我的投稿</h2>
                     <div class="account-empty">投稿功能未装，敬请期待～</div>
+                </section>
+
+                <!-- ⭐ 危险操作 -->
+                <section class="account-section" id="section-danger" style="display:none;">
+                    <h2>危险操作</h2>
+                    <div class="account-danger-box">
+                        <div class="account-danger-title">注销账号</div>
+                        <div class="account-danger-desc">
+                            注销后账号将无法恢复，你发布的任何内容（未来的投稿等）也会一起被删除。<br>
+                            输入密码以确认注销。
+                        </div>
+                        <div class="account-field-row" style="margin-top:0.8rem;">
+                            <input type="password" id="accountDeletePassword" placeholder="输入密码以确认" autocomplete="off">
+                            <button class="btn btn-danger" id="deleteAccountBtn">注销账号</button>
+                        </div>
+                    </div>
                 </section>
             </main>
         </div>
@@ -3202,14 +3250,112 @@
                 }
             });
 
-            // 保存用户名（暂未接后端）
-            document.getElementById('saveUsernameBtn').addEventListener('click', () => {
+            // ========== 保存用户名 ==========
+            document.getElementById('saveUsernameBtn').addEventListener('click', async () => {
+                if (currentRole === 'admin') {
+                    showToast('管理员账号不支持修改用户名');
+                    return;
+                }
                 const newName = document.getElementById('accountUsername').value.trim();
                 if (!newName) { showToast('用户名不能为空'); return; }
-                // TODO: 后期接入后端接口
-                showToast('用户名修改功能未装，敬请期待');
-                // 恢复显示
-                document.getElementById('accountUsername').value = currentUsername || '';
+                if (newName === currentUsername) { showToast('用户名没有变化'); return; }
+
+                // 弹窗输入密码
+                const password = prompt('请输入当前密码以确认修改：');
+                if (!password) return;
+
+                try {
+                    const res = await fetch(`${API_BASE}/users/me/username`, {
+                        method: 'PUT',
+                        headers: authHeaders(),
+                        body: JSON.stringify({ newUsername: newName, password })
+                    });
+                    const data = await res.json();
+                    if (data.token) {
+                        // 修改成功，更新本地
+                        authToken = data.token;
+                        currentUsername = data.username;
+                        localStorage.setItem(TOKEN_KEY, authToken);
+                        localStorage.setItem('tianji_username', currentUsername);
+                        updateLoginUI();
+                        // 更新账户中心显示
+                        document.getElementById('accountUsername').value = currentUsername;
+                        showToast('用户名修改成功');
+                    } else {
+                        showToast(data.error || '修改失败');
+                        document.getElementById('accountUsername').value = currentUsername;
+                    }
+                } catch (e) {
+                    showToast('网络错误');
+                }
+            });
+
+            // ========== 保存密码 ==========
+            document.getElementById('savePasswordBtn').addEventListener('click', async () => {
+                if (currentRole === 'admin') {
+                    showToast('管理员密码请前往 Railway 环境变量修改');
+                    return;
+                }
+                const oldPwd = document.getElementById('accountOldPassword').value;
+                const newPwd = document.getElementById('accountNewPassword').value;
+                const confirmPwd = document.getElementById('accountConfirmPassword').value;
+
+                if (!oldPwd || !newPwd || !confirmPwd) { showToast('请填写完整'); return; }
+                if (newPwd !== confirmPwd) { showToast('两次输入的新密码不一致'); return; }
+                if (newPwd.length < 6) { showToast('新密码至少 6 位'); return; }
+
+                try {
+                    const res = await fetch(`${API_BASE}/users/me/password`, {
+                        method: 'PUT',
+                        headers: authHeaders(),
+                        body: JSON.stringify({ oldPassword: oldPwd, newPassword: newPwd })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        showToast('密码修改成功，请重新登录');
+                        document.getElementById('accountOldPassword').value = '';
+                        document.getElementById('accountNewPassword').value = '';
+                        document.getElementById('accountConfirmPassword').value = '';
+                        // 密码改了，token 还生效，但为了安全建议重新登录
+                        setTimeout(() => {
+                            logout();
+                        }, 1500);
+                    } else {
+                        showToast(data.error || '修改失败');
+                    }
+                } catch (e) {
+                    showToast('网络错误');
+                }
+            });
+
+            // ========== 注销账号 ==========
+            document.getElementById('deleteAccountBtn').addEventListener('click', async () => {
+                if (currentRole === 'admin') {
+                    showToast('管理员账号不能注销');
+                    return;
+                }
+                const password = document.getElementById('accountDeletePassword').value;
+                if (!password) { showToast('请输入密码'); return; }
+
+                if (!confirm('⚠️ 确定要注销账号吗？此操作不可恢复！')) return;
+                if (!confirm('再次确认：真的要注销吗？')) return;
+
+                try {
+                    const res = await fetch(`${API_BASE}/users/me`, {
+                        method: 'DELETE',
+                        headers: authHeaders(),
+                        body: JSON.stringify({ password })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        showToast('账号已注销');
+                        logout();
+                    } else {
+                        showToast(data.error || '注销失败');
+                    }
+                } catch (e) {
+                    showToast('网络错误');
+                }
             });
 
             // ========== 登录/注册弹窗 ==========
@@ -3783,10 +3929,25 @@
                     homeBtn.style.display = '';
 
                     // 填充账户中心内容
+                    // 填充账户中心内容
                     const input = document.getElementById('accountUsername');
                     if (input) input.value = currentUsername || '';
                     const roleEl = document.getElementById('accountRole');
                     if (roleEl) roleEl.textContent = currentRole === 'admin' ? '管理员' : '普通用户';
+
+                    // 管理员：隐藏用户名/密码修改和注销功能
+                    const isAdminUser = currentRole === 'admin';
+                    const saveUsernameBtn = document.getElementById('saveUsernameBtn');
+                    const accountUsernameInput = document.getElementById('accountUsername');
+                    if (saveUsernameBtn) saveUsernameBtn.style.display = isAdminUser ? 'none' : '';
+                    if (accountUsernameInput) accountUsernameInput.disabled = isAdminUser;
+                    if (document.getElementById('savePasswordBtn')) {
+                        document.getElementById('savePasswordBtn').style.display = isAdminUser ? 'none' : '';
+                    }
+                    // 危险操作导航项只有普通用户显示
+                    document.querySelectorAll('.account-nav-item[data-section="danger"]').forEach(el => {
+                        el.style.display = isAdminUser ? 'none' : '';
+                    });
 
                     if (location.hash !== '#account') {
                         history.replaceState(null, '', '#account');
@@ -3855,7 +4016,7 @@
             if (searchPanel) searchPanel.classList.remove('show');
             if (menuDropdown) menuDropdown.classList.remove('show');
 
-            if (location.hash === '#account' && isAdmin) {
+            if (location.hash === '#account' && authToken && currentUsername) {
                 // 直接进账户中心
                 pageHome.style.display = 'none';
                 pageAccount.style.display = 'flex';
@@ -3863,10 +4024,25 @@
                 menuWrap.style.display = 'none';
                 homeBtn.style.display = '';
 
+                // 填充账户中心内容
                 const input = document.getElementById('accountUsername');
                 if (input) input.value = currentUsername || '';
                 const roleEl = document.getElementById('accountRole');
                 if (roleEl) roleEl.textContent = currentRole === 'admin' ? '管理员' : '普通用户';
+
+                // 管理员：隐藏用户名/密码修改和注销功能
+                const isAdminUser = currentRole === 'admin';
+                const saveUsernameBtn = document.getElementById('saveUsernameBtn');
+                const accountUsernameInput = document.getElementById('accountUsername');
+                if (saveUsernameBtn) saveUsernameBtn.style.display = isAdminUser ? 'none' : '';
+                if (accountUsernameInput) accountUsernameInput.disabled = isAdminUser;
+                if (document.getElementById('savePasswordBtn')) {
+                    document.getElementById('savePasswordBtn').style.display = isAdminUser ? 'none' : '';
+                }
+                // 危险操作导航项只有普通用户显示
+                document.querySelectorAll('.account-nav-item[data-section="danger"]').forEach(el => {
+                    el.style.display = isAdminUser ? 'none' : '';
+                });
 
                 currentPage = 'account';
             } else {
