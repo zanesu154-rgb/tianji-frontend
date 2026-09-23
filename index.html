@@ -2000,52 +2000,54 @@
     </div>
 
     <!-- 登录 / 注册弹窗 -->
-    <div class="modal-card">
-        <div class="auth-tabs">
-            <button class="auth-tab active" data-tab="login">登录</button>
-            <button class="auth-tab" data-tab="register">注册</button>
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-card">
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">登录</button>
+                <button class="auth-tab" data-tab="register">注册</button>
+            </div>
+
+            <!-- 登录表单 -->
+            <form id="panel-login" autocomplete="on" onsubmit="return false;">
+                <div class="modal-field">
+                    <label>用户名</label>
+                    <input type="text" id="loginUsername" placeholder="用户名" autocomplete="username" name="username">
+                </div>
+                <div class="modal-field">
+                    <label>密码</label>
+                    <input type="password" id="loginPassword" autocomplete="current-password" name="password">
+                </div>
+                <div class="modal-actions">
+                    <button class="btn" id="loginCancelBtn" type="button"
+                        style="background:var(--bg-tag);color:var(--text-main);">取消</button>
+                    <button class="btn btn-primary" id="loginSubmitBtn" type="button">登录</button>
+                </div>
+            </form>
+
+            <!-- 注册表单 -->
+            <form id="panel-register" autocomplete="on" style="display:none;" onsubmit="return false;">
+                <div class="modal-field">
+                    <label>用户名</label>
+                    <input type="text" id="registerUsername" placeholder="2-20 个字符，支持中英文" autocomplete="username"
+                        name="new-username">
+                </div>
+                <div class="modal-field">
+                    <label>密码</label>
+                    <input type="password" id="registerPassword" placeholder="至少 6 位" autocomplete="new-password"
+                        name="new-password">
+                </div>
+                <div class="modal-field">
+                    <label>确认密码</label>
+                    <input type="password" id="registerConfirm" placeholder="再次输入密码" autocomplete="new-password"
+                        name="confirm-password">
+                </div>
+                <div class="modal-actions">
+                    <button class="btn" id="registerCancelBtn" type="button"
+                        style="background:var(--bg-tag);color:var(--text-main);">取消</button>
+                    <button class="btn btn-primary" id="registerSubmitBtn" type="button">注册</button>
+                </div>
+            </form>
         </div>
-
-        <!-- 登录表单 -->
-        <form id="panel-login" autocomplete="on" onsubmit="return false;">
-            <div class="modal-field">
-                <label>用户名</label>
-                <input type="text" id="loginUsername" placeholder="用户名" autocomplete="username" name="username">
-            </div>
-            <div class="modal-field">
-                <label>密码</label>
-                <input type="password" id="loginPassword" autocomplete="current-password" name="password">
-            </div>
-            <div class="modal-actions">
-                <button class="btn" id="loginCancelBtn" type="button"
-                    style="background:var(--bg-tag);color:var(--text-main);">取消</button>
-                <button class="btn btn-primary" id="loginSubmitBtn" type="button">登录</button>
-            </div>
-        </form>
-
-        <!-- 注册表单 -->
-        <form id="panel-register" autocomplete="on" style="display:none;" onsubmit="return false;">
-            <div class="modal-field">
-                <label>用户名</label>
-                <input type="text" id="registerUsername" placeholder="2-20 个字符，支持中英文" autocomplete="username"
-                    name="new-username">
-            </div>
-            <div class="modal-field">
-                <label>密码</label>
-                <input type="password" id="registerPassword" placeholder="至少 6 位" autocomplete="new-password"
-                    name="new-password">
-            </div>
-            <div class="modal-field">
-                <label>确认密码</label>
-                <input type="password" id="registerConfirm" placeholder="再次输入密码" autocomplete="new-password"
-                    name="confirm-password">
-            </div>
-            <div class="modal-actions">
-                <button class="btn" id="registerCancelBtn" type="button"
-                    style="background:var(--bg-tag);color:var(--text-main);">取消</button>
-                <button class="btn btn-primary" id="registerSubmitBtn" type="button">注册</button>
-            </div>
-        </form>
     </div>
 
     <!-- 编辑弹窗 -->
@@ -3884,9 +3886,11 @@
 
             // 弹窗点外部关闭
             ['qrModal', 'loginModal', 'editModal'].forEach(id => {
-                document.getElementById(id).addEventListener('click', (e) => {
+                const el = document.getElementById(id);
+                if (!el) return;   // ⭐ 元素不存在就跳过
+                el.addEventListener('click', (e) => {
                     if (e.target.id === id) {
-                        document.getElementById(id).classList.remove('show');
+                        el.classList.remove('show');
                     }
                 });
             });
