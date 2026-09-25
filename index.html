@@ -4220,9 +4220,7 @@
         let isSwitching = false;
 
         function showPage(page) {
-            // GM 面板入口只有管理员可见
-            const gmNav = document.getElementById('gmNavBtn');
-            if (gmNav) gmNav.style.display = isAdminUser ? '' : 'none';
+
 
             if (isSwitching || page === currentPage) return;
 
@@ -4280,6 +4278,10 @@
                     document.querySelectorAll('.account-nav-item[data-section="danger"]').forEach(el => {
                         el.style.display = isAdminUser ? 'none' : '';
                     });
+                    
+                    // GM 面板入口只有管理员可见
+                    const gmNav = document.getElementById('gmNavBtn');
+                    if (gmNav) gmNav.style.display = isAdminUser ? '' : 'none';
 
                     if (location.hash !== '#account') {
                         history.replaceState(null, '', '#account');
