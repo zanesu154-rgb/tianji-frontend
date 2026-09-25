@@ -4310,10 +4310,6 @@
         // ==================== 初始化 ====================
         async function init() {
 
-            // GM 面板入口只有管理员可见
-            const gmNav = document.getElementById('gmNavBtn');
-            if (gmNav) gmNav.style.display = isAdminUser ? '' : 'none';
-
             // 应用当前主题
             const savedTheme = localStorage.getItem(THEME_KEY) || 'light';
             applyTheme(savedTheme);
@@ -4388,6 +4384,10 @@
                 document.querySelectorAll('.account-nav-item[data-section="danger"]').forEach(el => {
                     el.style.display = isAdminUser ? 'none' : '';
                 });
+
+                // GM 面板入口只有管理员可见
+                const gmNav = document.getElementById('gmNavBtn');
+                if (gmNav) gmNav.style.display = isAdminUser ? '' : 'none';
 
                 currentPage = 'account';
             } else {
