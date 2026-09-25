@@ -1735,6 +1735,154 @@
         .account-danger-box .account-field-row input {
             background: var(--bg-card);
         }
+
+        /* ==================== GM 面板 ==================== */
+        .gm-stats {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .gm-stat-card {
+            flex: 1;
+            min-width: 140px;
+            background: var(--bg-tag);
+            border-radius: 14px;
+            padding: 1.2rem 1.4rem;
+            text-align: center;
+        }
+
+        .gm-stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-text);
+            line-height: 1.2;
+        }
+
+        .gm-stat-label {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            margin-top: 0.3rem;
+        }
+
+        .gm-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .gm-section h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-title);
+            margin-bottom: 0.8rem;
+        }
+
+        .gm-trend {
+            display: flex;
+            align-items: flex-end;
+            gap: 0.5rem;
+            height: 120px;
+            padding: 0.8rem;
+            background: var(--bg-tag);
+            border-radius: 12px;
+            overflow-x: auto;
+        }
+
+        .gm-trend-bar {
+            flex: 1;
+            min-width: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .gm-trend-bar-fill {
+            width: 100%;
+            background: var(--accent);
+            border-radius: 4px 4px 0 0;
+            min-height: 4px;
+            transition: height 0.3s;
+        }
+
+        .gm-trend-bar-label {
+            font-size: 0.7rem;
+            color: var(--text-light);
+        }
+
+        .gm-user-list {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .gm-user-row {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--border-light);
+            flex-wrap: wrap;
+        }
+
+        .gm-user-row:last-child {
+            border-bottom: none;
+        }
+
+        .gm-user-name {
+            flex: 1;
+            min-width: 100px;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .gm-user-role {
+            font-size: 0.75rem;
+            padding: 0.15rem 0.6rem;
+            border-radius: 20px;
+            background: var(--bg-tag);
+            color: var(--text-sub);
+        }
+
+        .gm-user-role.admin {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .gm-user-date {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .gm-user-actions {
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        .gm-btn {
+            background: var(--bg-tag);
+            border: none;
+            border-radius: 8px;
+            padding: 0.35rem 0.7rem;
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            cursor: pointer;
+            transition: 0.15s;
+            font-family: inherit;
+        }
+
+        .gm-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-main);
+        }
+
+        .gm-btn.danger {
+            color: var(--danger-text);
+        }
+
+        .gm-btn.danger:hover {
+            background: var(--danger-bg-hover);
+        }
     </style>
 </head>
 
@@ -1918,6 +2066,14 @@
                         <span>我的投稿</span>
                         <span class="account-nav-badge">未装</span>
                     </button>
+                    <button class="account-nav-item" data-section="danger">
+                        <span class="account-nav-icon">⚠️</span>
+                        <span>危险操作</span>
+                    </button>
+                    <button class="account-nav-item" data-section="gm" id="gmNavBtn" style="display:none;">
+                        <span class="account-nav-icon">⚙️</span>
+                        <span>GM 面板</span>
+                    </button>
                 </nav>
             </aside>
 
@@ -1985,6 +2141,34 @@
                             <input type="password" id="accountDeletePassword" placeholder="输入密码以确认" autocomplete="off">
                             <button class="btn btn-danger" id="deleteAccountBtn">注销账号</button>
                         </div>
+                    </div>
+                </section>
+                <!-- GM 面板（仅管理员可见） -->
+                <section class="account-section" id="section-gm" style="display:none;">
+                    <h2>GM 面板</h2>
+
+                    <!-- 访客统计 -->
+                    <div class="gm-stats">
+                        <div class="gm-stat-card">
+                            <div class="gm-stat-value" id="gmTodayVisits">-</div>
+                            <div class="gm-stat-label">今日访客</div>
+                        </div>
+                        <div class="gm-stat-card">
+                            <div class="gm-stat-value" id="gmTotalUsers">-</div>
+                            <div class="gm-stat-label">注册用户</div>
+                        </div>
+                    </div>
+
+                    <!-- 近 7 天趋势 -->
+                    <div class="gm-section">
+                        <h3>近 7 天访问趋势</h3>
+                        <div class="gm-trend" id="gmTrend">加载中...</div>
+                    </div>
+
+                    <!-- 用户列表 -->
+                    <div class="gm-section">
+                        <h3>注册用户列表</h3>
+                        <div class="gm-user-list" id="gmUserList">加载中...</div>
                     </div>
                 </section>
             </main>
@@ -3234,6 +3418,127 @@
 
         // ==================== 事件绑定 ====================
         function setupEvents() {
+            // ========== GM 面板 ==========
+            const gmNavBtn = document.getElementById('gmNavBtn');
+            if (gmNavBtn) {
+                gmNavBtn.addEventListener('click', () => {
+                    loadGmData();
+                });
+            }
+
+            async function loadGmData() {
+                // 加载访客数据
+                try {
+                    const res = await fetch(`${API_BASE}/gm/visits`, { headers: authHeaders() });
+                    if (res.ok) {
+                        const data = await res.json();
+                        document.getElementById('gmTodayVisits').textContent = data.today;
+                        document.getElementById('gmTotalUsers').textContent = data.totalUsers;
+
+                        // 渲染趋势
+                        const trendEl = document.getElementById('gmTrend');
+                        if (data.trend.length === 0) {
+                            trendEl.innerHTML = '<div style="color:var(--text-light);font-size:0.85rem;">暂无数据</div>';
+                        } else {
+                            const maxCount = Math.max(...data.trend.map(d => d.count), 1);
+                            trendEl.innerHTML = data.trend.map(d => {
+                                const height = (d.count / maxCount) * 80;
+                                const date = d.visit_date.slice(5); // MM-DD
+                                return `
+                        <div class="gm-trend-bar">
+                            <div class="gm-trend-bar-fill" style="height:${height}px;" title="${d.count} 次访问"></div>
+                            <div class="gm-trend-bar-label">${date}</div>
+                        </div>
+                    `;
+                            }).join('');
+                        }
+                    }
+                } catch (e) {
+                    console.error('加载访客数据失败', e);
+                }
+
+                // 加载用户列表
+                try {
+                    const res = await fetch(`${API_BASE}/gm/users`, { headers: authHeaders() });
+                    if (res.ok) {
+                        const users = await res.json();
+                        const listEl = document.getElementById('gmUserList');
+                        if (users.length === 0) {
+                            listEl.innerHTML = '<div style="padding:1rem;color:var(--text-light);text-align:center;">暂无注册用户</div>';
+                        } else {
+                            listEl.innerHTML = users.map(u => {
+                                const date = new Date(u.created_at * 1000).toLocaleDateString();
+                                return `
+                        <div class="gm-user-row">
+                            <span class="gm-user-name">${escapeHtml(u.username)}</span>
+                            <span class="gm-user-role ${u.role === 'admin' ? 'admin' : ''}">${u.role === 'admin' ? '管理员' : '普通用户'}</span>
+                            <span class="gm-user-date">${date}</span>
+                            <div class="gm-user-actions">
+                                <button class="gm-btn" data-gm-reset="${u.id}" data-gm-name="${escapeHtml(u.username)}">重置密码</button>
+                                <button class="gm-btn danger" data-gm-delete="${u.id}" data-gm-name="${escapeHtml(u.username)}">删除</button>
+                            </div>
+                        </div>
+                    `;
+                            }).join('');
+                        }
+                    }
+                } catch (e) {
+                    console.error('加载用户列表失败', e);
+                }
+            }
+
+            // 用户操作事件委托
+            document.getElementById('gmUserList').addEventListener('click', async (e) => {
+                const resetBtn = e.target.closest('[data-gm-reset]');
+                if (resetBtn) {
+                    const id = resetBtn.dataset.gmReset;
+                    const name = resetBtn.dataset.gmName;
+                    const newPwd = prompt(`为「${name}」设置新密码（至少 6 位）：`);
+                    if (!newPwd) return;
+                    if (newPwd.length < 6) { showToast('密码至少 6 位'); return; }
+
+                    try {
+                        const res = await fetch(`${API_BASE}/gm/users/${id}/password`, {
+                            method: 'PUT',
+                            headers: authHeaders(),
+                            body: JSON.stringify({ newPassword: newPwd })
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            showToast('密码已重置');
+                        } else {
+                            showToast(data.error || '重置失败');
+                        }
+                    } catch (err) {
+                        showToast('网络错误');
+                    }
+                    return;
+                }
+
+                const deleteBtn = e.target.closest('[data-gm-delete]');
+                if (deleteBtn) {
+                    const id = deleteBtn.dataset.gmDelete;
+                    const name = deleteBtn.dataset.gmName;
+                    if (!confirm(`⚠️ 确定要删除用户「${name}」吗？此操作不可恢复！`)) return;
+
+                    try {
+                        const res = await fetch(`${API_BASE}/gm/users/${id}`, {
+                            method: 'DELETE',
+                            headers: authHeaders()
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            showToast('用户已删除');
+                            loadGmData();
+                        } else {
+                            showToast(data.error || '删除失败');
+                        }
+                    } catch (err) {
+                        showToast('网络错误');
+                    }
+                    return;
+                }
+            });
             const app = document.querySelector('.app');
 
             // 主题切换
@@ -3915,6 +4220,10 @@
         let isSwitching = false;
 
         function showPage(page) {
+            // GM 面板入口只有管理员可见
+            const gmNav = document.getElementById('gmNavBtn');
+            if (gmNav) gmNav.style.display = isAdminUser ? '' : 'none';
+
             if (isSwitching || page === currentPage) return;
 
             const pageHome = document.getElementById('pageHome');
@@ -4000,6 +4309,11 @@
 
         // ==================== 初始化 ====================
         async function init() {
+
+            // GM 面板入口只有管理员可见
+            const gmNav = document.getElementById('gmNavBtn');
+            if (gmNav) gmNav.style.display = isAdminUser ? '' : 'none';
+
             // 应用当前主题
             const savedTheme = localStorage.getItem(THEME_KEY) || 'light';
             applyTheme(savedTheme);
