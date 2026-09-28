@@ -1777,38 +1777,50 @@
             margin-bottom: 0.8rem;
         }
 
-        .gm-trend {
-            display: flex;
-            align-items: flex-end;
-            gap: 0.5rem;
-            height: 120px;
-            padding: 0.8rem;
+        .gm-chart-wrap {
             background: var(--bg-tag);
             border-radius: 12px;
-            overflow-x: auto;
+            padding: 1rem;
+            overflow: hidden;
         }
 
-        .gm-trend-bar {
-            flex: 1;
-            min-width: 30px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
-        .gm-trend-bar-fill {
+        .gm-chart {
             width: 100%;
-            background: var(--accent);
-            border-radius: 4px 4px 0 0;
-            min-height: 4px;
-            transition: height 0.3s;
+            height: 180px;
+            display: block;
         }
 
-        .gm-trend-bar-label {
-            font-size: 0.7rem;
-            color: var(--text-light);
+        .gm-chart polyline {
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
+
+        .gm-chart .chart-area {
+            fill: var(--accent);
+            opacity: 0.12;
+        }
+
+        .gm-chart circle {
+            fill: var(--accent);
+            stroke: var(--bg-card);
+            stroke-width: 2;
+        }
+
+        .gm-chart text {
+            font-size: 9px;
+            fill: var(--text-light);
+            font-family: inherit;
+        }
+
+        .gm-chart line.grid {
+            stroke: var(--border-light);
+            stroke-width: 1;
+            stroke-dasharray: 2 2;
+        }
+
 
         .gm-user-list {
             border: 1px solid var(--border);
@@ -2162,7 +2174,9 @@
                     <!-- 近 7 天趋势 -->
                     <div class="gm-section">
                         <h3>近 7 天访问趋势</h3>
-                        <div class="gm-trend" id="gmTrend">加载中...</div>
+                        <div class="gm-chart-wrap">
+                            <svg class="gm-chart" id="gmChart" viewBox="0 0 600 180" preserveAspectRatio="none"></svg>
+                        </div>
                     </div>
 
                     <!-- 用户列表 -->
@@ -3435,23 +3449,8 @@
                         document.getElementById('gmTodayVisits').textContent = data.today;
                         document.getElementById('gmTotalUsers').textContent = data.totalUsers;
 
-                        // 渲染趋势
-                        const trendEl = document.getElementById('gmTrend');
-                        if (data.trend.length === 0) {
-                            trendEl.innerHTML = '<div style="color:var(--text-light);font-size:0.85rem;">暂无数据</div>';
-                        } else {
-                            const maxCount = Math.max(...data.trend.map(d => d.count), 1);
-                            trendEl.innerHTML = data.trend.map(d => {
-                                const height = (d.count / maxCount) * 80;
-                                const date = d.visit_date.slice(5); // MM-DD
-                                return `
-                        <div class="gm-trend-bar">
-                            <div class="gm-trend-bar-fill" style="height:${height}px;" title="${d.count} 次访问"></div>
-                            <div class="gm-trend-bar-label">${date}</div>
-                        </div>
-                    `;
-                            }).join('');
-                        }
+                        // 渲染 14 天折线图
+                        renderVisitChart(data.trend);
                     }
                 } catch (e) {
                     console.error('加载访客数据失败', e);
@@ -3485,6 +3484,62 @@
                 } catch (e) {
                     console.error('加载用户列表失败', e);
                 }
+            }
+
+            function renderVisitChart(trend) {
+                const svg = document.getElementById('gmChart');
+                if (!svg) return;
+
+                // viewBox 坐标系：600 x 180
+                const W = 600, H = 180;
+                const padding = { top: 20, right: 20, bottom: 30, left: 30 };
+                const chartW = W - padding.left - padding.right;
+                const chartH = H - padding.top - padding.bottom;
+
+                const counts = trend.map(t => t.count);
+                const maxCount = Math.max(...counts, 1);
+
+                // 计算每个点坐标
+                const points = trend.map((t, i) => {
+                    const x = padding.left + (i / (trend.length - 1)) * chartW;
+                    const y = padding.top + chartH - (t.count / maxCount) * chartH;
+                    return { x, y, ...t };
+                });
+
+                // 折线点串
+                const polylinePoints = points.map(p => `${p.x},${p.y}`).join(' ');
+
+                // 面积填充（折线下方）
+                const areaPoints = `${padding.left},${padding.top + chartH} ${polylinePoints} ${padding.left + chartW},${padding.top + chartH}`;
+
+                // 网格线（5 条水平线）
+                let gridLines = '';
+                for (let i = 0; i <= 4; i++) {
+                    const y = padding.top + (chartH / 4) * i;
+                    const val = Math.round(maxCount - (maxCount / 4) * i);
+                    gridLines += `
+            <line class="grid" x1="${padding.left}" y1="${y}" x2="${padding.left + chartW}" y2="${y}" />
+            <text x="${padding.left - 4}" y="${y + 3}" text-anchor="end">${val}</text>
+        `;
+                }
+
+                // 数据点 + 日期标签
+                let dots = '';
+                let labels = '';
+                points.forEach((p, i) => {
+                    dots += `<circle cx="${p.x}" cy="${p.y}" r="3"><title>${p.date}：${p.count} 次访问</title></circle>`;
+                    if (i === 0 || i === 3 || i === 6 || i === 9 || i === 13) {
+                        labels += `<text x="${p.x}" y="${H - 8}" text-anchor="middle">${p.date.slice(5)}</text>`;
+                    }
+                });
+
+                svg.innerHTML = `
+        ${gridLines}
+        <polygon class="chart-area" points="${areaPoints}" />
+        <polyline points="${polylinePoints}" />
+        ${dots}
+        ${labels}
+    `;
             }
 
             // 用户操作事件委托
@@ -4278,7 +4333,7 @@
                     document.querySelectorAll('.account-nav-item[data-section="danger"]').forEach(el => {
                         el.style.display = isAdminUser ? 'none' : '';
                     });
-                    
+
                     // GM 面板入口只有管理员可见
                     const gmNav = document.getElementById('gmNavBtn');
                     if (gmNav) gmNav.style.display = isAdminUser ? '' : 'none';
