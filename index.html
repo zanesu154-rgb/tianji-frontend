@@ -1895,6 +1895,72 @@
         .gm-btn.danger:hover {
             background: var(--danger-bg-hover);
         }
+
+        .feedback-btn {
+            background: transparent;
+            border: none;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 0 0.3rem 0 0;
+            border-radius: 4px;
+            transition: 0.15s;
+            vertical-align: middle;
+            margin-right: 0.2rem;
+        }
+
+        .feedback-btn:hover {
+            color: var(--accent);
+            background: var(--bg-hover);
+        }
+
+        .gm-feedback-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .gm-feedback-card {
+            background: var(--bg-tag);
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            border-left: 3px solid var(--accent);
+        }
+
+        .gm-feedback-card.resolved {
+            border-left-color: #16a34a;
+            opacity: 0.65;
+        }
+
+        .gm-feedback-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.78rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .gm-feedback-item-name {
+            color: var(--accent-text);
+            font-weight: 500;
+        }
+
+        .gm-feedback-content {
+            font-size: 0.88rem;
+            color: var(--text-main);
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .gm-feedback-actions {
+            display: flex;
+            gap: 0.4rem;
+            margin-top: 0.6rem;
+            justify-content: flex-end;
+        }
     </style>
 </head>
 
@@ -2159,6 +2225,13 @@
                 <section class="account-section" id="section-gm" style="display:none;">
                     <h2>GM 面板</h2>
 
+                    <!-- 反馈列表 -->
+                    <div class="gm-section">
+                        <h3>收到的反馈 <span id="gmFeedbackCount"
+                                style="font-size:0.8rem;color:var(--text-light);font-weight:400;"></span></h3>
+                        <div class="gm-feedback-list" id="gmFeedbackList">加载中...</div>
+                    </div>
+
                     <!-- 访客统计 -->
                     <div class="gm-stats">
                         <div class="gm-stat-card">
@@ -2171,9 +2244,9 @@
                         </div>
                     </div>
 
-                    <!-- 近 7 天趋势 -->
+                    <!-- 近 14 天趋势 -->
                     <div class="gm-section">
-                        <h3>近 7 天访问趋势</h3>
+                        <h3>近 2 周访问趋势</h3>
                         <div class="gm-chart-wrap">
                             <svg class="gm-chart" id="gmChart" viewBox="0 0 600 180" preserveAspectRatio="none"></svg>
                         </div>
@@ -2341,6 +2414,27 @@
         </div>
     </div>
 
+    <!-- 反馈弹窗 -->
+    <div class="modal-overlay" id="feedbackModal">
+        <div class="modal-card">
+            <h3>反馈</h3>
+            <div class="modal-field">
+                <label>项目</label>
+                <input type="text" id="feedbackItemName" readonly>
+            </div>
+            <div class="modal-field">
+                <label>反馈内容</label>
+                <textarea id="feedbackContent" placeholder="说明问题、建议或汉化错误..." style="min-height:120px;"></textarea>
+                <div class="account-hint">最多 500 字</div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn" id="feedbackCancelBtn"
+                    style="background:var(--bg-tag);color:var(--text-main);">取消</button>
+                <button class="btn btn-primary" id="feedbackSubmitBtn">提交反馈</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ==================== 脚本（保持不变） ==================== -->
     <script>
         /* 你原来的脚本不用动 */
@@ -2368,6 +2462,7 @@
         let currentRole = localStorage.getItem('tianji_role') || '';   // ⭐
         let editingItemId = null;
         let currentCategory = 'all';   // ⭐ 加这里
+        let currentFeedbackItem = { id: '', name: '' };   // ⭐ 加这里
 
         const moduleExpanded = {
             pending: false,
@@ -2918,7 +3013,10 @@
                         <div class="item-top">
                             ${isAdmin ? `<span class="drag-handle" draggable="true" data-id="${item.id}" title="拖动排序">⋮⋮</span>` : ''}
                             ${!isDone ? `<span class="status-icon ${iconClass}" data-action="cycle-status" data-id="${item.id}" title="点击切换状态">${iconContent}</span>` : ''}
-                            <div class="item-name">${nameHtml}</div>
+                            <div class="item-name">
+                            ${!isAdmin && authToken ? `<button class="feedback-btn" data-action="feedback" data-id="${item.id}" data-name="${escapeHtml(orig)}" title="反馈">💬</button>` : ''}
+                            ${nameHtml}
+                        </div>
                         </div>
                         <div class="item-bottom">
                             <span class="author-name">${escapeHtml(authorDisplay)}</span>
@@ -3440,7 +3538,124 @@
                 });
             }
 
+            // ========== 反馈功能 ==========
+            app.addEventListener('click', (e) => {
+                const feedbackBtn = e.target.closest('[data-action="feedback"]');
+                if (feedbackBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    currentFeedbackItem.id = feedbackBtn.dataset.id;
+                    currentFeedbackItem.name = feedbackBtn.dataset.name;
+                    document.getElementById('feedbackItemName').value = currentFeedbackItem.name;
+                    document.getElementById('feedbackContent').value = '';
+                    document.getElementById('feedbackModal').classList.add('show');
+                    setTimeout(() => document.getElementById('feedbackContent').focus(), 100);
+                }
+            });
+
+            document.getElementById('feedbackCancelBtn').addEventListener('click', () => {
+                document.getElementById('feedbackModal').classList.remove('show');
+            });
+
+            document.getElementById('feedbackSubmitBtn').addEventListener('click', async () => {
+                const content = document.getElementById('feedbackContent').value.trim();
+                if (!content) { showToast('请填写反馈内容'); return; }
+                if (content.length > 500) { showToast('反馈内容不能超过 500 字'); return; }
+
+                try {
+                    const res = await fetch(`${API_BASE}/feedback`, {
+                        method: 'POST',
+                        headers: authHeaders(),
+                        body: JSON.stringify({
+                            itemId: currentFeedbackItem.id,
+                            itemName: currentFeedbackItem.name,
+                            content
+                        })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        showToast('反馈已提交，感谢！');
+                        document.getElementById('feedbackModal').classList.remove('show');
+                    } else {
+                        showToast(data.error || '提交失败');
+                    }
+                } catch (e) {
+                    showToast('网络错误');
+                }
+            });
+
+            document.getElementById('feedbackModal').addEventListener('click', (e) => {
+                if (e.target.id === 'feedbackModal') {
+                    document.getElementById('feedbackModal').classList.remove('show');
+                }
+            });
+
             async function loadGmData() {
+                // 加载反馈
+                try {
+                    const res = await fetch(`${API_BASE}/feedback/all`, { headers: authHeaders() });
+                    if (res.ok) {
+                        const list = await res.json();
+                        const listEl = document.getElementById('gmFeedbackList');
+                        const countEl = document.getElementById('gmFeedbackCount');
+                        const pendingCount = list.filter(f => f.status === 'pending').length;
+                        countEl.textContent = `（待处理 ${pendingCount} / 共 ${list.length}）`;
+
+                        if (list.length === 0) {
+                            listEl.innerHTML = '<div class="account-empty">暂无反馈</div>';
+                        } else {
+                            listEl.innerHTML = list.map(f => {
+                                const date = new Date(f.created_at * 1000).toLocaleString();
+                                const resolved = f.status === 'resolved';
+                                return `
+                    <div class="gm-feedback-card ${resolved ? 'resolved' : ''}">
+                        <div class="gm-feedback-meta">
+                            <span>👤 ${escapeHtml(f.username)}</span>
+                            <span>📦 <span class="gm-feedback-item-name">${escapeHtml(f.item_name)}</span></span>
+                            <span>🕐 ${date}</span>
+                            ${resolved ? '<span style="color:#16a34a;">✅ 已处理</span>' : ''}
+                        </div>
+                        <div class="gm-feedback-content">${escapeHtml(f.content)}</div>
+                        <div class="gm-feedback-actions">
+                            ${!resolved ? `<button class="gm-btn" data-fb-resolve="${f.id}">标记已处理</button>` : ''}
+                            <button class="gm-btn danger" data-fb-delete="${f.id}">删除</button>
+                        </div>
+                    </div>
+                `;
+                            }).join('');
+                        }
+                    }
+                } catch (e) {
+                    console.error('加载反馈失败', e);
+                }
+
+                // 反馈操作事件委托（只绑定一次）
+                if (!document.getElementById('gmFeedbackList').dataset.bound) {
+                    document.getElementById('gmFeedbackList').dataset.bound = '1';
+                    document.getElementById('gmFeedbackList').addEventListener('click', async (e) => {
+                        const resolveBtn = e.target.closest('[data-fb-resolve]');
+                        if (resolveBtn) {
+                            const id = resolveBtn.dataset.fbResolve;
+                            await fetch(`${API_BASE}/feedback/${id}/resolve`, {
+                                method: 'PUT',
+                                headers: authHeaders()
+                            });
+                            loadGmData();
+                            return;
+                        }
+                        const deleteBtn = e.target.closest('[data-fb-delete]');
+                        if (deleteBtn) {
+                            if (!confirm('确定删除这条反馈吗？')) return;
+                            const id = deleteBtn.dataset.fbDelete;
+                            await fetch(`${API_BASE}/feedback/${id}`, {
+                                method: 'DELETE',
+                                headers: authHeaders()
+                            });
+                            loadGmData();
+                            return;
+                        }
+                    });
+                }
                 // 加载访客数据
                 try {
                     const res = await fetch(`${API_BASE}/gm/visits`, { headers: authHeaders() });
