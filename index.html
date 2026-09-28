@@ -3538,57 +3538,7 @@
                 });
             }
 
-            // ========== 反馈功能 ==========
-            app.addEventListener('click', (e) => {
-                const feedbackBtn = e.target.closest('[data-action="feedback"]');
-                if (feedbackBtn) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    currentFeedbackItem.id = feedbackBtn.dataset.id;
-                    currentFeedbackItem.name = feedbackBtn.dataset.name;
-                    document.getElementById('feedbackItemName').value = currentFeedbackItem.name;
-                    document.getElementById('feedbackContent').value = '';
-                    document.getElementById('feedbackModal').classList.add('show');
-                    setTimeout(() => document.getElementById('feedbackContent').focus(), 100);
-                }
-            });
 
-            document.getElementById('feedbackCancelBtn').addEventListener('click', () => {
-                document.getElementById('feedbackModal').classList.remove('show');
-            });
-
-            document.getElementById('feedbackSubmitBtn').addEventListener('click', async () => {
-                const content = document.getElementById('feedbackContent').value.trim();
-                if (!content) { showToast('请填写反馈内容'); return; }
-                if (content.length > 500) { showToast('反馈内容不能超过 500 字'); return; }
-
-                try {
-                    const res = await fetch(`${API_BASE}/feedback`, {
-                        method: 'POST',
-                        headers: authHeaders(),
-                        body: JSON.stringify({
-                            itemId: currentFeedbackItem.id,
-                            itemName: currentFeedbackItem.name,
-                            content
-                        })
-                    });
-                    const data = await res.json();
-                    if (data.success) {
-                        showToast('反馈已提交，感谢！');
-                        document.getElementById('feedbackModal').classList.remove('show');
-                    } else {
-                        showToast(data.error || '提交失败');
-                    }
-                } catch (e) {
-                    showToast('网络错误');
-                }
-            });
-
-            document.getElementById('feedbackModal').addEventListener('click', (e) => {
-                if (e.target.id === 'feedbackModal') {
-                    document.getElementById('feedbackModal').classList.remove('show');
-                }
-            });
 
             async function loadGmData() {
                 // 加载反馈
@@ -3810,6 +3760,58 @@
                 }
             });
             const app = document.querySelector('.app');
+
+            // ========== 反馈功能 ==========
+            app.addEventListener('click', (e) => {
+                const feedbackBtn = e.target.closest('[data-action="feedback"]');
+                if (feedbackBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    currentFeedbackItem.id = feedbackBtn.dataset.id;
+                    currentFeedbackItem.name = feedbackBtn.dataset.name;
+                    document.getElementById('feedbackItemName').value = currentFeedbackItem.name;
+                    document.getElementById('feedbackContent').value = '';
+                    document.getElementById('feedbackModal').classList.add('show');
+                    setTimeout(() => document.getElementById('feedbackContent').focus(), 100);
+                }
+            });
+
+            document.getElementById('feedbackCancelBtn').addEventListener('click', () => {
+                document.getElementById('feedbackModal').classList.remove('show');
+            });
+
+            document.getElementById('feedbackSubmitBtn').addEventListener('click', async () => {
+                const content = document.getElementById('feedbackContent').value.trim();
+                if (!content) { showToast('请填写反馈内容'); return; }
+                if (content.length > 500) { showToast('反馈内容不能超过 500 字'); return; }
+
+                try {
+                    const res = await fetch(`${API_BASE}/feedback`, {
+                        method: 'POST',
+                        headers: authHeaders(),
+                        body: JSON.stringify({
+                            itemId: currentFeedbackItem.id,
+                            itemName: currentFeedbackItem.name,
+                            content
+                        })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        showToast('反馈已提交，感谢！');
+                        document.getElementById('feedbackModal').classList.remove('show');
+                    } else {
+                        showToast(data.error || '提交失败');
+                    }
+                } catch (e) {
+                    showToast('网络错误');
+                }
+            });
+
+            document.getElementById('feedbackModal').addEventListener('click', (e) => {
+                if (e.target.id === 'feedbackModal') {
+                    document.getElementById('feedbackModal').classList.remove('show');
+                }
+            });
 
             // 主题切换
             document.getElementById('themeToggleBtn').addEventListener('click', () => {
