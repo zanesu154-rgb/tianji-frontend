@@ -1961,6 +1961,330 @@
             margin-top: 0.6rem;
             justify-content: flex-end;
         }
+
+        .gm-feedback-reply {
+            margin-top: 0.5rem;
+            font-size: 0.82rem;
+            color: var(--text-sub);
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 0.4rem 0.6rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        /* ==================== 弹窗通用补充 ==================== */
+        .modal-card {
+            max-height: calc(100vh - 2rem);
+            max-height: calc(100dvh - 2rem);
+            overflow-y: auto;
+        }
+
+        .modal-card.wide {
+            max-width: 520px;
+        }
+
+        .modal-field select {
+            width: 100%;
+            padding: 0.6rem 0.9rem;
+            border: 1px solid var(--border-input);
+            border-radius: 12px;
+            font-size: 0.9rem;
+            background: var(--bg-input);
+            color: var(--text-main);
+            font-family: inherit;
+        }
+
+        .modal-field-row {
+            display: flex;
+            gap: 0.6rem;
+        }
+
+        .modal-field-row>.modal-field {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .required-mark {
+            color: var(--danger-text);
+            margin-left: 2px;
+        }
+
+        /* ==================== 未读红点 ==================== */
+        .nav-icon-btn {
+            position: relative;
+        }
+
+        .nav-dot {
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ef4444;
+            box-shadow: 0 0 0 2px var(--bg-card);
+            display: none;
+        }
+
+        .nav-dot.show {
+            display: block;
+        }
+
+        .unread-badge {
+            margin-left: auto;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 5px;
+            border-radius: 9px;
+            background: #ef4444;
+            color: #fff;
+            font-size: 0.68rem;
+            font-weight: 600;
+            line-height: 18px;
+            text-align: center;
+            display: none;
+        }
+
+        .unread-badge.show {
+            display: inline-block;
+        }
+
+        /* ==================== 消息 ==================== */
+        .section-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.6rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .section-toolbar-info {
+            font-size: 0.82rem;
+            color: var(--text-light);
+        }
+
+        .section-toolbar-actions {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+
+        .msg-list,
+        .sub-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .msg-card {
+            background: var(--bg-tag);
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            border-left: 3px solid transparent;
+            cursor: default;
+            transition: background 0.15s;
+        }
+
+        .msg-card.unread {
+            border-left-color: #ef4444;
+            background: var(--accent-light);
+            cursor: pointer;
+        }
+
+        .msg-head {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .msg-title {
+            flex: 1;
+            font-weight: 600;
+            font-size: 0.92rem;
+            color: var(--text-main);
+            word-break: break-word;
+        }
+
+        .msg-time {
+            font-size: 0.72rem;
+            color: var(--text-light);
+            white-space: nowrap;
+        }
+
+        .msg-content {
+            margin-top: 0.4rem;
+            font-size: 0.86rem;
+            color: var(--text-sub);
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .msg-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 0.4rem;
+        }
+
+        /* ==================== 投稿 ==================== */
+        .sub-card {
+            background: var(--bg-tag);
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+        }
+
+        .sub-head {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .sub-name {
+            flex: 1;
+            min-width: 120px;
+            font-weight: 600;
+            font-size: 0.92rem;
+            color: var(--text-orig);
+            word-break: break-word;
+        }
+
+        .sub-name .trans {
+            font-weight: 400;
+            color: var(--text-trans);
+        }
+
+        .sub-status {
+            font-size: 0.72rem;
+            padding: 0.15rem 0.6rem;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        .sub-status.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .sub-status.approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .sub-status.rejected {
+            background: var(--danger-bg);
+            color: var(--danger-text);
+        }
+
+        .sub-meta {
+            margin-top: 0.35rem;
+            font-size: 0.76rem;
+            color: var(--text-light);
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .sub-desc {
+            margin-top: 0.4rem;
+            font-size: 0.84rem;
+            color: var(--text-sub);
+            line-height: 1.55;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .sub-links {
+            margin-top: 0.4rem;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            word-break: break-all;
+            line-height: 1.6;
+        }
+
+        .sub-note {
+            margin-top: 0.5rem;
+            font-size: 0.82rem;
+            color: var(--text-sub);
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 0.4rem 0.6rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .sub-actions {
+            display: flex;
+            gap: 0.4rem;
+            justify-content: flex-end;
+            margin-top: 0.5rem;
+        }
+
+        .gm-tabs {
+            display: inline-flex;
+            gap: 0.3rem;
+            background: var(--bg-tag);
+            padding: 0.2rem;
+            border-radius: 10px;
+            margin-bottom: 0.8rem;
+        }
+
+        .gm-tab {
+            background: transparent;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .gm-tab.active {
+            background: var(--bg-card);
+            color: var(--accent-text);
+            font-weight: 500;
+        }
+
+        .gm-section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.8rem;
+        }
+
+        .gm-section-head h3 {
+            margin-bottom: 0 !important;
+        }
+
+        .gm-stat-card.clickable {
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .gm-stat-card.clickable:hover {
+            background: var(--bg-hover);
+        }
+
+        @media (max-width: 640px) {
+            .modal-field-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .gm-stat-card {
+                min-width: calc(50% - 0.5rem);
+                padding: 0.9rem 0.6rem;
+            }
+
+            .gm-stat-value {
+                font-size: 1.5rem;
+            }
+        }
     </style>
 </head>
 
@@ -1980,11 +2304,21 @@
                 <button class="nav-icon-btn" id="themeToggleBtn" title="切换主题">🌙</button>
                 <button class="nav-icon-btn home" id="homeBtn" style="display:none;" title="返回主页">🏠</button>
                 <div class="menu-wrap">
-                    <button class="nav-icon-btn" id="menuToggleBtn" title="菜单">☰</button>
+                    <button class="nav-icon-btn" id="menuToggleBtn" title="菜单">☰<span class="nav-dot"
+                            id="menuDot"></span></button>
                     <div class="menu-dropdown" id="menuDropdown">
                         <button class="menu-item" id="menuLoginBtn">
                             <span class="menu-item-icon">👤</span>
                             <span id="menuLoginText">注册 / 登录</span>
+                        </button>
+                        <button class="menu-item" id="menuMessagesBtn" style="display:none;">
+                            <span class="menu-item-icon">📬</span>
+                            <span>消息</span>
+                            <span class="unread-badge" id="menuUnreadBadge"></span>
+                        </button>
+                        <button class="menu-item" id="menuSubmitBtn" style="display:none;">
+                            <span class="menu-item-icon">📤</span>
+                            <span>投稿资源</span>
                         </button>
                         <a class="menu-item" id="menuToolBtn" href="https://zanesu154-rgb.github.io/tianji-turn-addon/"
                             target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
@@ -2134,15 +2468,14 @@
                         <span class="account-nav-icon">🔐</span>
                         <span>安全设置</span>
                     </button>
-                    <button class="account-nav-item" data-section="messages">
+                    <button class="account-nav-item" data-section="messages" data-user-only="1">
                         <span class="account-nav-icon">📬</span>
                         <span>消息</span>
-                        <span class="account-nav-badge">未装</span>
+                        <span class="unread-badge" id="msgNavBadge"></span>
                     </button>
-                    <button class="account-nav-item" data-section="my-submissions">
+                    <button class="account-nav-item" data-section="my-submissions" data-user-only="1">
                         <span class="account-nav-icon">📤</span>
                         <span>我的投稿</span>
-                        <span class="account-nav-badge">未装</span>
                     </button>
                     <button class="account-nav-item" data-section="danger">
                         <span class="account-nav-icon">⚠️</span>
@@ -2197,13 +2530,24 @@
                 <!-- 消息 -->
                 <section class="account-section" id="section-messages" style="display:none;">
                     <h2>消息</h2>
-                    <div class="account-empty">消息功能未装，敬请期待～</div>
+                    <div class="section-toolbar">
+                        <span class="section-toolbar-info" id="msgSummary"></span>
+                        <div class="section-toolbar-actions">
+                            <button class="gm-btn" id="msgReadAllBtn">全部已读</button>
+                            <button class="gm-btn danger" id="msgClearReadBtn">清空已读</button>
+                        </div>
+                    </div>
+                    <div class="msg-list" id="msgList"><div class="account-empty">加载中...</div></div>
                 </section>
 
                 <!-- 我的投稿 -->
                 <section class="account-section" id="section-my-submissions" style="display:none;">
                     <h2>我的投稿</h2>
-                    <div class="account-empty">投稿功能未装，敬请期待～</div>
+                    <div class="section-toolbar">
+                        <span class="section-toolbar-info">发现好资源？投稿给栈主，审核通过后会上架到展示区。</span>
+                        <button class="btn btn-primary" id="newSubmissionBtn">➕ 新投稿</button>
+                    </div>
+                    <div class="sub-list" id="mySubList"><div class="account-empty">加载中...</div></div>
                 </section>
 
                 <!-- ⭐ 危险操作 -->
@@ -2225,14 +2569,7 @@
                 <section class="account-section" id="section-gm" style="display:none;">
                     <h2>GM 面板</h2>
 
-                    <!-- 反馈列表 -->
-                    <div class="gm-section">
-                        <h3>收到的反馈 <span id="gmFeedbackCount"
-                                style="font-size:0.8rem;color:var(--text-light);font-weight:400;"></span></h3>
-                        <div class="gm-feedback-list" id="gmFeedbackList">加载中...</div>
-                    </div>
-
-                    <!-- 访客统计 -->
+                    <!-- 访客统计 + 待办 -->
                     <div class="gm-stats">
                         <div class="gm-stat-card">
                             <div class="gm-stat-value" id="gmTodayVisits">-</div>
@@ -2242,6 +2579,32 @@
                             <div class="gm-stat-value" id="gmTotalUsers">-</div>
                             <div class="gm-stat-label">注册用户</div>
                         </div>
+                        <div class="gm-stat-card clickable" data-gm-jump="gmSubSection">
+                            <div class="gm-stat-value" id="gmPendingSubs">-</div>
+                            <div class="gm-stat-label">待审投稿</div>
+                        </div>
+                        <div class="gm-stat-card clickable" data-gm-jump="gmFeedbackSection">
+                            <div class="gm-stat-value" id="gmPendingFeedback">-</div>
+                            <div class="gm-stat-label">待处理反馈</div>
+                        </div>
+                    </div>
+
+                    <!-- 投稿审核 -->
+                    <div class="gm-section" id="gmSubSection">
+                        <h3>投稿审核</h3>
+                        <div class="gm-tabs" id="gmSubTabs">
+                            <button class="gm-tab active" data-status="pending">待审核</button>
+                            <button class="gm-tab" data-status="approved">已通过</button>
+                            <button class="gm-tab" data-status="rejected">已驳回</button>
+                        </div>
+                        <div class="sub-list" id="gmSubList">加载中...</div>
+                    </div>
+
+                    <!-- 反馈列表 -->
+                    <div class="gm-section" id="gmFeedbackSection">
+                        <h3>收到的反馈 <span id="gmFeedbackCount"
+                                style="font-size:0.8rem;color:var(--text-light);font-weight:400;"></span></h3>
+                        <div class="gm-feedback-list" id="gmFeedbackList">加载中...</div>
                     </div>
 
                     <!-- 近 14 天趋势 -->
@@ -2254,7 +2617,10 @@
 
                     <!-- 用户列表 -->
                     <div class="gm-section">
-                        <h3>注册用户列表</h3>
+                        <div class="gm-section-head">
+                            <h3>注册用户列表</h3>
+                            <button class="gm-btn" id="gmBroadcastBtn">📢 群发通知</button>
+                        </div>
                         <div class="gm-user-list" id="gmUserList">加载中...</div>
                     </div>
                 </section>
@@ -2350,15 +2716,24 @@
                 <label>作者</label>
                 <input type="text" id="editAuthor" placeholder="佚名">
             </div>
-            <div class="modal-field">
-                <label>分类</label>
-                <select id="editCategory"
-                    style="width:100%;padding:0.6rem 0.9rem;border:1px solid var(--border-input);border-radius:12px;font-size:0.9rem;background:var(--bg-input);color:var(--text-main);font-family:inherit;">
-                    <option value="addon">附加包</option>
-                    <option value="texture">材质包</option>
-                    <option value="shader">光影</option>
-                    <option value="map">地图</option>
-                </select>
+            <div class="modal-field-row">
+                <div class="modal-field">
+                    <label>分类</label>
+                    <select id="editCategory">
+                        <option value="addon">附加包</option>
+                        <option value="texture">材质包</option>
+                        <option value="shader">光影</option>
+                        <option value="map">地图</option>
+                    </select>
+                </div>
+                <div class="modal-field">
+                    <label>状态</label>
+                    <select id="editStatus">
+                        <option value="todo">待汉化</option>
+                        <option value="doing">汉化中</option>
+                        <option value="done">已汉化（展示）</option>
+                    </select>
+                </div>
             </div>
             <div class="modal-field">
                 <label>简介</label>
@@ -2435,34 +2810,166 @@
         </div>
     </div>
 
-    <!-- ==================== 脚本（保持不变） ==================== -->
-    <script>
-        /* 你原来的脚本不用动 */
-    </script>
-</body>
+    <!-- 投稿弹窗（用户） -->
+    <div class="modal-overlay" id="submitModal">
+        <div class="modal-card wide">
+            <h3>投稿资源</h3>
+            <div class="modal-field">
+                <label>资源名称（英文原名）<span class="required-mark">*</span></label>
+                <input type="text" id="subOriginal" maxlength="200" placeholder="例如：Better On Bedrock">
+            </div>
+            <div class="modal-field-row">
+                <div class="modal-field">
+                    <label>中文译名</label>
+                    <input type="text" id="subTranslated" maxlength="200" placeholder="可选">
+                </div>
+                <div class="modal-field">
+                    <label>分类</label>
+                    <select id="subCategory">
+                        <option value="addon">附加包</option>
+                        <option value="texture">材质包</option>
+                        <option value="shader">光影</option>
+                        <option value="map">地图</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-field">
+                <label>原作者</label>
+                <input type="text" id="subAuthor" maxlength="100" placeholder="不知道可以留空">
+            </div>
+            <div class="modal-field">
+                <label>原版链接</label>
+                <input type="text" id="subOriginalLink" maxlength="1000" placeholder="https://...">
+            </div>
+            <div class="modal-field">
+                <label>汉化版链接</label>
+                <input type="text" id="subTranslationLink" maxlength="1000" placeholder="https://...（原版/汉化至少填一个）">
+            </div>
+            <div class="modal-field">
+                <label>作者主页</label>
+                <input type="text" id="subAuthorLink" maxlength="1000" placeholder="可选">
+            </div>
+            <div class="modal-field">
+                <label>简介</label>
+                <textarea id="subDescription" maxlength="2000" placeholder="简单介绍一下这个资源，以及推荐理由～"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn" id="subCancelBtn" style="background:var(--bg-tag);color:var(--text-main);">取消</button>
+                <button class="btn btn-primary" id="subSubmitBtn">📤 提交投稿</button>
+            </div>
+        </div>
+    </div>
 
+    <!-- 投稿审核弹窗（管理员） -->
+    <div class="modal-overlay" id="reviewModal">
+        <div class="modal-card wide">
+            <h3>审核投稿</h3>
+            <div class="account-hint" id="reviewMeta" style="text-align:center;margin:-0.6rem 0 1rem;"></div>
+            <div class="modal-field">
+                <label>英文原名</label>
+                <input type="text" id="reviewOriginal" maxlength="200">
+            </div>
+            <div class="modal-field-row">
+                <div class="modal-field">
+                    <label>中文译名</label>
+                    <input type="text" id="reviewTranslated" maxlength="200">
+                </div>
+                <div class="modal-field">
+                    <label>作者</label>
+                    <input type="text" id="reviewAuthor" maxlength="100">
+                </div>
+            </div>
+            <div class="modal-field-row">
+                <div class="modal-field">
+                    <label>分类</label>
+                    <select id="reviewCategory">
+                        <option value="addon">附加包</option>
+                        <option value="texture">材质包</option>
+                        <option value="shader">光影</option>
+                        <option value="map">地图</option>
+                    </select>
+                </div>
+                <div class="modal-field">
+                    <label>通过后放到</label>
+                    <select id="reviewStatus">
+                        <option value="done">展示区（已汉化）</option>
+                        <option value="todo">待汉化列表</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-field">
+                <label>原版链接</label>
+                <input type="text" id="reviewOriginalLink" maxlength="1000">
+            </div>
+            <div class="modal-field">
+                <label>汉化链接</label>
+                <input type="text" id="reviewTranslationLink" maxlength="1000">
+            </div>
+            <div class="modal-field">
+                <label>作者直链</label>
+                <input type="text" id="reviewAuthorLink" maxlength="1000">
+            </div>
+            <div class="modal-field">
+                <label>简介</label>
+                <textarea id="reviewDescription" maxlength="5000"></textarea>
+            </div>
+            <div class="modal-field">
+                <label>给投稿人的留言 / 驳回原因</label>
+                <textarea id="reviewNote" maxlength="500" placeholder="可选，会通过站内消息发送给投稿人"
+                    style="min-height:60px;"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-danger" id="reviewRejectBtn">✕ 驳回</button>
+                <button class="btn" id="reviewCancelBtn" style="background:var(--bg-tag);color:var(--text-main);">取消</button>
+                <button class="btn btn-primary" id="reviewApproveBtn">✓ 通过</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 发消息弹窗（管理员：单发 / 群发） -->
+    <div class="modal-overlay" id="composeModal">
+        <div class="modal-card">
+            <h3 id="composeTitle">发送消息</h3>
+            <div class="modal-field">
+                <label>标题</label>
+                <input type="text" id="composeSubject" maxlength="100" placeholder="来自栈主的消息">
+            </div>
+            <div class="modal-field">
+                <label>内容</label>
+                <textarea id="composeContent" maxlength="2000" style="min-height:120px;"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn" id="composeCancelBtn" style="background:var(--bg-tag);color:var(--text-main);">取消</button>
+                <button class="btn btn-primary" id="composeSendBtn">发送</button>
+            </div>
+        </div>
+    </div>
 
 <script>
     (function () {
         // ==================== 配置 ====================
         const API_BASE = 'https://tianji-server-production-d7f3.up.railway.app/api';
         const TOKEN_KEY = 'tianji_token';
-        const QR_KEY = 'tianji_qr_image';
         const THEME_KEY = 'tianji_theme';
         const CACHE_KEY = 'tianji_items_cache';
         const CACHE_TTL = 5 * 60 * 1000; // 5 分钟
+        const UNREAD_POLL_MS = 90 * 1000; // 未读消息轮询间隔
 
         // ==================== 状态 ====================
         let items = [];
-        let qrImageSrc = localStorage.getItem(QR_KEY) || '';
         let searchQuery = '';
         let authToken = localStorage.getItem(TOKEN_KEY) || '';
         let isAdmin = false;
-        let currentUsername = localStorage.getItem('tianji_username') || '';   // ← 加这里
-        let currentRole = localStorage.getItem('tianji_role') || '';   // ⭐
+        let currentUsername = localStorage.getItem('tianji_username') || '';
+        let currentRole = localStorage.getItem('tianji_role') || '';
         let editingItemId = null;
-        let currentCategory = 'all';   // ⭐ 加这里
-        let currentFeedbackItem = { id: '', name: '' };   // ⭐ 加这里
+        let currentCategory = 'all';
+        let currentFeedbackItem = { id: '', name: '' };
+        let unreadCount = 0;
+        let unreadTimer = null;
+        let reviewingSubmission = null;   // 管理员正在审核的投稿
+        let composeTarget = null;         // 发消息对象：{ id, name } 或 'all'
+        let gmSubStatus = 'pending';
 
         const moduleExpanded = {
             pending: false,
@@ -2484,12 +2991,29 @@
         }
 
         // ==================== 工具函数 ====================
+        // 同时转义引号，保证插入到属性值（value="..."、data-*="..."）里也安全
         function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+            if (text === null || text === undefined) return '';
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
         }
+
+        function formatTime(sec) {
+            if (!sec) return '';
+            const d = new Date(Number(sec) * 1000);
+            const diff = (Date.now() - d.getTime()) / 1000;
+            if (diff < 60) return '刚刚';
+            if (diff < 3600) return Math.floor(diff / 60) + ' 分钟前';
+            if (diff < 86400) return Math.floor(diff / 3600) + ' 小时前';
+            if (diff < 7 * 86400) return Math.floor(diff / 86400) + ' 天前';
+            return d.toLocaleDateString();
+        }
+
+        const CATEGORY_LABELS = { addon: '附加包', texture: '材质包', shader: '光影', map: '地图' };
 
         function showToast(text) {
             const toast = document.createElement('div');
@@ -2545,6 +3069,40 @@
             return h;
         }
 
+        // 统一请求：自动带 token、解析 JSON；带 token 却返回 401 时说明登录已失效，自动退出
+        async function api(method, path, body) {
+            let res;
+            try {
+                res = await fetch(API_BASE + path, {
+                    method,
+                    headers: authHeaders(),
+                    body: body === undefined ? undefined : JSON.stringify(body)
+                });
+            } catch (e) {
+                const err = new Error('网络错误，请检查网络后重试');
+                err.network = true;
+                throw err;
+            }
+            let data = null;
+            try { data = await res.json(); } catch (e) { }
+            if (!res.ok) {
+                if (res.status === 401 && authToken) handleSessionExpired();
+                const err = new Error((data && data.error) || `请求失败（${res.status}）`);
+                err.status = res.status;
+                throw err;
+            }
+            return data;
+        }
+
+        let sessionExpiredShown = false;
+        function handleSessionExpired() {
+            if (sessionExpiredShown) return;
+            sessionExpiredShown = true;
+            logout(true);
+            showToast('登录已过期，请重新登录');
+            setTimeout(() => { sessionExpiredShown = false; }, 3000);
+        }
+
         // ==================== 数据缓存 ====================
         function getCachedItems() {
             try {
@@ -2579,22 +3137,20 @@
                 if (cached) {
                     items = cached;
                     render();
-                    // 后台静默刷新
-                    fetchFreshItems();
+                    // 后台静默刷新，拿到新数据后重新渲染
+                    fetchFreshItems().then(changed => { if (changed) render(); });
                     return;
                 }
             }
-
             await fetchFreshItems();
         }
 
+        // 返回数据是否有变化
         async function fetchFreshItems() {
             try {
-                const url = isAdmin ? `${API_BASE}/items?all=1` : `${API_BASE}/items`;
-                const res = await fetch(url, { headers: authHeaders() });
-                if (!res.ok) throw new Error('HTTP ' + res.status);
-                const rows = await res.json();
-                items = rows.map(r => ({
+                const rows = await api('GET', isAdmin ? '/items?all=1' : '/items');
+                const expandedIds = new Set(items.filter(i => i.expanded).map(i => i.id));
+                const next = rows.map(r => ({
                     id: r.id,
                     original: r.original,
                     translated: r.translated,
@@ -2604,80 +3160,60 @@
                     originalLink: r.original_link,
                     description: r.description,
                     status: r.status,
-                    category: r.category || 'addon',   // ⭐
-                    expanded: false
+                    category: r.category || 'addon',
+                    expanded: expandedIds.has(r.id)   // 保留已展开的项目
                 }));
+                const strip = list => JSON.stringify(list.map(({ expanded, ...rest }) => rest));
+                const changed = strip(next) !== strip(items);
+                items = next;
                 if (!isAdmin) setCachedItems(items);
+                return changed;
             } catch (e) {
                 console.error('加载失败', e);
                 if (items.length === 0) {
                     showToast('加载数据失败，请刷新重试');
+                    const doneList = document.getElementById('doneList');
+                    if (doneList && doneList.querySelector('.skeleton-item')) {
+                        doneList.innerHTML = '<div class="empty-msg">加载失败，请刷新页面重试</div>';
+                    }
                 }
+                return false;
             }
         }
 
         async function apiCreate(item) {
-            const res = await fetch(`${API_BASE}/items`, {
-                method: 'POST',
-                headers: authHeaders(),
-                body: JSON.stringify(item)
-            });
-            if (!res.ok) throw new Error('创建失败');
+            const data = await api('POST', '/items', item);
             clearCache();
-            return res.json();
+            return data;
         }
 
         async function apiUpdate(id, fields) {
-            const res = await fetch(`${API_BASE}/items/${id}`, {
-                method: 'PUT',
-                headers: authHeaders(),
-                body: JSON.stringify(fields)
-            });
-            if (!res.ok) throw new Error('更新失败');
+            const data = await api('PUT', `/items/${encodeURIComponent(id)}`, fields);
             clearCache();
-            return res.json();
+            return data;
         }
 
         async function apiDelete(id) {
-            const res = await fetch(`${API_BASE}/items/${id}`, {
-                method: 'DELETE',
-                headers: authHeaders()
-            });
-            if (!res.ok) throw new Error('删除失败');
+            await api('DELETE', `/items/${encodeURIComponent(id)}`);
             clearCache();
         }
 
         async function apiBatchCreate(list) {
-            const res = await fetch(`${API_BASE}/items/batch`, {
-                method: 'POST',
-                headers: authHeaders(),
-                body: JSON.stringify(list)
-            });
-            if (!res.ok) throw new Error('批量导入失败');
+            const data = await api('POST', '/items/batch', list);
             clearCache();
-            return res.json();
+            return data;
         }
 
         async function apiReorder(list) {
-            const res = await fetch(`${API_BASE}/items/reorder`, {
-                method: 'PUT',
-                headers: authHeaders(),
-                body: JSON.stringify(list)
-            });
-            if (!res.ok) throw new Error('排序失败');
+            const data = await api('PUT', '/items/reorder', list);
             clearCache();
-            return res.json();
+            return data;
         }
 
         async function apiBatchUpdate(list) {
-            const res = await fetch(`${API_BASE}/items/batch-update`, {
-                method: 'PUT',
-                headers: authHeaders(),
-                body: JSON.stringify(list)
-            });
-            if (!res.ok) throw new Error('批量更新失败');
+            const data = await api('PUT', '/items/batch-update', list);
             clearCache();
-            return res.json();
+            return data;
         }
 
         // ==================== 公告轮播 ====================
@@ -2858,13 +3394,7 @@
         }
 
         async function saveAnnouncement(value) {
-            const res = await fetch(`${API_BASE}/settings/announcement`, {
-                method: 'PUT',
-                headers: authHeaders(),
-                body: JSON.stringify({ value })
-            });
-            if (!res.ok) throw new Error('保存失败');
-            return res.json();
+            return api('PUT', '/settings/announcement', { value });
         }
 
         // ==================== 渲染 ====================
@@ -3009,21 +3539,22 @@
 
 
                 html += `
-                    <div class="item" data-id="${item.id}">
+                    <div class="item" data-id="${escapeHtml(item.id)}">
                         <div class="item-top">
-                            ${isAdmin ? `<span class="drag-handle" draggable="true" data-id="${item.id}" title="拖动排序">⋮⋮</span>` : ''}
-                            ${!isDone ? `<span class="status-icon ${iconClass}" data-action="cycle-status" data-id="${item.id}" title="点击切换状态">${iconContent}</span>` : ''}
+                            ${isAdmin ? `<span class="drag-handle" draggable="true" data-id="${escapeHtml(item.id)}" title="拖动排序">⋮⋮</span>` : ''}
+                            ${!isDone ? `<span class="status-icon ${iconClass}" data-action="cycle-status" data-id="${escapeHtml(item.id)}" title="点击切换状态">${iconContent}</span>` : ''}
                             <div class="item-name">
-                            ${!isAdmin && authToken ? `<button class="feedback-btn" data-action="feedback" data-id="${item.id}" data-name="${escapeHtml(orig)}" title="反馈">💬</button>` : ''}
-                            ${nameHtml}
-                        </div>
+                                ${!isAdmin && isDone ? `<button class="feedback-btn" data-action="feedback" data-id="${escapeHtml(item.id)}" data-name="${escapeHtml(orig)}" title="反馈">💬</button>` : ''}
+                                ${nameHtml}
+                            </div>
                         </div>
                         <div class="item-bottom">
                             <span class="author-name">${escapeHtml(authorDisplay)}</span>
-                            ${isAdmin ? `<button class="edit-icon-btn" data-action="edit-item" data-id="${item.id}" title="编辑">✏️</button>` : ''}
-                            <button class="expand-btn" data-action="expand" data-id="${item.id}">${item.expanded ? '▲' : '▼'}</button>
+                            ${isAdmin ? `<button class="edit-icon-btn" data-action="edit-item" data-id="${escapeHtml(item.id)}" title="编辑">✏️</button>` : ''}
+                            <button class="expand-btn" data-action="expand" data-id="${escapeHtml(item.id)}">${item.expanded ? '▲' : '▼'}</button>
                         </div>
-                        <div class="item-details" data-details-id="${item.id}"></div>
+                        <div class="item-details${item.expanded ? ' show' : ''}" data-details-id="${escapeHtml(item.id)}"
+                            ${item.expanded ? 'data-loaded="1" style="max-height:none"' : ''}>${item.expanded ? buildDetailsHtml(item) : ''}</div>
                     </div>
                 `;
             });
@@ -3049,15 +3580,15 @@
             linkFields.forEach(({ label, field }) => {
                 const val = item[field] || '';
                 const readonlyHtml = isAdmin
-                    ? `<input type="text" class="detail-input" data-field="${field}" data-id="${item.id}" value="${escapeHtml(val)}" placeholder="https://...">`
+                    ? `<input type="text" class="detail-input" data-field="${field}" data-id="${escapeHtml(item.id)}" value="${escapeHtml(val)}" placeholder="https://...">`
                     : `<div class="detail-readonly">${val ? escapeHtml(val) : '<span style="color:var(--text-light);">未填写</span>'}</div>`;
                 detailsHtml += `
             <div class="detail-row">
                 <span class="detail-label">${label}</span>
                 ${readonlyHtml}
                 <div class="btn-group">
-                    <button class="copy-btn" data-copy="${field}" data-id="${item.id}">📋 复制</button>
-                    <a class="open-btn" href="javascript:void(0)" data-action="open-link" data-id="${item.id}" data-field="${field}">🔗 跳转</a>
+                    <button class="copy-btn" data-copy="${field}" data-id="${escapeHtml(item.id)}">📋 复制</button>
+                    <a class="open-btn" href="javascript:void(0)" data-action="open-link" data-id="${escapeHtml(item.id)}" data-field="${field}">🔗 跳转</a>
                 </div>
             </div>
         `;
@@ -3104,7 +3635,7 @@
                     setTimeout(() => openEditModal(id), 100);
                 }
             } catch (e) {
-                showToast('操作失败');
+                showToast(e.message || '操作失败');
             }
         }
 
@@ -3172,12 +3703,17 @@
             document.getElementById('editAuthor').value = item.author || '佚名';
             document.getElementById('editDescription').value = item.description || '';
             document.getElementById('editCategory').value = item.category || 'addon';
-
-            const isDone = item.status === STATUS.DONE;
-            document.getElementById('editTranslatedField').style.display = isDone ? 'block' : 'none';
+            document.getElementById('editStatus').value = item.status || STATUS.TODO;
+            syncEditTranslatedField();
 
             document.getElementById('editModal').classList.add('show');
             document.getElementById('editOriginal').focus();
+        }
+
+        // 只有「已汉化」状态才需要填写中文译名
+        function syncEditTranslatedField() {
+            const isDone = document.getElementById('editStatus').value === STATUS.DONE;
+            document.getElementById('editTranslatedField').style.display = isDone ? 'block' : 'none';
         }
 
         function closeEditModal() {
@@ -3194,11 +3730,10 @@
                 original: document.getElementById('editOriginal').value.trim() || item.original,
                 author: document.getElementById('editAuthor').value.trim() || '佚名',
                 description: document.getElementById('editDescription').value.trim(),
-                category: document.getElementById('editCategory').value   // ⭐
+                category: document.getElementById('editCategory').value,
+                status: document.getElementById('editStatus').value,
+                translated: document.getElementById('editTranslated').value.trim()
             };
-            if (item.status === STATUS.DONE) {
-                fields.translated = document.getElementById('editTranslated').value.trim();
-            }
 
             try {
                 await apiUpdate(editingItemId, fields);
@@ -3222,7 +3757,7 @@
                 render();
                 showToast('已保存');
             } catch (e) {
-                showToast('保存失败');
+                showToast(e.message || '保存失败');
             }
         }
 
@@ -3361,50 +3896,257 @@
         }
 
         // ==================== 登录 ====================
+        function isLoggedIn() {
+            return !!(authToken && currentUsername);
+        }
+
+        // 普通注册用户（管理员没有消息/投稿）
+        function isRegularUser() {
+            return isLoggedIn() && currentRole !== 'admin';
+        }
+
         function updateLoginUI() {
             const toolbar = document.getElementById('adminToolbar');
             const annEditBtn = document.getElementById('announcementEditBtn');
             const loginText = document.getElementById('menuLoginText');
-            const loginIcon = document.querySelector('#menuLoginBtn .menu-item-icon');
 
-            if (authToken && currentUsername) {
-                // 登录后显示用户名 + 角色标识
+            if (isLoggedIn()) {
                 loginText.textContent = currentUsername + (currentRole === 'admin' ? ' (管理员)' : '');
-                loginIcon.textContent = '👤';
-                // 只有管理员才显示管理工具栏和公告编辑
                 toolbar.style.display = isAdmin ? '' : 'none';
                 if (annEditBtn) annEditBtn.style.display = isAdmin ? '' : 'none';
             } else {
                 loginText.textContent = '登录 / 注册';
-                loginIcon.textContent = '👤';
                 toolbar.style.display = 'none';
                 if (annEditBtn) annEditBtn.style.display = 'none';
             }
+
+            const regular = isRegularUser();
+            document.getElementById('menuMessagesBtn').style.display = regular ? '' : 'none';
+            document.getElementById('menuSubmitBtn').style.display = regular ? '' : 'none';
+            if (!regular) setUnread(0);
+        }
+
+        function saveSession(token, username, role) {
+            authToken = token;
+            currentUsername = username;
+            currentRole = role || 'user';
+            isAdmin = currentRole === 'admin';
+            try {
+                localStorage.setItem(TOKEN_KEY, authToken);
+                localStorage.setItem('tianji_username', currentUsername);
+                localStorage.setItem('tianji_role', currentRole);
+            } catch (e) { }
+        }
+
+        function clearSession() {
+            authToken = '';
+            isAdmin = false;
+            currentUsername = '';
+            currentRole = '';
+            try {
+                localStorage.removeItem(TOKEN_KEY);
+                localStorage.removeItem('tianji_username');
+                localStorage.removeItem('tianji_role');
+            } catch (e) { }
         }
 
         async function tryLogin() {
-            if (!authToken) return;
-            try {
-                const res = await fetch(`${API_BASE}/users/me`, {
-                    headers: authHeaders()
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    currentUsername = data.username;
-                    currentRole = data.role;
-                    isAdmin = data.role === 'admin';
-                    localStorage.setItem('tianji_username', currentUsername);
-                    localStorage.setItem('tianji_role', currentRole);
-                } else {
-                    authToken = '';
-                    currentRole = '';
-                    localStorage.removeItem(TOKEN_KEY);
-                    localStorage.removeItem('tianji_role');
-                }
-            } catch (e) {
-                // 网络错误，暂不处理
+            if (!authToken) {
+                clearSession();
+                return;
             }
-            updateLoginUI();
+            // 先按本地记录的角色显示，避免网络慢时管理员界面闪烁
+            isAdmin = currentRole === 'admin';
+            try {
+                const data = await api('GET', '/users/me');
+                saveSession(authToken, data.username, data.role);
+            } catch (e) {
+                if (e.status === 401) clearSession();
+                // 网络错误：保留本地登录状态，稍后再试
+            }
+        }
+
+        // ==================== 未读消息 ====================
+        function setUnread(n) {
+            unreadCount = Math.max(0, Number(n) || 0);
+            const text = unreadCount > 99 ? '99+' : String(unreadCount);
+            ['menuUnreadBadge', 'msgNavBadge'].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.textContent = text;
+                el.classList.toggle('show', unreadCount > 0);
+            });
+            document.getElementById('menuDot').classList.toggle('show', unreadCount > 0);
+        }
+
+        async function refreshUnread() {
+            if (!isRegularUser()) return;
+            try {
+                const data = await api('GET', '/messages/unread-count');
+                setUnread(data.unread);
+            } catch (e) { }
+        }
+
+        function startUnreadPolling() {
+            stopUnreadPolling();
+            if (!isRegularUser()) return;
+            refreshUnread();
+            unreadTimer = setInterval(() => {
+                if (document.visibilityState === 'visible') refreshUnread();
+            }, UNREAD_POLL_MS);
+        }
+
+        function stopUnreadPolling() {
+            if (unreadTimer) clearInterval(unreadTimer);
+            unreadTimer = null;
+        }
+
+        // ==================== 消息页 ====================
+        let messages = [];
+
+        async function loadMessages() {
+            const listEl = document.getElementById('msgList');
+            try {
+                const data = await api('GET', '/messages');
+                messages = data.list || [];
+                setUnread(data.unread);
+                renderMessages();
+            } catch (e) {
+                listEl.innerHTML = `<div class="account-empty">${escapeHtml(e.message || '加载失败')}</div>`;
+            }
+        }
+
+        function renderMessages() {
+            const listEl = document.getElementById('msgList');
+            const summary = document.getElementById('msgSummary');
+            summary.textContent = messages.length ? `共 ${messages.length} 条，${unreadCount} 条未读` : '';
+            document.getElementById('msgReadAllBtn').disabled = unreadCount === 0;
+            if (!messages.length) {
+                listEl.innerHTML = '<div class="account-empty">还没有消息～<br>反馈被处理、投稿被审核时会在这里通知你</div>';
+                return;
+            }
+            const icons = { feedback: '💬', submission: '📤', admin: '📢', system: '🔔' };
+            listEl.innerHTML = messages.map(m => `
+                <div class="msg-card ${m.is_read ? '' : 'unread'}" data-msg-id="${escapeHtml(m.id)}">
+                    <div class="msg-head">
+                        <span>${icons[m.type] || '🔔'}</span>
+                        <span class="msg-title">${escapeHtml(m.title)}</span>
+                        <span class="msg-time" title="${escapeHtml(new Date(m.created_at * 1000).toLocaleString())}">${formatTime(m.created_at)}</span>
+                    </div>
+                    ${m.content ? `<div class="msg-content">${escapeHtml(m.content)}</div>` : ''}
+                    <div class="msg-actions">
+                        <button class="gm-btn danger" data-msg-delete="${escapeHtml(m.id)}">删除</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function markMessageRead(id) {
+            const m = messages.find(x => x.id === id);
+            if (!m || m.is_read) return;
+            m.is_read = 1;
+            setUnread(unreadCount - 1);
+            renderMessages();
+            try { await api('PUT', `/messages/${encodeURIComponent(id)}/read`); } catch (e) { }
+        }
+
+        // ==================== 我的投稿 ====================
+        const SUB_STATUS = {
+            pending: ['pending', '⏳ 待审核'],
+            approved: ['approved', '✅ 已通过'],
+            rejected: ['rejected', '✕ 未通过']
+        };
+
+        function subLinksHtml(s) {
+            const links = [
+                ['原版', s.original_link], ['汉化', s.translation_link], ['作者', s.author_link]
+            ].filter(([, v]) => v);
+            if (!links.length) return '';
+            return `<div class="sub-links">${links.map(([k, v]) => `${k}：${escapeHtml(v)}`).join('<br>')}</div>`;
+        }
+
+        function subCardHtml(s, actionsHtml) {
+            const [cls, label] = SUB_STATUS[s.status] || SUB_STATUS.pending;
+            return `
+                <div class="sub-card">
+                    <div class="sub-head">
+                        <span class="sub-name">${escapeHtml(s.original)}${s.translated ? ` <span class="trans">（${escapeHtml(s.translated)}）</span>` : ''}</span>
+                        <span class="sub-status ${cls}">${label}</span>
+                    </div>
+                    <div class="sub-meta">
+                        <span>${CATEGORY_LABELS[s.category] || '附加包'}</span>
+                        <span>作者：${escapeHtml(s.author || '佚名')}</span>
+                        ${isAdmin ? `<span>投稿人：${escapeHtml(s.username)}</span>` : ''}
+                        <span>${formatTime(s.created_at)}</span>
+                    </div>
+                    ${s.description ? `<div class="sub-desc">${escapeHtml(s.description)}</div>` : ''}
+                    ${subLinksHtml(s)}
+                    ${s.review_note ? `<div class="sub-note">${s.status === 'rejected' ? '驳回原因' : '栈主留言'}：${escapeHtml(s.review_note)}</div>` : ''}
+                    ${actionsHtml ? `<div class="sub-actions">${actionsHtml}</div>` : ''}
+                </div>`;
+        }
+
+        async function loadMySubmissions() {
+            const listEl = document.getElementById('mySubList');
+            try {
+                const list = await api('GET', '/submissions/mine');
+                if (!list.length) {
+                    listEl.innerHTML = '<div class="account-empty">还没有投稿，点右上角「新投稿」分享你发现的好资源吧～</div>';
+                    return;
+                }
+                listEl.innerHTML = list.map(s => subCardHtml(s,
+                    s.status === 'pending' ? `<button class="gm-btn danger" data-sub-withdraw="${escapeHtml(s.id)}">撤回</button>` : ''
+                )).join('');
+            } catch (e) {
+                listEl.innerHTML = `<div class="account-empty">${escapeHtml(e.message || '加载失败')}</div>`;
+            }
+        }
+
+        const SUB_FIELDS = ['subOriginal', 'subTranslated', 'subAuthor', 'subOriginalLink', 'subTranslationLink', 'subAuthorLink', 'subDescription'];
+
+        function openSubmitModal() {
+            if (!isLoggedIn()) {
+                showToast('请先登录后再投稿');
+                openLoginModal();
+                return;
+            }
+            if (!isRegularUser()) {
+                showToast('管理员请直接用「导入项目」添加');
+                return;
+            }
+            SUB_FIELDS.forEach(id => { document.getElementById(id).value = ''; });
+            document.getElementById('subCategory').value = 'addon';
+            document.getElementById('submitModal').classList.add('show');
+            setTimeout(() => document.getElementById('subOriginal').focus(), 100);
+        }
+
+        async function submitSubmission() {
+            const v = id => document.getElementById(id).value.trim();
+            const body = {
+                original: v('subOriginal'),
+                translated: v('subTranslated'),
+                author: v('subAuthor'),
+                category: document.getElementById('subCategory').value,
+                originalLink: v('subOriginalLink'),
+                translationLink: v('subTranslationLink'),
+                authorLink: v('subAuthorLink'),
+                description: v('subDescription')
+            };
+            if (!body.original) { showToast('请填写资源名称'); return; }
+            if (!body.originalLink && !body.translationLink) { showToast('原版链接和汉化链接至少填一个'); return; }
+
+            const btn = document.getElementById('subSubmitBtn');
+            btn.disabled = true;
+            try {
+                await api('POST', '/submissions', body);
+                document.getElementById('submitModal').classList.remove('show');
+                showToast('投稿成功，等待栈主审核～');
+                if (currentPage === 'account') loadMySubmissions();
+            } catch (e) {
+                showToast(e.message || '投稿失败');
+            } finally {
+                btn.disabled = false;
+            }
         }
 
         // ==================== 登录 / 注册 ====================
@@ -3414,7 +4156,6 @@
             document.getElementById('registerUsername').value = '';
             document.getElementById('registerPassword').value = '';
             document.getElementById('registerConfirm').value = '';
-            // 默认显示登录 tab
             switchAuthTab('login');
             document.getElementById('loginModal').classList.add('show');
             setTimeout(() => document.getElementById('loginUsername').focus(), 100);
@@ -3432,348 +4173,496 @@
             document.getElementById('panel-register').style.display = tab === 'register' ? '' : 'none';
         }
 
+        async function afterAuthSuccess(toastText) {
+            closeLoginModal();
+            updateLoginUI();
+            startUnreadPolling();
+            showToast(toastText);
+            await loadItems(false);
+            render();
+        }
+
+        let authBusy = false;
+
         async function submitLogin() {
+            if (authBusy) return;
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value;
             if (!username || !password) {
                 showToast('请填写用户名和密码');
                 return;
             }
+            authBusy = true;
             try {
-                const res = await fetch(`${API_BASE}/users/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-                const data = await res.json();
-                if (data.token) {
-                    authToken = data.token;
-                    currentUsername = data.username || username;
-                    currentRole = data.role || 'user';   // ⭐ 记录角色
-                    localStorage.setItem(TOKEN_KEY, authToken);
-                    localStorage.setItem('tianji_username', currentUsername);
-                    localStorage.setItem('tianji_role', currentRole);
-                    isAdmin = currentRole === 'admin';
-                    closeLoginModal();
-                    updateLoginUI();
-                    await loadItems(false);
-                    render();
-                    showToast(currentRole === 'admin' ? '管理员登录成功' : '登录成功');
-                } else {
-                    showToast(data.error || '登录失败');
-                }
+                const data = await api('POST', '/users/login', { username, password });
+                saveSession(data.token, data.username || username, data.role);
+                await afterAuthSuccess(currentRole === 'admin' ? '管理员登录成功' : '登录成功');
             } catch (e) {
-                showToast('网络错误');
+                showToast(e.message || '登录失败');
+            } finally {
+                authBusy = false;
             }
         }
 
         async function submitRegister() {
+            if (authBusy) return;
             const username = document.getElementById('registerUsername').value.trim();
             const password = document.getElementById('registerPassword').value;
             const confirm = document.getElementById('registerConfirm').value;
 
-            if (!username || !password || !confirm) {
-                showToast('请填写完整');
-                return;
-            }
-            if (password !== confirm) {
-                showToast('两次输入的密码不一致');
-                return;
-            }
-            if (password.length < 6) {
-                showToast('密码至少 6 位');
-                return;
-            }
+            if (!username || !password || !confirm) { showToast('请填写完整'); return; }
+            if (username.length < 2 || username.length > 20) { showToast('用户名长度 2-20 个字符'); return; }
+            if (!/^[\w一-龥]+$/.test(username)) { showToast('用户名只能包含字母、数字、下划线、中文'); return; }
+            if (password !== confirm) { showToast('两次输入的密码不一致'); return; }
+            if (password.length < 6) { showToast('密码至少 6 位'); return; }
 
+            authBusy = true;
             try {
-                const res = await fetch(`${API_BASE}/users/register`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-                const data = await res.json();
-                if (data.token) {
-                    // 注册成功 = 自动登录
-                    authToken = data.token;
-                    currentUsername = data.username || username;
-                    currentRole = data.role || 'user';
-                    localStorage.setItem(TOKEN_KEY, authToken);
-                    localStorage.setItem('tianji_username', currentUsername);
-                    localStorage.setItem('tianji_role', currentRole);
-                    isAdmin = currentRole === 'admin';
-                    closeLoginModal();
-                    updateLoginUI();
-                    await loadItems(false);
-                    render();
-                    showToast('注册成功，已自动登录');
-                } else {
-                    showToast(data.error || '注册失败');
-                }
+                const data = await api('POST', '/users/register', { username, password });
+                saveSession(data.token, data.username || username, data.role);
+                await afterAuthSuccess('注册成功，已自动登录');
             } catch (e) {
-                showToast('网络错误');
+                showToast(e.message || '注册失败');
+            } finally {
+                authBusy = false;
             }
         }
 
-        function logout() {
-            authToken = '';
-            isAdmin = false;
-            currentUsername = '';
-            currentRole = '';
-            localStorage.removeItem(TOKEN_KEY);
-            localStorage.removeItem('tianji_username');
-            localStorage.removeItem('tianji_role');
+        function logout(silent) {
+            clearSession();
+            stopUnreadPolling();
+            messages = [];
             updateLoginUI();
             loadItems(true).then(render);
             showPage('home');
-            showToast('已退出');
+            if (!silent) showToast('已退出');
+        }
+
+        // ==================== 事件绑定 ====================
+        // ==================== GM 面板 ====================
+        async function loadGmData() {
+            await Promise.all([loadGmStats(), loadGmSubmissions(), loadGmFeedback(), loadGmUsers()]);
+        }
+
+        async function loadGmStats() {
+            try {
+                const data = await api('GET', '/gm/visits');
+                document.getElementById('gmTodayVisits').textContent = data.today;
+                document.getElementById('gmTotalUsers').textContent = data.totalUsers;
+                document.getElementById('gmPendingSubs').textContent = data.pendingSubmissions ?? 0;
+                document.getElementById('gmPendingFeedback').textContent = data.pendingFeedback ?? 0;
+                renderVisitChart(data.trend);
+            } catch (e) {
+                console.error('加载访客数据失败', e);
+            }
+        }
+
+        let gmSubmissions = [];
+
+        async function loadGmSubmissions() {
+            const listEl = document.getElementById('gmSubList');
+            try {
+                gmSubmissions = await api('GET', `/submissions/all?status=${gmSubStatus}`);
+                if (!gmSubmissions.length) {
+                    const empty = { pending: '没有待审核的投稿 🎉', approved: '还没有通过的投稿', rejected: '还没有驳回的投稿' };
+                    listEl.innerHTML = `<div class="account-empty">${empty[gmSubStatus]}</div>`;
+                    return;
+                }
+                listEl.innerHTML = gmSubmissions.map(s => subCardHtml(s,
+                    s.status === 'pending'
+                        ? `<button class="gm-btn" data-sub-review="${escapeHtml(s.id)}">审核</button>`
+                        : `<button class="gm-btn danger" data-sub-delete="${escapeHtml(s.id)}">删除记录</button>`
+                )).join('');
+            } catch (e) {
+                listEl.innerHTML = `<div class="account-empty">${escapeHtml(e.message || '加载失败')}</div>`;
+            }
+        }
+
+        const REVIEW_FIELDS = {
+            reviewOriginal: 'original', reviewTranslated: 'translated', reviewAuthor: 'author',
+            reviewOriginalLink: 'original_link', reviewTranslationLink: 'translation_link',
+            reviewAuthorLink: 'author_link', reviewDescription: 'description'
+        };
+
+        function openReviewModal(id) {
+            const s = gmSubmissions.find(x => x.id === id);
+            if (!s) return;
+            reviewingSubmission = s;
+            Object.entries(REVIEW_FIELDS).forEach(([elId, key]) => {
+                document.getElementById(elId).value = s[key] || '';
+            });
+            document.getElementById('reviewCategory').value = s.category || 'addon';
+            document.getElementById('reviewStatus').value = (s.translation_link || s.translated) ? 'done' : 'todo';
+            document.getElementById('reviewNote').value = '';
+            document.getElementById('reviewMeta').textContent = `投稿人：${s.username} · ${new Date(s.created_at * 1000).toLocaleString()}`;
+            document.getElementById('reviewModal').classList.add('show');
+        }
+
+        function closeReviewModal() {
+            document.getElementById('reviewModal').classList.remove('show');
+            reviewingSubmission = null;
+        }
+
+        async function approveSubmission() {
+            if (!reviewingSubmission) return;
+            const v = id => document.getElementById(id).value.trim();
+            const body = {
+                original: v('reviewOriginal'),
+                translated: v('reviewTranslated'),
+                author: v('reviewAuthor'),
+                category: document.getElementById('reviewCategory').value,
+                originalLink: v('reviewOriginalLink'),
+                translationLink: v('reviewTranslationLink'),
+                authorLink: v('reviewAuthorLink'),
+                description: v('reviewDescription'),
+                status: document.getElementById('reviewStatus').value,
+                note: v('reviewNote')
+            };
+            if (!body.original) { showToast('英文原名不能为空'); return; }
+            try {
+                await api('PUT', `/submissions/${encodeURIComponent(reviewingSubmission.id)}/approve`, body);
+                closeReviewModal();
+                showToast('已通过并上架');
+                loadGmSubmissions();
+                loadGmStats();
+                await loadItems(false);
+                render();
+            } catch (e) {
+                showToast(e.message || '操作失败');
+            }
+        }
+
+        async function rejectSubmission() {
+            if (!reviewingSubmission) return;
+            const reason = document.getElementById('reviewNote').value.trim();
+            if (!reason && !confirm('没有填写驳回原因，确定直接驳回吗？')) return;
+            try {
+                await api('PUT', `/submissions/${encodeURIComponent(reviewingSubmission.id)}/reject`, { reason });
+                closeReviewModal();
+                showToast('已驳回');
+                loadGmSubmissions();
+                loadGmStats();
+            } catch (e) {
+                showToast(e.message || '操作失败');
+            }
+        }
+
+        async function loadGmFeedback() {
+            const listEl = document.getElementById('gmFeedbackList');
+            const countEl = document.getElementById('gmFeedbackCount');
+            try {
+                const list = await api('GET', '/feedback/all');
+                const pendingCount = list.filter(f => f.status === 'pending').length;
+                countEl.textContent = `（待处理 ${pendingCount} / 共 ${list.length}）`;
+                if (list.length === 0) {
+                    listEl.innerHTML = '<div class="account-empty">暂无反馈</div>';
+                    return;
+                }
+                listEl.innerHTML = list.map(f => {
+                    const resolved = f.status === 'resolved';
+                    return `
+                        <div class="gm-feedback-card ${resolved ? 'resolved' : ''}">
+                            <div class="gm-feedback-meta">
+                                <span>👤 ${escapeHtml(f.username)}</span>
+                                <span>📦 <span class="gm-feedback-item-name">${escapeHtml(f.item_name)}</span></span>
+                                <span>🕐 ${escapeHtml(new Date(f.created_at * 1000).toLocaleString())}</span>
+                                ${resolved ? '<span style="color:#16a34a;">✅ 已处理</span>' : ''}
+                            </div>
+                            <div class="gm-feedback-content">${escapeHtml(f.content)}</div>
+                            ${f.reply ? `<div class="gm-feedback-reply">回复：${escapeHtml(f.reply)}</div>` : ''}
+                            <div class="gm-feedback-actions">
+                                ${!resolved ? `<button class="gm-btn" data-fb-resolve="${escapeHtml(f.id)}">回复并处理</button>` : ''}
+                                <button class="gm-btn danger" data-fb-delete="${escapeHtml(f.id)}">删除</button>
+                            </div>
+                        </div>`;
+                }).join('');
+            } catch (e) {
+                listEl.innerHTML = `<div class="account-empty">${escapeHtml(e.message || '加载失败')}</div>`;
+            }
+        }
+
+        async function loadGmUsers() {
+            const listEl = document.getElementById('gmUserList');
+            try {
+                const users = await api('GET', '/gm/users');
+                if (users.length === 0) {
+                    listEl.innerHTML = '<div style="padding:1rem;color:var(--text-light);text-align:center;">暂无注册用户</div>';
+                    return;
+                }
+                listEl.innerHTML = users.map(u => `
+                    <div class="gm-user-row">
+                        <span class="gm-user-name">${escapeHtml(u.username)}</span>
+                        <span class="gm-user-role ${u.role === 'admin' ? 'admin' : ''}">${u.role === 'admin' ? '管理员' : '普通用户'}</span>
+                        <span class="gm-user-date">${escapeHtml(new Date(u.created_at * 1000).toLocaleDateString())}</span>
+                        <div class="gm-user-actions">
+                            <button class="gm-btn" data-gm-message="${escapeHtml(u.id)}" data-gm-name="${escapeHtml(u.username)}">发消息</button>
+                            <button class="gm-btn" data-gm-reset="${escapeHtml(u.id)}" data-gm-name="${escapeHtml(u.username)}">重置密码</button>
+                            <button class="gm-btn danger" data-gm-delete="${escapeHtml(u.id)}" data-gm-name="${escapeHtml(u.username)}">删除</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                listEl.innerHTML = `<div class="account-empty">${escapeHtml(e.message || '加载失败')}</div>`;
+            }
+        }
+
+        function renderVisitChart(trend) {
+            const svg = document.getElementById('gmChart');
+            if (!svg || !trend || trend.length < 2) return;
+
+            const W = 600, H = 180;
+            const padding = { top: 20, right: 20, bottom: 30, left: 30 };
+            const chartW = W - padding.left - padding.right;
+            const chartH = H - padding.top - padding.bottom;
+            // 刻度取整：每格 step 个访客，保证 5 条网格线的数值都是不重复的整数
+            const rawMax = Math.max(...trend.map(t => t.count), 1);
+            const step = Math.ceil(rawMax / 4);
+            const maxCount = step * 4;
+
+            const points = trend.map((t, i) => ({
+                x: padding.left + (i / (trend.length - 1)) * chartW,
+                y: padding.top + chartH - (t.count / maxCount) * chartH,
+                ...t
+            }));
+            const polylinePoints = points.map(p => `${p.x},${p.y}`).join(' ');
+            const areaPoints = `${padding.left},${padding.top + chartH} ${polylinePoints} ${padding.left + chartW},${padding.top + chartH}`;
+
+            let gridLines = '';
+            for (let i = 0; i <= 4; i++) {
+                const y = padding.top + (chartH / 4) * i;
+                gridLines += `<line class="grid" x1="${padding.left}" y1="${y}" x2="${padding.left + chartW}" y2="${y}" />
+                    <text x="${padding.left - 4}" y="${y + 3}" text-anchor="end">${maxCount - step * i}</text>`;
+            }
+
+            let dots = '';
+            let labels = '';
+            const last = points.length - 1;
+            points.forEach((p, i) => {
+                dots += `<circle cx="${p.x}" cy="${p.y}" r="3"><title>${p.date}：${p.count} 位访客</title></circle>`;
+                if (i % 3 === 0 || i === last) {
+                    labels += `<text x="${p.x}" y="${H - 8}" text-anchor="middle">${p.date.slice(5)}</text>`;
+                }
+            });
+
+            svg.innerHTML = `${gridLines}<polygon class="chart-area" points="${areaPoints}" /><polyline points="${polylinePoints}" />${dots}${labels}`;
+        }
+
+        function openCompose(target) {
+            composeTarget = target;
+            document.getElementById('composeTitle').textContent =
+                target === 'all' ? '群发通知（所有注册用户）' : `发消息给「${target.name}」`;
+            document.getElementById('composeSubject').value = target === 'all' ? '站点通知' : '';
+            document.getElementById('composeContent').value = '';
+            document.getElementById('composeModal').classList.add('show');
+            setTimeout(() => document.getElementById('composeContent').focus(), 100);
+        }
+
+        async function sendCompose() {
+            const title = document.getElementById('composeSubject').value.trim();
+            const content = document.getElementById('composeContent').value.trim();
+            if (!content) { showToast('请填写消息内容'); return; }
+            try {
+                if (composeTarget === 'all') {
+                    if (!confirm('确定发送给所有注册用户吗？')) return;
+                    const data = await api('POST', '/gm/broadcast', { title, content });
+                    showToast(`已发送给 ${data.count} 位用户`);
+                } else {
+                    await api('POST', `/gm/users/${encodeURIComponent(composeTarget.id)}/message`, { title, content });
+                    showToast('消息已发送');
+                }
+                document.getElementById('composeModal').classList.remove('show');
+            } catch (e) {
+                showToast(e.message || '发送失败');
+            }
         }
 
         // ==================== 事件绑定 ====================
         function setupEvents() {
-            // ========== GM 面板 ==========
-            const gmNavBtn = document.getElementById('gmNavBtn');
-            if (gmNavBtn) {
-                gmNavBtn.addEventListener('click', () => {
-                    loadGmData();
+            // ---------- GM 面板 ----------
+            document.getElementById('gmNavBtn').addEventListener('click', loadGmData);
+
+            document.getElementById('gmSubTabs').addEventListener('click', (e) => {
+                const tab = e.target.closest('.gm-tab');
+                if (!tab) return;
+                gmSubStatus = tab.dataset.status;
+                document.querySelectorAll('#gmSubTabs .gm-tab').forEach(t => t.classList.toggle('active', t === tab));
+                loadGmSubmissions();
+            });
+
+            document.getElementById('gmSubList').addEventListener('click', async (e) => {
+                const reviewBtn = e.target.closest('[data-sub-review]');
+                if (reviewBtn) { openReviewModal(reviewBtn.dataset.subReview); return; }
+                const delBtn = e.target.closest('[data-sub-delete]');
+                if (delBtn) {
+                    if (!confirm('删除这条投稿记录？（已上架的项目不受影响）')) return;
+                    try {
+                        await api('DELETE', `/submissions/${encodeURIComponent(delBtn.dataset.subDelete)}`);
+                        loadGmSubmissions();
+                    } catch (err) { showToast(err.message); }
+                }
+            });
+
+            document.querySelectorAll('[data-gm-jump]').forEach(card => {
+                card.addEventListener('click', () => {
+                    const target = document.getElementById(card.dataset.gmJump);
+                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 });
-            }
+            });
 
+            document.getElementById('reviewApproveBtn').addEventListener('click', approveSubmission);
+            document.getElementById('reviewRejectBtn').addEventListener('click', rejectSubmission);
+            document.getElementById('reviewCancelBtn').addEventListener('click', closeReviewModal);
 
-
-            async function loadGmData() {
-                // 加载反馈
-                try {
-                    const res = await fetch(`${API_BASE}/feedback/all`, { headers: authHeaders() });
-                    if (res.ok) {
-                        const list = await res.json();
-                        const listEl = document.getElementById('gmFeedbackList');
-                        const countEl = document.getElementById('gmFeedbackCount');
-                        const pendingCount = list.filter(f => f.status === 'pending').length;
-                        countEl.textContent = `（待处理 ${pendingCount} / 共 ${list.length}）`;
-
-                        if (list.length === 0) {
-                            listEl.innerHTML = '<div class="account-empty">暂无反馈</div>';
-                        } else {
-                            listEl.innerHTML = list.map(f => {
-                                const date = new Date(f.created_at * 1000).toLocaleString();
-                                const resolved = f.status === 'resolved';
-                                return `
-                    <div class="gm-feedback-card ${resolved ? 'resolved' : ''}">
-                        <div class="gm-feedback-meta">
-                            <span>👤 ${escapeHtml(f.username)}</span>
-                            <span>📦 <span class="gm-feedback-item-name">${escapeHtml(f.item_name)}</span></span>
-                            <span>🕐 ${date}</span>
-                            ${resolved ? '<span style="color:#16a34a;">✅ 已处理</span>' : ''}
-                        </div>
-                        <div class="gm-feedback-content">${escapeHtml(f.content)}</div>
-                        <div class="gm-feedback-actions">
-                            ${!resolved ? `<button class="gm-btn" data-fb-resolve="${f.id}">标记已处理</button>` : ''}
-                            <button class="gm-btn danger" data-fb-delete="${f.id}">删除</button>
-                        </div>
-                    </div>
-                `;
-                            }).join('');
-                        }
-                    }
-                } catch (e) {
-                    console.error('加载反馈失败', e);
+            document.getElementById('gmFeedbackList').addEventListener('click', async (e) => {
+                const resolveBtn = e.target.closest('[data-fb-resolve]');
+                if (resolveBtn) {
+                    const reply = prompt('回复反馈人（可留空，会通过站内消息通知对方）：', '');
+                    if (reply === null) return; // 取消
+                    try {
+                        await api('PUT', `/feedback/${encodeURIComponent(resolveBtn.dataset.fbResolve)}/resolve`, { reply: reply.trim() });
+                        showToast('已处理');
+                        loadGmFeedback();
+                        loadGmStats();
+                    } catch (err) { showToast(err.message); }
+                    return;
                 }
-
-                // 反馈操作事件委托（只绑定一次）
-                if (!document.getElementById('gmFeedbackList').dataset.bound) {
-                    document.getElementById('gmFeedbackList').dataset.bound = '1';
-                    document.getElementById('gmFeedbackList').addEventListener('click', async (e) => {
-                        const resolveBtn = e.target.closest('[data-fb-resolve]');
-                        if (resolveBtn) {
-                            const id = resolveBtn.dataset.fbResolve;
-                            await fetch(`${API_BASE}/feedback/${id}/resolve`, {
-                                method: 'PUT',
-                                headers: authHeaders()
-                            });
-                            loadGmData();
-                            return;
-                        }
-                        const deleteBtn = e.target.closest('[data-fb-delete]');
-                        if (deleteBtn) {
-                            if (!confirm('确定删除这条反馈吗？')) return;
-                            const id = deleteBtn.dataset.fbDelete;
-                            await fetch(`${API_BASE}/feedback/${id}`, {
-                                method: 'DELETE',
-                                headers: authHeaders()
-                            });
-                            loadGmData();
-                            return;
-                        }
-                    });
+                const deleteBtn = e.target.closest('[data-fb-delete]');
+                if (deleteBtn) {
+                    if (!confirm('确定删除这条反馈吗？')) return;
+                    try {
+                        await api('DELETE', `/feedback/${encodeURIComponent(deleteBtn.dataset.fbDelete)}`);
+                        loadGmFeedback();
+                        loadGmStats();
+                    } catch (err) { showToast(err.message); }
                 }
-                // 加载访客数据
-                try {
-                    const res = await fetch(`${API_BASE}/gm/visits`, { headers: authHeaders() });
-                    if (res.ok) {
-                        const data = await res.json();
-                        document.getElementById('gmTodayVisits').textContent = data.today;
-                        document.getElementById('gmTotalUsers').textContent = data.totalUsers;
+            });
 
-                        // 渲染 14 天折线图
-                        renderVisitChart(data.trend);
-                    }
-                } catch (e) {
-                    console.error('加载访客数据失败', e);
-                }
+            document.getElementById('gmBroadcastBtn').addEventListener('click', () => openCompose('all'));
+            document.getElementById('composeSendBtn').addEventListener('click', sendCompose);
+            document.getElementById('composeCancelBtn').addEventListener('click', () => {
+                document.getElementById('composeModal').classList.remove('show');
+            });
 
-                // 加载用户列表
-                try {
-                    const res = await fetch(`${API_BASE}/gm/users`, { headers: authHeaders() });
-                    if (res.ok) {
-                        const users = await res.json();
-                        const listEl = document.getElementById('gmUserList');
-                        if (users.length === 0) {
-                            listEl.innerHTML = '<div style="padding:1rem;color:var(--text-light);text-align:center;">暂无注册用户</div>';
-                        } else {
-                            listEl.innerHTML = users.map(u => {
-                                const date = new Date(u.created_at * 1000).toLocaleDateString();
-                                return `
-                        <div class="gm-user-row">
-                            <span class="gm-user-name">${escapeHtml(u.username)}</span>
-                            <span class="gm-user-role ${u.role === 'admin' ? 'admin' : ''}">${u.role === 'admin' ? '管理员' : '普通用户'}</span>
-                            <span class="gm-user-date">${date}</span>
-                            <div class="gm-user-actions">
-                                <button class="gm-btn" data-gm-reset="${u.id}" data-gm-name="${escapeHtml(u.username)}">重置密码</button>
-                                <button class="gm-btn danger" data-gm-delete="${u.id}" data-gm-name="${escapeHtml(u.username)}">删除</button>
-                            </div>
-                        </div>
-                    `;
-                            }).join('');
-                        }
-                    }
-                } catch (e) {
-                    console.error('加载用户列表失败', e);
-                }
-            }
-
-            function renderVisitChart(trend) {
-                const svg = document.getElementById('gmChart');
-                if (!svg) return;
-
-                // viewBox 坐标系：600 x 180
-                const W = 600, H = 180;
-                const padding = { top: 20, right: 20, bottom: 30, left: 30 };
-                const chartW = W - padding.left - padding.right;
-                const chartH = H - padding.top - padding.bottom;
-
-                const counts = trend.map(t => t.count);
-                const maxCount = Math.max(...counts, 1);
-
-                // 计算每个点坐标
-                const points = trend.map((t, i) => {
-                    const x = padding.left + (i / (trend.length - 1)) * chartW;
-                    const y = padding.top + chartH - (t.count / maxCount) * chartH;
-                    return { x, y, ...t };
-                });
-
-                // 折线点串
-                const polylinePoints = points.map(p => `${p.x},${p.y}`).join(' ');
-
-                // 面积填充（折线下方）
-                const areaPoints = `${padding.left},${padding.top + chartH} ${polylinePoints} ${padding.left + chartW},${padding.top + chartH}`;
-
-                // 网格线（5 条水平线）
-                let gridLines = '';
-                for (let i = 0; i <= 4; i++) {
-                    const y = padding.top + (chartH / 4) * i;
-                    const val = Math.round(maxCount - (maxCount / 4) * i);
-                    gridLines += `
-            <line class="grid" x1="${padding.left}" y1="${y}" x2="${padding.left + chartW}" y2="${y}" />
-            <text x="${padding.left - 4}" y="${y + 3}" text-anchor="end">${val}</text>
-        `;
-                }
-
-                // 数据点 + 日期标签
-                let dots = '';
-                let labels = '';
-                points.forEach((p, i) => {
-                    dots += `<circle cx="${p.x}" cy="${p.y}" r="3"><title>${p.date}：${p.count} 次访问</title></circle>`;
-                    if (i === 0 || i === 3 || i === 6 || i === 9 || i === 13) {
-                        labels += `<text x="${p.x}" y="${H - 8}" text-anchor="middle">${p.date.slice(5)}</text>`;
-                    }
-                });
-
-                svg.innerHTML = `
-        ${gridLines}
-        <polygon class="chart-area" points="${areaPoints}" />
-        <polyline points="${polylinePoints}" />
-        ${dots}
-        ${labels}
-    `;
-            }
-
-            // 用户操作事件委托
             document.getElementById('gmUserList').addEventListener('click', async (e) => {
+                const msgBtn = e.target.closest('[data-gm-message]');
+                if (msgBtn) {
+                    openCompose({ id: msgBtn.dataset.gmMessage, name: msgBtn.dataset.gmName });
+                    return;
+                }
+
                 const resetBtn = e.target.closest('[data-gm-reset]');
                 if (resetBtn) {
-                    const id = resetBtn.dataset.gmReset;
-                    const name = resetBtn.dataset.gmName;
-                    const newPwd = prompt(`为「${name}」设置新密码（至少 6 位）：`);
+                    const newPwd = prompt(`为「${resetBtn.dataset.gmName}」设置新密码（至少 6 位）：`);
                     if (!newPwd) return;
                     if (newPwd.length < 6) { showToast('密码至少 6 位'); return; }
-
                     try {
-                        const res = await fetch(`${API_BASE}/gm/users/${id}/password`, {
-                            method: 'PUT',
-                            headers: authHeaders(),
-                            body: JSON.stringify({ newPassword: newPwd })
-                        });
-                        const data = await res.json();
-                        if (data.success) {
-                            showToast('密码已重置');
-                        } else {
-                            showToast(data.error || '重置失败');
-                        }
-                    } catch (err) {
-                        showToast('网络错误');
-                    }
+                        await api('PUT', `/gm/users/${encodeURIComponent(resetBtn.dataset.gmReset)}/password`, { newPassword: newPwd });
+                        showToast('密码已重置，该用户需要重新登录');
+                    } catch (err) { showToast(err.message || '重置失败'); }
                     return;
                 }
 
                 const deleteBtn = e.target.closest('[data-gm-delete]');
                 if (deleteBtn) {
-                    const id = deleteBtn.dataset.gmDelete;
-                    const name = deleteBtn.dataset.gmName;
-                    if (!confirm(`⚠️ 确定要删除用户「${name}」吗？此操作不可恢复！`)) return;
-
+                    if (!confirm(`⚠️ 确定要删除用户「${deleteBtn.dataset.gmName}」吗？此操作不可恢复！`)) return;
                     try {
-                        const res = await fetch(`${API_BASE}/gm/users/${id}`, {
-                            method: 'DELETE',
-                            headers: authHeaders()
-                        });
-                        const data = await res.json();
-                        if (data.success) {
-                            showToast('用户已删除');
-                            loadGmData();
-                        } else {
-                            showToast(data.error || '删除失败');
-                        }
-                    } catch (err) {
-                        showToast('网络错误');
-                    }
-                    return;
+                        await api('DELETE', `/gm/users/${encodeURIComponent(deleteBtn.dataset.gmDelete)}`);
+                        showToast('用户已删除');
+                        loadGmUsers();
+                        loadGmStats();
+                    } catch (err) { showToast(err.message || '删除失败'); }
                 }
             });
+
+            // ---------- 消息 ----------
+            document.getElementById('msgList').addEventListener('click', async (e) => {
+                const delBtn = e.target.closest('[data-msg-delete]');
+                if (delBtn) {
+                    const id = delBtn.dataset.msgDelete;
+                    try {
+                        await api('DELETE', `/messages/${encodeURIComponent(id)}`);
+                        const m = messages.find(x => x.id === id);
+                        if (m && !m.is_read) setUnread(unreadCount - 1);
+                        messages = messages.filter(x => x.id !== id);
+                        renderMessages();
+                    } catch (err) { showToast(err.message); }
+                    return;
+                }
+                const card = e.target.closest('.msg-card.unread');
+                if (card) markMessageRead(card.dataset.msgId);
+            });
+
+            document.getElementById('msgReadAllBtn').addEventListener('click', async () => {
+                try {
+                    await api('PUT', '/messages/read-all');
+                    messages.forEach(m => { m.is_read = 1; });
+                    setUnread(0);
+                    renderMessages();
+                } catch (err) { showToast(err.message); }
+            });
+
+            document.getElementById('msgClearReadBtn').addEventListener('click', async () => {
+                if (!messages.some(m => m.is_read)) { showToast('没有已读消息'); return; }
+                if (!confirm('删除所有已读消息？')) return;
+                try {
+                    await api('DELETE', '/messages/read');
+                    messages = messages.filter(m => !m.is_read);
+                    renderMessages();
+                } catch (err) { showToast(err.message); }
+            });
+
+            // ---------- 投稿 ----------
+            document.getElementById('newSubmissionBtn').addEventListener('click', openSubmitModal);
+            document.getElementById('subSubmitBtn').addEventListener('click', submitSubmission);
+            document.getElementById('subCancelBtn').addEventListener('click', () => {
+                document.getElementById('submitModal').classList.remove('show');
+            });
+            document.getElementById('mySubList').addEventListener('click', async (e) => {
+                const btn = e.target.closest('[data-sub-withdraw]');
+                if (!btn) return;
+                if (!confirm('确定撤回这条投稿吗？')) return;
+                try {
+                    await api('DELETE', `/submissions/mine/${encodeURIComponent(btn.dataset.subWithdraw)}`);
+                    showToast('已撤回');
+                    loadMySubmissions();
+                } catch (err) { showToast(err.message); }
+            });
+
+            document.getElementById('menuMessagesBtn').addEventListener('click', () => {
+                document.getElementById('menuDropdown').classList.remove('show');
+                showPage('account', 'messages');
+            });
+            document.getElementById('menuSubmitBtn').addEventListener('click', () => {
+                document.getElementById('menuDropdown').classList.remove('show');
+                openSubmitModal();
+            });
+
+            // 切回页面时刷新未读数
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') refreshUnread();
+            });
+
+            document.getElementById('editStatus').addEventListener('change', syncEditTranslatedField);
+
             const app = document.querySelector('.app');
 
             // ========== 反馈功能 ==========
             app.addEventListener('click', (e) => {
                 const feedbackBtn = e.target.closest('[data-action="feedback"]');
-                if (feedbackBtn) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    currentFeedbackItem.id = feedbackBtn.dataset.id;
-                    currentFeedbackItem.name = feedbackBtn.dataset.name;
-                    document.getElementById('feedbackItemName').value = currentFeedbackItem.name;
-                    document.getElementById('feedbackContent').value = '';
-                    document.getElementById('feedbackModal').classList.add('show');
-                    setTimeout(() => document.getElementById('feedbackContent').focus(), 100);
+                if (!feedbackBtn) return;
+                e.preventDefault();
+                e.stopPropagation();
+                if (!isLoggedIn()) {
+                    showToast('登录后才能反馈哦');
+                    openLoginModal();
+                    return;
                 }
+                currentFeedbackItem.id = feedbackBtn.dataset.id;
+                currentFeedbackItem.name = feedbackBtn.dataset.name;
+                document.getElementById('feedbackItemName').value = currentFeedbackItem.name;
+                document.getElementById('feedbackContent').value = '';
+                document.getElementById('feedbackModal').classList.add('show');
+                setTimeout(() => document.getElementById('feedbackContent').focus(), 100);
             });
 
             document.getElementById('feedbackCancelBtn').addEventListener('click', () => {
@@ -3784,32 +4673,20 @@
                 const content = document.getElementById('feedbackContent').value.trim();
                 if (!content) { showToast('请填写反馈内容'); return; }
                 if (content.length > 500) { showToast('反馈内容不能超过 500 字'); return; }
-
+                const btn = document.getElementById('feedbackSubmitBtn');
+                btn.disabled = true;
                 try {
-                    const res = await fetch(`${API_BASE}/feedback`, {
-                        method: 'POST',
-                        headers: authHeaders(),
-                        body: JSON.stringify({
-                            itemId: currentFeedbackItem.id,
-                            itemName: currentFeedbackItem.name,
-                            content
-                        })
+                    await api('POST', '/feedback', {
+                        itemId: currentFeedbackItem.id,
+                        itemName: currentFeedbackItem.name,
+                        content
                     });
-                    const data = await res.json();
-                    if (data.success) {
-                        showToast('反馈已提交，感谢！');
-                        document.getElementById('feedbackModal').classList.remove('show');
-                    } else {
-                        showToast(data.error || '提交失败');
-                    }
-                } catch (e) {
-                    showToast('网络错误');
-                }
-            });
-
-            document.getElementById('feedbackModal').addEventListener('click', (e) => {
-                if (e.target.id === 'feedbackModal') {
+                    showToast('反馈已提交，处理后会通过消息通知你');
                     document.getElementById('feedbackModal').classList.remove('show');
+                } catch (err) {
+                    showToast(err.message || '提交失败');
+                } finally {
+                    btn.disabled = false;
                 }
             });
 
@@ -3821,14 +4698,7 @@
 
             // ========== 账户中心导航 ==========
             document.querySelectorAll('.account-nav-item').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const section = btn.dataset.section;
-                    document.querySelectorAll('.account-nav-item').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    document.querySelectorAll('.account-section').forEach(s => s.style.display = 'none');
-                    const target = document.getElementById('section-' + section);
-                    if (target) target.style.display = 'block';
-                });
+                btn.addEventListener('click', () => showAccountSection(btn.dataset.section));
             });
 
             // 返回主页
@@ -3838,10 +4708,7 @@
 
             // 账户中心退出登录
             document.getElementById('accountLogoutBtn').addEventListener('click', () => {
-                if (confirm('确定要退出登录吗？')) {
-                    logout();
-                    showPage('home');
-                }
+                if (confirm('确定要退出登录吗？')) logout();
             });
 
             // ========== 保存用户名 ==========
@@ -3850,37 +4717,23 @@
                     showToast('管理员账号不支持修改用户名');
                     return;
                 }
-                const newName = document.getElementById('accountUsername').value.trim();
+                const input = document.getElementById('accountUsername');
+                const newName = input.value.trim();
                 if (!newName) { showToast('用户名不能为空'); return; }
                 if (newName === currentUsername) { showToast('用户名没有变化'); return; }
 
-                // 弹窗输入密码
                 const password = prompt('请输入当前密码以确认修改：');
                 if (!password) return;
 
                 try {
-                    const res = await fetch(`${API_BASE}/users/me/username`, {
-                        method: 'PUT',
-                        headers: authHeaders(),
-                        body: JSON.stringify({ newUsername: newName, password })
-                    });
-                    const data = await res.json();
-                    if (data.token) {
-                        // 修改成功，更新本地
-                        authToken = data.token;
-                        currentUsername = data.username;
-                        localStorage.setItem(TOKEN_KEY, authToken);
-                        localStorage.setItem('tianji_username', currentUsername);
-                        updateLoginUI();
-                        // 更新账户中心显示
-                        document.getElementById('accountUsername').value = currentUsername;
-                        showToast('用户名修改成功');
-                    } else {
-                        showToast(data.error || '修改失败');
-                        document.getElementById('accountUsername').value = currentUsername;
-                    }
-                } catch (e) {
-                    showToast('网络错误');
+                    const data = await api('PUT', '/users/me/username', { newUsername: newName, password });
+                    saveSession(data.token, data.username, currentRole);
+                    updateLoginUI();
+                    input.value = currentUsername;
+                    showToast('用户名修改成功');
+                } catch (err) {
+                    showToast(err.message || '修改失败');
+                    input.value = currentUsername;
                 }
             });
 
@@ -3899,26 +4752,16 @@
                 if (newPwd.length < 6) { showToast('新密码至少 6 位'); return; }
 
                 try {
-                    const res = await fetch(`${API_BASE}/users/me/password`, {
-                        method: 'PUT',
-                        headers: authHeaders(),
-                        body: JSON.stringify({ oldPassword: oldPwd, newPassword: newPwd })
+                    await api('PUT', '/users/me/password', { oldPassword: oldPwd, newPassword: newPwd });
+                    ['accountOldPassword', 'accountNewPassword', 'accountConfirmPassword'].forEach(id => {
+                        document.getElementById(id).value = '';
                     });
-                    const data = await res.json();
-                    if (data.success) {
-                        showToast('密码修改成功，请重新登录');
-                        document.getElementById('accountOldPassword').value = '';
-                        document.getElementById('accountNewPassword').value = '';
-                        document.getElementById('accountConfirmPassword').value = '';
-                        // 密码改了，token 还生效，但为了安全建议重新登录
-                        setTimeout(() => {
-                            logout();
-                        }, 1500);
-                    } else {
-                        showToast(data.error || '修改失败');
-                    }
-                } catch (e) {
-                    showToast('网络错误');
+                    // 后端已让所有旧登录失效，需要重新登录
+                    logout(true);
+                    showToast('密码修改成功，请用新密码重新登录');
+                    setTimeout(openLoginModal, 600);
+                } catch (err) {
+                    showToast(err.message || '修改失败');
                 }
             });
 
@@ -3928,40 +4771,36 @@
                     showToast('管理员账号不能注销');
                     return;
                 }
-                const password = document.getElementById('accountDeletePassword').value;
+                const pwdInput = document.getElementById('accountDeletePassword');
+                const password = pwdInput.value;
                 if (!password) { showToast('请输入密码'); return; }
 
                 if (!confirm('⚠️ 确定要注销账号吗？此操作不可恢复！')) return;
                 if (!confirm('再次确认：真的要注销吗？')) return;
 
                 try {
-                    const res = await fetch(`${API_BASE}/users/me`, {
-                        method: 'DELETE',
-                        headers: authHeaders(),
-                        body: JSON.stringify({ password })
-                    });
-                    const data = await res.json();
-                    if (data.success) {
-                        showToast('账号已注销');
-                        logout();
-                    } else {
-                        showToast(data.error || '注销失败');
-                    }
-                } catch (e) {
-                    showToast('网络错误');
+                    await api('DELETE', '/users/me', { password });
+                    pwdInput.value = '';
+                    logout(true);
+                    showToast('账号已注销');
+                } catch (err) {
+                    showToast(err.message || '注销失败');
                 }
             });
 
             // ========== 登录/注册弹窗 ==========
             document.getElementById('loginSubmitBtn').addEventListener('click', submitLogin);
             document.getElementById('loginCancelBtn').addEventListener('click', closeLoginModal);
-            document.getElementById('loginPassword').addEventListener('keypress', (e) => {
+            document.getElementById('loginUsername').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') document.getElementById('loginPassword').focus();
+            });
+            document.getElementById('loginPassword').addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') submitLogin();
             });
 
             document.getElementById('registerSubmitBtn').addEventListener('click', submitRegister);
             document.getElementById('registerCancelBtn').addEventListener('click', closeLoginModal);
-            document.getElementById('registerConfirm').addEventListener('keypress', (e) => {
+            document.getElementById('registerConfirm').addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') submitRegister();
             });
 
@@ -4136,6 +4975,7 @@
             }
             document.getElementById('announcementClose').addEventListener('click', () => {
                 annBar.style.display = 'none';
+                try { sessionStorage.setItem('tianji_announcement_closed', '1'); } catch (e) { }
             });
 
             // 模块展开/收起
@@ -4329,19 +5169,11 @@
             // ========== 菜单：登录/退出 ==========
             document.getElementById('menuLoginBtn').addEventListener('click', () => {
                 menuDropdown.classList.remove('show');
-                if (authToken && currentUsername) {    // ⭐ 判断是否登录
+                if (isLoggedIn()) {
                     showPage('account');
                 } else {
                     openLoginModal();
                 }
-            });
-
-
-
-            document.getElementById('loginSubmitBtn').addEventListener('click', submitLogin);
-            document.getElementById('loginCancelBtn').addEventListener('click', closeLoginModal);
-            document.getElementById('loginPassword').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') submitLogin();
             });
 
             // 编辑弹窗
@@ -4474,210 +5306,177 @@
                 }
             });
 
-            // 弹窗点外部关闭
-            ['qrModal', 'loginModal', 'editModal'].forEach(id => {
+            // 弹窗点外部关闭（投稿/审核等表单弹窗不响应外部点击，避免误触丢失已填内容）
+            ['qrModal', 'loginModal', 'editModal', 'feedbackModal', 'composeModal'].forEach(id => {
                 const el = document.getElementById(id);
-                if (!el) return;   // ⭐ 元素不存在就跳过
+                if (!el) return;
                 el.addEventListener('click', (e) => {
                     if (e.target.id === id) {
                         el.classList.remove('show');
+                        if (id === 'editModal') editingItemId = null;
                     }
                 });
             });
+
+            // Esc 关闭最上层弹窗
+            document.addEventListener('keydown', (e) => {
+                if (e.key !== 'Escape') return;
+                const open = [...document.querySelectorAll('.modal-overlay.show')].pop();
+                if (!open) return;
+                open.classList.remove('show');
+                if (open.id === 'editModal') editingItemId = null;
+                if (open.id === 'reviewModal') reviewingSubmission = null;
+            });
         }
 
-        // ==================== 页面切换 ====================
         // ==================== 页面切换（带动画） ====================
         let currentPage = 'home';
         let isSwitching = false;
+        const ACCOUNT_SECTIONS = ['profile', 'security', 'messages', 'my-submissions', 'danger', 'gm'];
 
-        function showPage(page) {
+        // 根据身份填充账户中心、显示/隐藏对应入口
+        function fillAccountPage() {
+            const isAdminUser = currentRole === 'admin';
+            const input = document.getElementById('accountUsername');
+            input.value = currentUsername || '';
+            input.disabled = isAdminUser;
+            document.getElementById('accountRole').textContent = isAdminUser ? '管理员' : '普通用户';
+            document.getElementById('saveUsernameBtn').style.display = isAdminUser ? 'none' : '';
+            document.getElementById('savePasswordBtn').style.display = isAdminUser ? 'none' : '';
 
+            // 危险操作、消息、投稿只对普通用户显示；GM 面板只对管理员显示
+            document.querySelectorAll('.account-nav-item[data-section="danger"], .account-nav-item[data-user-only]').forEach(el => {
+                el.style.display = isAdminUser ? 'none' : '';
+            });
+            document.getElementById('gmNavBtn').style.display = isAdminUser ? '' : 'none';
+        }
 
-            if (isSwitching || page === currentPage) return;
+        function sectionAllowed(section) {
+            if (!ACCOUNT_SECTIONS.includes(section)) return false;
+            const isAdminUser = currentRole === 'admin';
+            if (section === 'gm') return isAdminUser;
+            if (['messages', 'my-submissions', 'danger'].includes(section)) return !isAdminUser;
+            return true;
+        }
+
+        function showAccountSection(section) {
+            if (!sectionAllowed(section)) section = 'profile';
+            document.querySelectorAll('.account-nav-item').forEach(b => {
+                b.classList.toggle('active', b.dataset.section === section);
+            });
+            document.querySelectorAll('.account-section').forEach(sec => {
+                sec.style.display = sec.id === 'section-' + section ? 'block' : 'none';
+            });
+
+            if (section === 'messages') loadMessages();
+            else if (section === 'my-submissions') loadMySubmissions();
+            else if (section === 'gm') loadGmData();
+
+            const hash = section === 'profile' ? '#account' : `#account/${section}`;
+            if (location.hash !== hash) history.replaceState(null, '', hash);
+        }
+
+        function setTopNavForPage(page) {
+            const onAccount = page === 'account';
+            document.getElementById('searchToggleBtn').style.display = onAccount ? 'none' : '';
+            document.querySelector('.menu-wrap').style.display = onAccount ? 'none' : '';
+            document.getElementById('homeBtn').style.display = onAccount ? '' : 'none';
+        }
+
+        function showPage(page, section) {
+            if (page === 'account' && !isLoggedIn()) { openLoginModal(); return; }
+
+            // 已在账户中心时直接切换分区
+            if (page === currentPage) {
+                if (page === 'account' && section) showAccountSection(section);
+                return;
+            }
+            if (isSwitching) return;
 
             const pageHome = document.getElementById('pageHome');
             const pageAccount = document.getElementById('pageAccount');
-            const searchBtn = document.getElementById('searchToggleBtn');
-            const menuWrap = document.querySelector('.menu-wrap');
-            const menuDropdown = document.getElementById('menuDropdown');
-            const homeBtn = document.getElementById('homeBtn');
-            const searchPanel = document.getElementById('searchPanel');
-
-            // 关闭任何打开的下拉/面板
-            if (menuDropdown) menuDropdown.classList.remove('show');
-            if (searchPanel) searchPanel.classList.remove('show');
+            document.getElementById('menuDropdown').classList.remove('show');
+            document.getElementById('searchPanel').classList.remove('show');
 
             const leavingEl = page === 'account' ? pageHome : pageAccount;
             const enteringEl = page === 'account' ? pageAccount : pageHome;
 
             isSwitching = true;
-
-            // 1. 让离开的页面淡出
+            currentPage = page;
             leavingEl.classList.add('page-leaving');
 
             setTimeout(() => {
-                // 2. 切换 display
                 leavingEl.style.display = 'none';
                 leavingEl.classList.remove('page-leaving');
-
-                enteringEl.style.display = 'flex';   // 用 flex（和 CSS 里对齐）
+                enteringEl.style.display = 'flex';
                 enteringEl.classList.add('page-entering');
+                setTopNavForPage(page);
 
-                // 3. 更新顶栏按钮可见性
                 if (page === 'account') {
-                    searchBtn.style.display = 'none';
-                    menuWrap.style.display = 'none';
-                    homeBtn.style.display = '';
-
-                    // 填充账户中心内容
-                    // 填充账户中心内容
-                    const input = document.getElementById('accountUsername');
-                    if (input) input.value = currentUsername || '';
-                    const roleEl = document.getElementById('accountRole');
-                    if (roleEl) roleEl.textContent = currentRole === 'admin' ? '管理员' : '普通用户';
-
-                    // 管理员：隐藏用户名/密码修改和注销功能
-                    const isAdminUser = currentRole === 'admin';
-                    const saveUsernameBtn = document.getElementById('saveUsernameBtn');
-                    const accountUsernameInput = document.getElementById('accountUsername');
-                    if (saveUsernameBtn) saveUsernameBtn.style.display = isAdminUser ? 'none' : '';
-                    if (accountUsernameInput) accountUsernameInput.disabled = isAdminUser;
-                    if (document.getElementById('savePasswordBtn')) {
-                        document.getElementById('savePasswordBtn').style.display = isAdminUser ? 'none' : '';
-                    }
-                    // 危险操作导航项只有普通用户显示
-                    document.querySelectorAll('.account-nav-item[data-section="danger"]').forEach(el => {
-                        el.style.display = isAdminUser ? 'none' : '';
-                    });
-
-                    // GM 面板入口只有管理员可见
-                    const gmNav = document.getElementById('gmNavBtn');
-                    if (gmNav) gmNav.style.display = isAdminUser ? '' : 'none';
-
-                    if (location.hash !== '#account') {
-                        history.replaceState(null, '', '#account');
-                    }
-                } else {
-                    searchBtn.style.display = '';
-                    menuWrap.style.display = '';
-                    homeBtn.style.display = 'none';
-
-                    if (location.hash === '#account') {
-                        history.replaceState(null, '', location.pathname);
-                    }
+                    fillAccountPage();
+                    showAccountSection(section || 'profile');
+                } else if (location.hash.startsWith('#account')) {
+                    history.replaceState(null, '', location.pathname + location.search);
                 }
 
-                // 4. 回到顶部
                 window.scrollTo({ top: 0, behavior: 'smooth' });
 
-                // 5. 动画结束后清理
                 setTimeout(() => {
                     enteringEl.classList.remove('page-entering');
                     isSwitching = false;
                 }, 340);
             }, 280);
-
-            currentPage = page;
         }
 
         // ==================== 初始化 ====================
         async function init() {
+            applyTheme(localStorage.getItem(THEME_KEY) || 'light');
 
-            // 应用当前主题
-            const savedTheme = localStorage.getItem(THEME_KEY) || 'light';
-            applyTheme(savedTheme);
-
-            currentUsername = localStorage.getItem('tianji_username') || '';
-
-            // 恢复收款码
-            if (qrImageSrc) {
-                document.getElementById('qrImage').innerHTML = `<img src="${qrImageSrc}" alt="收款码">`;
-            }
-
-            await fetchAnnouncement();
-
-            // 检查登录状态
-            await tryLogin();
-
-            // 加载数据（首次可用缓存）
-            await loadItems(true);
-
-            // 渲染
-            render();
+            // 先绑定事件，保证后端冷启动较慢时按钮也能立即响应
+            setupEvents();
             updateLoginUI();
 
-            // 绑定事件
-            setupEvents();
-
             // 延迟移除搜索框的 readonly（防止浏览器自动填充）
-            const searchInputEl = document.getElementById('searchInput');
-            if (searchInputEl) {
-                setTimeout(() => {
-                    searchInputEl.removeAttribute('readonly');
-                }, 100);
+            setTimeout(() => {
+                const el = document.getElementById('searchInput');
+                if (el) el.removeAttribute('readonly');
+            }, 100);
+
+            // 初始页面（无动画）
+            const wantAccount = location.hash.startsWith('#account') && isLoggedIn();
+            const initialSection = location.hash.split('/')[1] || 'profile';
+            document.getElementById('searchPanel').classList.remove('show');
+            document.getElementById('menuDropdown').classList.remove('show');
+            document.getElementById('pageHome').style.display = wantAccount ? 'none' : 'flex';
+            document.getElementById('pageAccount').style.display = wantAccount ? 'flex' : 'none';
+            setTopNavForPage(wantAccount ? 'account' : 'home');
+            currentPage = wantAccount ? 'account' : 'home';
+            if (!wantAccount && location.hash.startsWith('#account')) {
+                history.replaceState(null, '', location.pathname + location.search);
             }
 
-            // ⭐ 初始页面状态（无动画直接设置）
-            const pageHome = document.getElementById('pageHome');
-            const pageAccount = document.getElementById('pageAccount');
-            const searchBtn = document.getElementById('searchToggleBtn');
-            const menuWrap = document.querySelector('.menu-wrap');
-            const homeBtn = document.getElementById('homeBtn');
-            const searchPanel = document.getElementById('searchPanel');
-            const menuDropdown = document.getElementById('menuDropdown');
+            // 公告和登录状态并行请求
+            fetchAnnouncement();
+            await tryLogin();
+            updateLoginUI();
+            startUnreadPolling();
 
-            // 关闭所有浮层
-            if (searchPanel) searchPanel.classList.remove('show');
-            if (menuDropdown) menuDropdown.classList.remove('show');
-
-            if (location.hash === '#account' && authToken && currentUsername) {
-                // 直接进账户中心
-                pageHome.style.display = 'none';
-                pageAccount.style.display = 'flex';
-                searchBtn.style.display = 'none';
-                menuWrap.style.display = 'none';
-                homeBtn.style.display = '';
-
-                // 填充账户中心内容
-                const input = document.getElementById('accountUsername');
-                if (input) input.value = currentUsername || '';
-                const roleEl = document.getElementById('accountRole');
-                if (roleEl) roleEl.textContent = currentRole === 'admin' ? '管理员' : '普通用户';
-
-                // 管理员：隐藏用户名/密码修改和注销功能
-                const isAdminUser = currentRole === 'admin';
-                const saveUsernameBtn = document.getElementById('saveUsernameBtn');
-                const accountUsernameInput = document.getElementById('accountUsername');
-                if (saveUsernameBtn) saveUsernameBtn.style.display = isAdminUser ? 'none' : '';
-                if (accountUsernameInput) accountUsernameInput.disabled = isAdminUser;
-                if (document.getElementById('savePasswordBtn')) {
-                    document.getElementById('savePasswordBtn').style.display = isAdminUser ? 'none' : '';
-                }
-                // 危险操作导航项只有普通用户显示
-                document.querySelectorAll('.account-nav-item[data-section="danger"]').forEach(el => {
-                    el.style.display = isAdminUser ? 'none' : '';
-                });
-
-                // GM 面板入口只有管理员可见
-                const gmNav = document.getElementById('gmNavBtn');
-                if (gmNav) gmNav.style.display = isAdminUser ? '' : 'none';
-
-                currentPage = 'account';
-            } else {
-                // 主页
-                pageHome.style.display = 'flex';
-                pageAccount.style.display = 'none';
-                searchBtn.style.display = '';
-                menuWrap.style.display = '';
-                homeBtn.style.display = 'none';
-
-                currentPage = 'home';
-                // 如果 URL 有 #account 但没登录，清掉 hash
-                if (location.hash === '#account') {
-                    history.replaceState(null, '', location.pathname);
+            if (currentPage === 'account') {
+                if (isLoggedIn()) {
+                    fillAccountPage();
+                    showAccountSection(initialSection);
+                } else {
+                    // token 已失效
+                    document.getElementById('pageAccount').style.display = 'none';
+                    document.getElementById('pageHome').style.display = 'flex';
+                    setTopNavForPage('home');
+                    currentPage = 'home';
+                    history.replaceState(null, '', location.pathname + location.search);
                 }
             }
+
+            await loadItems(true);
+            render();
         }
 
         init();
