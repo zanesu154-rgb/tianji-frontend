@@ -2332,12 +2332,15 @@
 
         <!-- 搜索面板：点击 🔍 后从下方滑出 -->
         <div class="search-panel" id="searchPanel">
-            <div class="search-panel-inner">
+            <!-- 独立的 form，避免浏览器把它当成登录表单的一部分自动填入用户名 -->
+            <form class="search-panel-inner" role="search" autocomplete="off"
+                onsubmit="document.getElementById('searchInput').blur(); return false;">
                 <span class="search-panel-icon">🔍</span>
                 <input type="search" class="search-panel-input" id="searchInput" placeholder="搜索附加包名 / 作者 / 简介..."
-                    autocomplete="off" name="search-q" readonly>
-                <button class="search-panel-clear" id="searchClear" style="display:none;">✕</button>
-            </div>
+                    autocomplete="off" name="tianji-search" autocorrect="off" autocapitalize="off" spellcheck="false"
+                    data-lpignore="true" data-1p-ignore="true" data-form-type="other" readonly>
+                <button type="button" class="search-panel-clear" id="searchClear" style="display:none;">✕</button>
+            </form>
         </div>
     </header>
 
@@ -2424,11 +2427,14 @@
             <div class="bottom-bar" id="adminToolbar" style="display:none;">
                 <div class="bottom-left">
                     <button class="btn btn-primary" id="importToggleBtn">➕ 导入项目</button>
-                    <div id="importInputWrap" style="display:none;gap:0.6rem;align-items:center;flex-wrap:wrap;">
+                    <form id="importInputWrap" autocomplete="off" onsubmit="return false;"
+                        style="display:none;gap:0.6rem;align-items:center;flex-wrap:wrap;margin:0;">
                         <input type="text" class="import-input" id="importInput" placeholder="英文(中文) | 作者"
+                            autocomplete="off" name="tianji-import" data-lpignore="true" data-1p-ignore="true"
+                            data-form-type="other"
                             style="padding:0.7rem 1rem;border:1px solid var(--border-input);border-radius:30px;font-size:0.9rem;background:var(--bg-input);color:var(--text-main);">
-                        <button class="btn" id="importConfirmBtn">确认</button>
-                    </div>
+                        <button type="button" class="btn" id="importConfirmBtn">确认</button>
+                    </form>
                 </div>
                 <div class="bottom-right">
                     <button class="btn" id="exportBtn">📤 导出</button>
@@ -2494,10 +2500,11 @@
                     <h2>个人资料</h2>
                     <div class="account-field">
                         <label>用户名</label>
-                        <div class="account-field-row">
-                            <input type="text" id="accountUsername" placeholder="用户名">
-                            <button class="btn btn-primary" id="saveUsernameBtn">保存</button>
-                        </div>
+                        <form class="account-field-row" autocomplete="off" onsubmit="return false;">
+                            <input type="text" id="accountUsername" placeholder="用户名" name="tianji-new-username"
+                                autocomplete="off" data-lpignore="true" data-1p-ignore="true">
+                            <button type="button" class="btn btn-primary" id="saveUsernameBtn">保存</button>
+                        </form>
                         <div class="account-hint">修改用户名需要输入当前密码。</div>
                     </div>
                     <div class="account-field">
@@ -2509,6 +2516,8 @@
                 <!-- 安全设置 -->
                 <section class="account-section" id="section-security" style="display:none;">
                     <h2>安全设置</h2>
+                    <form id="securityForm" autocomplete="on" onsubmit="return false;">
+                    <input type="text" name="username" autocomplete="username" class="account-username-hint" hidden>
                     <div class="account-field">
                         <label>当前密码</label>
                         <input type="password" id="accountOldPassword" placeholder="当前密码"
@@ -2524,7 +2533,8 @@
                         <input type="password" id="accountConfirmPassword" placeholder="再次输入新密码"
                             autocomplete="new-password">
                     </div>
-                    <button class="btn btn-primary" id="savePasswordBtn">保存密码</button>
+                    <button type="button" class="btn btn-primary" id="savePasswordBtn">保存密码</button>
+                    </form>
                 </section>
 
                 <!-- 消息 -->
@@ -2559,10 +2569,12 @@
                             注销后账号将无法恢复，你发布的任何内容（未来的投稿等）也会一起被删除。<br>
                             输入密码以确认注销。
                         </div>
-                        <div class="account-field-row" style="margin-top:0.8rem;">
-                            <input type="password" id="accountDeletePassword" placeholder="输入密码以确认" autocomplete="off">
-                            <button class="btn btn-danger" id="deleteAccountBtn">注销账号</button>
-                        </div>
+                        <form class="account-field-row" style="margin-top:0.8rem;" autocomplete="on" onsubmit="return false;">
+                            <input type="text" name="username" autocomplete="username" class="account-username-hint" hidden>
+                            <input type="password" id="accountDeletePassword" placeholder="输入密码以确认"
+                                autocomplete="current-password" name="password">
+                            <button type="button" class="btn btn-danger" id="deleteAccountBtn">注销账号</button>
+                        </form>
                     </div>
                 </section>
                 <!-- GM 面板（仅管理员可见） -->
@@ -2706,15 +2718,15 @@
             <h3 id="editModalTitle">编辑附加包</h3>
             <div class="modal-field">
                 <label>英文原名</label>
-                <input type="text" id="editOriginal" placeholder="英文原名">
+                <input type="text" id="editOriginal" autocomplete="off" placeholder="英文原名">
             </div>
             <div class="modal-field" id="editTranslatedField">
                 <label>中文译名</label>
-                <input type="text" id="editTranslated" placeholder="中文译名">
+                <input type="text" id="editTranslated" autocomplete="off" placeholder="中文译名">
             </div>
             <div class="modal-field">
                 <label>作者</label>
-                <input type="text" id="editAuthor" placeholder="佚名">
+                <input type="text" id="editAuthor" autocomplete="off" placeholder="佚名">
             </div>
             <div class="modal-field-row">
                 <div class="modal-field">
@@ -2795,7 +2807,7 @@
             <h3>反馈</h3>
             <div class="modal-field">
                 <label>项目</label>
-                <input type="text" id="feedbackItemName" readonly>
+                <input type="text" id="feedbackItemName" autocomplete="off" readonly>
             </div>
             <div class="modal-field">
                 <label>反馈内容</label>
@@ -2816,12 +2828,12 @@
             <h3>投稿资源</h3>
             <div class="modal-field">
                 <label>资源名称（英文原名）<span class="required-mark">*</span></label>
-                <input type="text" id="subOriginal" maxlength="200" placeholder="例如：Better On Bedrock">
+                <input type="text" id="subOriginal" autocomplete="off" maxlength="200" placeholder="例如：Better On Bedrock">
             </div>
             <div class="modal-field-row">
                 <div class="modal-field">
                     <label>中文译名</label>
-                    <input type="text" id="subTranslated" maxlength="200" placeholder="可选">
+                    <input type="text" id="subTranslated" autocomplete="off" maxlength="200" placeholder="可选">
                 </div>
                 <div class="modal-field">
                     <label>分类</label>
@@ -2835,19 +2847,19 @@
             </div>
             <div class="modal-field">
                 <label>原作者</label>
-                <input type="text" id="subAuthor" maxlength="100" placeholder="不知道可以留空">
+                <input type="text" id="subAuthor" autocomplete="off" maxlength="100" placeholder="不知道可以留空">
             </div>
             <div class="modal-field">
                 <label>原版链接</label>
-                <input type="text" id="subOriginalLink" maxlength="1000" placeholder="https://...">
+                <input type="text" id="subOriginalLink" autocomplete="off" maxlength="1000" placeholder="https://...">
             </div>
             <div class="modal-field">
                 <label>汉化版链接</label>
-                <input type="text" id="subTranslationLink" maxlength="1000" placeholder="https://...（原版/汉化至少填一个）">
+                <input type="text" id="subTranslationLink" autocomplete="off" maxlength="1000" placeholder="https://...（原版/汉化至少填一个）">
             </div>
             <div class="modal-field">
                 <label>作者主页</label>
-                <input type="text" id="subAuthorLink" maxlength="1000" placeholder="可选">
+                <input type="text" id="subAuthorLink" autocomplete="off" maxlength="1000" placeholder="可选">
             </div>
             <div class="modal-field">
                 <label>简介</label>
@@ -2867,16 +2879,16 @@
             <div class="account-hint" id="reviewMeta" style="text-align:center;margin:-0.6rem 0 1rem;"></div>
             <div class="modal-field">
                 <label>英文原名</label>
-                <input type="text" id="reviewOriginal" maxlength="200">
+                <input type="text" id="reviewOriginal" autocomplete="off" maxlength="200">
             </div>
             <div class="modal-field-row">
                 <div class="modal-field">
                     <label>中文译名</label>
-                    <input type="text" id="reviewTranslated" maxlength="200">
+                    <input type="text" id="reviewTranslated" autocomplete="off" maxlength="200">
                 </div>
                 <div class="modal-field">
                     <label>作者</label>
-                    <input type="text" id="reviewAuthor" maxlength="100">
+                    <input type="text" id="reviewAuthor" autocomplete="off" maxlength="100">
                 </div>
             </div>
             <div class="modal-field-row">
@@ -2899,15 +2911,15 @@
             </div>
             <div class="modal-field">
                 <label>原版链接</label>
-                <input type="text" id="reviewOriginalLink" maxlength="1000">
+                <input type="text" id="reviewOriginalLink" autocomplete="off" maxlength="1000">
             </div>
             <div class="modal-field">
                 <label>汉化链接</label>
-                <input type="text" id="reviewTranslationLink" maxlength="1000">
+                <input type="text" id="reviewTranslationLink" autocomplete="off" maxlength="1000">
             </div>
             <div class="modal-field">
                 <label>作者直链</label>
-                <input type="text" id="reviewAuthorLink" maxlength="1000">
+                <input type="text" id="reviewAuthorLink" autocomplete="off" maxlength="1000">
             </div>
             <div class="modal-field">
                 <label>简介</label>
@@ -2932,7 +2944,7 @@
             <h3 id="composeTitle">发送消息</h3>
             <div class="modal-field">
                 <label>标题</label>
-                <input type="text" id="composeSubject" maxlength="100" placeholder="来自栈主的消息">
+                <input type="text" id="composeSubject" autocomplete="off" maxlength="100" placeholder="来自栈主的消息">
             </div>
             <div class="modal-field">
                 <label>内容</label>
@@ -3580,7 +3592,7 @@
             linkFields.forEach(({ label, field }) => {
                 const val = item[field] || '';
                 const readonlyHtml = isAdmin
-                    ? `<input type="text" class="detail-input" data-field="${field}" data-id="${escapeHtml(item.id)}" value="${escapeHtml(val)}" placeholder="https://...">`
+                    ? `<input type="text" class="detail-input" data-field="${field}" data-id="${escapeHtml(item.id)}" value="${escapeHtml(val)}" placeholder="https://..." autocomplete="off" name="tianji-link-${field}" data-lpignore="true" data-1p-ignore="true" data-form-type="other">`
                     : `<div class="detail-readonly">${val ? escapeHtml(val) : '<span style="color:var(--text-light);">未填写</span>'}</div>`;
                 detailsHtml += `
             <div class="detail-row">
@@ -4994,20 +5006,46 @@
             const searchInput = document.getElementById('searchInput');
             const searchClear = document.getElementById('searchClear');
 
+            // 浏览器自动填充（密码管理器）写进来的内容不算用户搜索
+            function isAutofilled(el) {
+                try { return el.matches(':autofill'); } catch (e) { }
+                try { return el.matches(':-webkit-autofill'); } catch (e) { }
+                return false;
+            }
+
+            // 把搜索框的值恢复成用户真正输入过的内容
+            function syncSearchInput() {
+                if (searchInput.value !== searchQuery) searchInput.value = searchQuery;
+                searchClear.style.display = searchQuery ? 'block' : 'none';
+            }
+
             searchToggleBtn.addEventListener('click', () => {
                 const isOpen = searchPanel.classList.contains('show');
                 if (isOpen) {
                     searchPanel.classList.remove('show');
+                    searchInput.setAttribute('readonly', '');   // 关闭时只读，浏览器不会往里自动填充
                 } else {
+                    syncSearchInput();
+                    searchInput.removeAttribute('readonly');
                     searchPanel.classList.add('show');
                     setTimeout(() => searchInput.focus(), 280);
                 }
             });
 
             searchInput.addEventListener('input', function () {
+                // 面板没打开时用户不可能在输入，这类写入都来自自动填充
+                if (!searchPanel.classList.contains('show') || isAutofilled(this)) {
+                    syncSearchInput();
+                    return;
+                }
                 searchQuery = this.value.trim();
                 searchClear.style.display = searchQuery ? 'block' : 'none';
                 render();
+            });
+
+            // 自动填充有时不触发 input 事件，失焦/重新聚焦时再校正一次
+            searchInput.addEventListener('focus', function () {
+                if (isAutofilled(this)) syncSearchInput();
             });
 
             searchClear.addEventListener('click', function () {
@@ -5341,6 +5379,8 @@
             input.value = currentUsername || '';
             input.disabled = isAdminUser;
             document.getElementById('accountRole').textContent = isAdminUser ? '管理员' : '普通用户';
+            // 隐藏的用户名字段：让密码管理器知道改密/注销表单属于哪个账号
+            document.querySelectorAll('.account-username-hint').forEach(el => { el.value = currentUsername || ''; });
             document.getElementById('saveUsernameBtn').style.display = isAdminUser ? 'none' : '';
             document.getElementById('savePasswordBtn').style.display = isAdminUser ? 'none' : '';
 
@@ -5397,6 +5437,7 @@
             const pageAccount = document.getElementById('pageAccount');
             document.getElementById('menuDropdown').classList.remove('show');
             document.getElementById('searchPanel').classList.remove('show');
+            document.getElementById('searchInput').setAttribute('readonly', '');
 
             const leavingEl = page === 'account' ? pageHome : pageAccount;
             const enteringEl = page === 'account' ? pageAccount : pageHome;
@@ -5436,11 +5477,8 @@
             setupEvents();
             updateLoginUI();
 
-            // 延迟移除搜索框的 readonly（防止浏览器自动填充）
-            setTimeout(() => {
-                const el = document.getElementById('searchInput');
-                if (el) el.removeAttribute('readonly');
-            }, 100);
+            // 搜索框保持只读，打开搜索面板时才解除（防止浏览器自动填充）
+            document.getElementById('searchInput').value = '';
 
             // 初始页面（无动画）
             const wantAccount = location.hash.startsWith('#account') && isLoggedIn();
