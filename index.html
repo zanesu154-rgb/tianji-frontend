@@ -3469,7 +3469,7 @@
                 <input type="text" id="subTranslationLink" autocomplete="off" maxlength="1000" placeholder="https://...（原版/汉化至少填一个）">
             </div>
             <div class="modal-field">
-                <label>作者主页</label>
+                <label>作者直链</label>
                 <input type="text" id="subAuthorLink" autocomplete="off" maxlength="1000" placeholder="可选">
             </div>
             <div class="modal-field">
@@ -4912,7 +4912,7 @@
         }
 
         let gmClickDays = 7;
-        const LINK_FIELD_LABELS = { translationLink: '汉化', originalLink: '原版', authorLink: '作者' };
+        const LINK_FIELD_LABELS = { translationLink: '汉化', originalLink: '原版', authorLink: '作者直链' };
 
         async function loadGmClicks() {
             const summary = document.getElementById('gmClickSummary');
@@ -6248,6 +6248,14 @@
             return location.origin + location.pathname + '#item/' + encodeURIComponent(id);
         }
 
+        // 后端分享页：聊天软件能读到这个资源的标题/简介/封面生成预览，打开后自动跳到详情页
+        const SHARE_BASE = API_BASE.replace(/\/api\/?$/, '');
+        function itemPreviewUrl(item) {
+            return item.status === STATUS.DONE
+                ? `${SHARE_BASE}/s/${encodeURIComponent(item.id)}`
+                : itemShareUrl(item.id);   // 未上架的只有管理员能看，分享页不提供
+        }
+
         function fmtDate(sec) {
             if (!sec) return '';
             return new Date(Number(sec) * 1000).toLocaleDateString();
@@ -6296,6 +6304,7 @@
 
             const links = [
                 ['translationLink', '⬇ 汉化版下载', true],
+                ['authorLink', '作者直链', false],
                 ['originalLink', '原版下载', false]
             ].filter(([f]) => (item[f] || '').trim());
 
@@ -6314,10 +6323,7 @@
                     </div>
                 </div>`).join('') : '<div class="ip-empty">暂无下载链接</div>';
 
-            const authorName = escapeHtml(item.author || '佚名');
-            const author = (item.authorLink || '').trim()
-                ? `<a class="ip-author-link" data-ip-open="authorLink" title="访问作者主页">${authorName}</a>${clickBadge('authorLink')}`
-                : authorName;
+            const author = escapeHtml(item.author || '佚名');
 
             const related = isDone ? relatedItems(item) : [];
             const relatedHtml = related.length ? `
@@ -6445,7 +6451,7 @@
         }
 
         async function shareItem(item) {
-            const url = itemShareUrl(item.id);
+            const url = itemPreviewUrl(item);
             const title = item.translated ? `${item.translated}（${item.original}）` : item.original;
             // 手机上优先用系统分享面板
             if (navigator.share && window.matchMedia('(pointer: coarse)').matches) {
