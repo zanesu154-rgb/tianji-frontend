@@ -1068,13 +1068,118 @@
             cursor: grabbing;
         }
 
-        .item.dragging {
-            opacity: 0.4;
+        /* 触屏拖动：禁止手柄上的默认滚动/缩放，否则手指一动页面就滚走了 */
+        .drag-handle {
+            touch-action: none;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
         }
 
-        .item.drag-over {
+        .item.dragging {
+            position: relative;
+            z-index: 50;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
             border-color: var(--accent);
-            box-shadow: 0 0 0 2px var(--accent-border);
+            transition: none !important;
+            opacity: 0.96;
+        }
+
+        .item.sort-shift {
+            transition: transform 0.15s ease;
+        }
+
+        body.is-sorting,
+        body.is-sorting * {
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            cursor: grabbing !important;
+        }
+
+        @media (hover: none), (max-width: 640px) {
+            .drag-handle {
+                /* 手机上加大触控区域 */
+                padding: 8px 8px;
+                margin: -6px -2px -6px -6px;
+                font-size: 1rem;
+            }
+        }
+
+        .click-count {
+            font-size: 0.7rem;
+            color: var(--accent-text);
+            background: var(--accent-light);
+            border-radius: 10px;
+            padding: 0 6px;
+            margin-left: 4px;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        .click-rank-row {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 0.8rem;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 0.85rem;
+        }
+
+        .click-rank-row:last-child {
+            border-bottom: none;
+        }
+
+        .click-rank-no {
+            width: 1.6rem;
+            text-align: center;
+            color: var(--text-light);
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .click-rank-row:nth-child(-n+3) .click-rank-no {
+            color: var(--accent-text);
+        }
+
+        .click-rank-main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .click-rank-name {
+            color: var(--text-orig);
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .click-rank-detail {
+            margin-top: 0.15rem;
+            font-size: 0.74rem;
+            color: var(--text-light);
+            display: flex;
+            gap: 0.7rem;
+            flex-wrap: wrap;
+        }
+
+        .click-rank-total {
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .click-rank-list {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 0.8rem;
+        }
+
+        .click-summary {
+            font-size: 0.82rem;
+            color: var(--text-sub);
+            margin-bottom: 0.6rem;
         }
 
         /* ============ 底部 footer ============ */
@@ -2619,6 +2724,23 @@
                         <div class="gm-feedback-list" id="gmFeedbackList">加载中...</div>
                     </div>
 
+                    <!-- 链接点击统计 -->
+                    <div class="gm-section" id="gmClickSection">
+                        <div class="gm-section-head">
+                            <h3>链接点击量</h3>
+                            <div class="gm-tabs" id="gmClickTabs" style="margin-bottom:0;">
+                                <button class="gm-tab active" data-days="7">近 7 天</button>
+                                <button class="gm-tab" data-days="30">近 30 天</button>
+                                <button class="gm-tab" data-days="0">全部</button>
+                            </div>
+                        </div>
+                        <div class="click-summary" id="gmClickSummary">加载中...</div>
+                        <div class="gm-chart-wrap">
+                            <svg class="gm-chart" id="gmClickChart" viewBox="0 0 600 180" preserveAspectRatio="none"></svg>
+                        </div>
+                        <div class="click-rank-list" id="gmClickList"></div>
+                    </div>
+
                     <!-- 近 14 天趋势 -->
                     <div class="gm-section">
                         <h3>近 2 周访问趋势</h3>
@@ -3036,7 +3158,7 @@
         }
 
         // ==================== 外部链接风险提醒 ====================
-        function showExternalWarning(url, onConfirm) {
+        function showExternalWarning(url, onConfirm, onCopy) {
             const modal = document.getElementById('externalWarningModal');
             const urlInput = document.getElementById('externalWarningUrl');
             const confirmBtn = document.getElementById('externalWarningConfirm');
@@ -3064,6 +3186,7 @@
             copyBtn.parentNode.replaceChild(newCopy, copyBtn);
             newCopy.addEventListener('click', () => {
                 copyText(url);
+                if (onCopy) onCopy();
             });
 
             modal.onclick = (e) => {
@@ -3173,6 +3296,7 @@
                     description: r.description,
                     status: r.status,
                     category: r.category || 'addon',
+                    clicks: r.clicks || null,         // 仅管理员接口返回
                     expanded: expandedIds.has(r.id)   // 保留已展开的项目
                 }));
                 const strip = list => JSON.stringify(list.map(({ expanded, ...rest }) => rest));
@@ -3553,7 +3677,7 @@
                 html += `
                     <div class="item" data-id="${escapeHtml(item.id)}">
                         <div class="item-top">
-                            ${isAdmin ? `<span class="drag-handle" draggable="true" data-id="${escapeHtml(item.id)}" title="拖动排序">⋮⋮</span>` : ''}
+                            ${isAdmin ? `<span class="drag-handle" data-id="${escapeHtml(item.id)}" title="按住拖动排序">⋮⋮</span>` : ''}
                             ${!isDone ? `<span class="status-icon ${iconClass}" data-action="cycle-status" data-id="${escapeHtml(item.id)}" title="点击切换状态">${iconContent}</span>` : ''}
                             <div class="item-name">
                                 ${!isAdmin && isDone ? `<button class="feedback-btn" data-action="feedback" data-id="${escapeHtml(item.id)}" data-name="${escapeHtml(orig)}" title="反馈">💬</button>` : ''}
@@ -3594,9 +3718,12 @@
                 const readonlyHtml = isAdmin
                     ? `<input type="text" class="detail-input" data-field="${field}" data-id="${escapeHtml(item.id)}" value="${escapeHtml(val)}" placeholder="https://..." autocomplete="off" name="tianji-link-${field}" data-lpignore="true" data-1p-ignore="true" data-form-type="other">`
                     : `<div class="detail-readonly">${val ? escapeHtml(val) : '<span style="color:var(--text-light);">未填写</span>'}</div>`;
+                const clickN = isAdmin && item.clicks ? (item.clicks[field] || 0) : null;
+                const clickHtml = clickN !== null && val
+                    ? `<span class="click-count" title="累计点击（跳转 + 复制）">👆 ${clickN}</span>` : '';
                 detailsHtml += `
             <div class="detail-row">
-                <span class="detail-label">${label}</span>
+                <span class="detail-label">${label}${clickHtml}</span>
                 ${readonlyHtml}
                 <div class="btn-group">
                     <button class="copy-btn" data-copy="${field}" data-id="${escapeHtml(item.id)}">📋 复制</button>
@@ -3814,16 +3941,30 @@
             else prompt('请手动复制:', text);
         }
 
+        // 记录链接点击（管理员自己的点击不计）；失败不影响用户操作
+        function trackClick(id, field, action) {
+            if (isAdmin || !id || !field) return;
+            try {
+                fetch(`${API_BASE}/items/${encodeURIComponent(id)}/click`, {
+                    method: 'POST',
+                    headers: authHeaders(),
+                    body: JSON.stringify({ field, action }),
+                    keepalive: true   // 页面跳走时请求也能发出去
+                }).catch(() => { });
+            } catch (e) { }
+        }
+
         function openLink(id, field) {
             const item = items.find(i => i.id === id);
             if (!item) return;
             let url = (item[field] || '').trim();
             if (!url) { showToast('链接为空'); return; }
             if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-            // 走风险提醒
+            // 走风险提醒；确认访问才算一次「跳转」，在提醒框里复制算一次「复制」
             showExternalWarning(url, () => {
+                trackClick(id, field, 'open');
                 window.open(url, '_blank', 'noopener,noreferrer');
-            });
+            }, () => trackClick(id, field, 'copy'));
         }
 
         // ==================== 导入 ====================
@@ -4253,7 +4394,44 @@
         // ==================== 事件绑定 ====================
         // ==================== GM 面板 ====================
         async function loadGmData() {
-            await Promise.all([loadGmStats(), loadGmSubmissions(), loadGmFeedback(), loadGmUsers()]);
+            await Promise.all([loadGmStats(), loadGmSubmissions(), loadGmFeedback(), loadGmUsers(), loadGmClicks()]);
+        }
+
+        let gmClickDays = 7;
+        const LINK_FIELD_LABELS = { translationLink: '汉化', originalLink: '原版', authorLink: '作者' };
+
+        async function loadGmClicks() {
+            const summary = document.getElementById('gmClickSummary');
+            const listEl = document.getElementById('gmClickList');
+            try {
+                const data = await api('GET', `/gm/clicks?days=${gmClickDays}`);
+                const rangeText = data.days ? `近 ${data.days} 天` : '全部时间';
+                summary.textContent = `${rangeText}共 ${data.total} 次点击，涉及 ${data.itemCount} 个项目 · 今日 ${data.today} 次（同一访客对同一链接每天只计一次）`;
+                renderVisitChart(data.trend, 'gmClickChart', '次点击');
+                if (!data.ranking.length) {
+                    listEl.innerHTML = '<div class="account-empty">这段时间还没有点击记录</div>';
+                    return;
+                }
+                listEl.innerHTML = data.ranking.map((r, idx) => {
+                    const name = r.translated ? `${r.original}（${r.translated}）` : r.original;
+                    const detail = Object.entries(r.fields)
+                        .sort((a, b) => (b[1].open + b[1].copy) - (a[1].open + a[1].copy))
+                        .map(([f, v]) => `<span>${LINK_FIELD_LABELS[f] || f}：跳转 ${v.open} · 复制 ${v.copy}</span>`)
+                        .join('');
+                    return `
+                        <div class="click-rank-row">
+                            <span class="click-rank-no">${idx + 1}</span>
+                            <div class="click-rank-main">
+                                <div class="click-rank-name" title="${escapeHtml(name)}">${escapeHtml(name)}</div>
+                                <div class="click-rank-detail">${detail}</div>
+                            </div>
+                            <span class="click-rank-total">${r.total}</span>
+                        </div>`;
+                }).join('');
+            } catch (e) {
+                summary.textContent = e.message || '加载失败';
+                listEl.innerHTML = '';
+            }
         }
 
         async function loadGmStats() {
@@ -4418,8 +4596,8 @@
             }
         }
 
-        function renderVisitChart(trend) {
-            const svg = document.getElementById('gmChart');
+        function renderVisitChart(trend, svgId = 'gmChart', unit = '位访客') {
+            const svg = document.getElementById(svgId);
             if (!svg || !trend || trend.length < 2) return;
 
             const W = 600, H = 180;
@@ -4450,7 +4628,7 @@
             let labels = '';
             const last = points.length - 1;
             points.forEach((p, i) => {
-                dots += `<circle cx="${p.x}" cy="${p.y}" r="3"><title>${p.date}：${p.count} 位访客</title></circle>`;
+                dots += `<circle cx="${p.x}" cy="${p.y}" r="3"><title>${p.date}：${p.count} ${unit}</title></circle>`;
                 if (i % 3 === 0 || i === last) {
                     labels += `<text x="${p.x}" y="${H - 8}" text-anchor="middle">${p.date.slice(5)}</text>`;
                 }
@@ -4492,6 +4670,14 @@
         function setupEvents() {
             // ---------- GM 面板 ----------
             document.getElementById('gmNavBtn').addEventListener('click', loadGmData);
+
+            document.getElementById('gmClickTabs').addEventListener('click', (e) => {
+                const tab = e.target.closest('.gm-tab');
+                if (!tab) return;
+                gmClickDays = Number(tab.dataset.days);
+                document.querySelectorAll('#gmClickTabs .gm-tab').forEach(t => t.classList.toggle('active', t === tab));
+                loadGmClicks();
+            });
 
             document.getElementById('gmSubTabs').addEventListener('click', (e) => {
                 const tab = e.target.closest('.gm-tab');
@@ -5085,7 +5271,11 @@
                 const copyBtn = e.target.closest('[data-copy]');
                 if (copyBtn) {
                     const item = items.find(i => i.id === copyBtn.dataset.id);
-                    if (item) copyText(item[copyBtn.dataset.copy] || '');
+                    if (item) {
+                        const val = item[copyBtn.dataset.copy] || '';
+                        copyText(val);
+                        if (val) trackClick(item.id, copyBtn.dataset.copy, 'copy');
+                    }
                     return;
                 }
 
@@ -5115,85 +5305,173 @@
                 }
             }, true);
 
-            // ========== 拖拽排序（仅管理员） ==========
-            let dragSrcEl = null;
+            // ========== 拖拽排序（仅管理员，鼠标 / 触屏通用） ==========
+            // 用 Pointer Events 实现：原生 HTML5 拖放在手机浏览器上不会触发。
+            // 按住 ⋮⋮ 手柄拖动，经过相邻项目的中线时交换位置，靠近屏幕上下边缘自动滚动。
+            let sort = null;
 
-            app.addEventListener('dragstart', (e) => {
-                if (!isAdmin) return;
+            function sortGroupOf(id) {
+                // 待汉化模块里「汉化中」固定排在「待汉化」前面，只能和同状态的项目互换
+                const it = items.find(i => i.id === id);
+                if (!it) return '';
+                return it.status === STATUS.DONE ? 'done' : it.status;
+            }
+
+            function sortSiblings() {
+                return [...sort.list.querySelectorAll(':scope > .item')]
+                    .filter(el => el !== sort.el && sortGroupOf(el.dataset.id) === sort.group);
+            }
+
+            function positionDragged() {
+                const el = sort.el;
+                el.style.transform = '';
+                const naturalTop = el.getBoundingClientRect().top;
+                el.style.transform = `translateY(${sort.pointerY - sort.grabOffset - naturalTop}px)`;
+            }
+
+            function maybeSwap() {
+                const el = sort.el;
+                let moved = true;
+                while (moved) {
+                    moved = false;
+                    el.style.transform = '';
+                    const siblings = sortSiblings();
+                    const rect = el.getBoundingClientRect();
+                    // 用被拖项目自身的中心（而不是手指位置）判断，手柄在卡片哪里都一样跟手
+                    const center = sort.pointerY - sort.grabOffset + rect.height / 2;
+                    const prev = siblings.filter(s => s.getBoundingClientRect().top < rect.top).pop();
+                    const next = siblings.find(s => s.getBoundingClientRect().top > rect.top);
+                    if (prev) {
+                        const r = prev.getBoundingClientRect();
+                        if (center < r.top + r.height / 2) { prev.before(el); moved = true; continue; }
+                    }
+                    if (next) {
+                        const r = next.getBoundingClientRect();
+                        if (center > r.top + r.height / 2) { next.after(el); moved = true; }
+                    }
+                }
+                positionDragged();
+            }
+
+            // 指针离边缘越近滚得越快
+            function edgeSpeed(y, top, bottom, edge) {
+                if (y < top + edge) return -Math.ceil((top + edge - y) / 5);
+                if (y > bottom - edge) return Math.ceil((y - (bottom - edge)) / 5);
+                return 0;
+            }
+
+            function autoScrollLoop() {
+                if (!sort) return;
+                const list = sort.list;
+                // 模块收起时列表本身是一个可滚动的小窗口，先滚列表
+                if (list.scrollHeight > list.clientHeight + 1) {
+                    const r = list.getBoundingClientRect();
+                    const top = Math.max(r.top, 0), bottom = Math.min(r.bottom, window.innerHeight);
+                    const dy = edgeSpeed(sort.pointerY, top, bottom, Math.min(48, (bottom - top) / 4));
+                    if (dy) list.scrollTop += dy;
+                }
+                // 靠近屏幕上下边缘时滚动整个页面
+                const wdy = edgeSpeed(sort.pointerY, 0, window.innerHeight, 70);
+                if (wdy) window.scrollBy({ top: wdy, behavior: 'instant' });
+                sort.raf = requestAnimationFrame(autoScrollLoop);
+            }
+
+            app.addEventListener('pointerdown', (e) => {
+                if (!isAdmin || sort) return;
+                if (e.pointerType === 'mouse' && e.button !== 0) return;
                 const handle = e.target.closest('.drag-handle');
                 if (!handle) return;
-                const item = handle.closest('.item');
-                if (!item) return;
-                dragSrcEl = item;
-                item.classList.add('dragging');
-                e.dataTransfer.effectAllowed = 'move';
-            });
-
-            app.addEventListener('dragover', (e) => {
-                if (!isAdmin || !dragSrcEl) return;
+                const el = handle.closest('.item');
+                const list = el && el.parentElement;
+                if (!el || !list) return;
                 e.preventDefault();
-                const target = e.target.closest('.item');
-                if (!target || target === dragSrcEl) return;
-                target.classList.add('drag-over');
+
+                const rect = el.getBoundingClientRect();
+                sort = {
+                    el, list, handle,
+                    pointerId: e.pointerId,
+                    group: sortGroupOf(el.dataset.id),
+                    startOrder: [...list.querySelectorAll(':scope > .item')].map(x => x.dataset.id),
+                    grabOffset: e.clientY - rect.top,
+                    pointerY: e.clientY,
+                    raf: 0
+                };
+                try { handle.setPointerCapture(e.pointerId); } catch (err) { }
+                el.classList.add('dragging');
+                document.body.classList.add('is-sorting');
+                // 关闭浏览器的滚动锚定：否则项目往上移动时浏览器会自动滚动页面来"补偿"，列表就跟不上手指
+                document.documentElement.style.overflowAnchor = 'none';
+                document.body.style.overflowAnchor = 'none';
+                list.style.overflowAnchor = 'none';
+                if (navigator.vibrate && e.pointerType === 'touch') navigator.vibrate(12);
+                sort.raf = requestAnimationFrame(autoScrollLoop);
             });
 
-            app.addEventListener('dragleave', (e) => {
-                const target = e.target.closest('.item');
-                if (target) target.classList.remove('drag-over');
+            document.addEventListener('pointermove', (e) => {
+                if (!sort || e.pointerId !== sort.pointerId) return;
+                if (e.cancelable) e.preventDefault();
+                sort.pointerY = e.clientY;
+                maybeSwap();
             });
 
-            app.addEventListener('drop', async (e) => {
-                if (!isAdmin || !dragSrcEl) return;
-                e.preventDefault();
-                const target = e.target.closest('.item');
-                if (!target || target === dragSrcEl) return;
-                target.classList.remove('drag-over');
+            async function finishSort(cancelled) {
+                if (!sort) return;
+                const { el, list, handle, pointerId, startOrder, raf } = sort;
+                sort = null;
+                cancelAnimationFrame(raf);
+                try { handle.releasePointerCapture(pointerId); } catch (err) { }
+                el.classList.remove('dragging');
+                el.style.transform = '';
+                document.body.classList.remove('is-sorting');
+                document.documentElement.style.overflowAnchor = '';
+                document.body.style.overflowAnchor = '';
+                list.style.overflowAnchor = '';
 
-                const srcId = dragSrcEl.dataset.id;
-                const dstId = target.dataset.id;
-                if (!srcId || !dstId) return;
-
-                // 只允许同模块内排序
-                const srcDone = items.find(i => i.id === srcId)?.status === STATUS.DONE;
-                const dstDone = items.find(i => i.id === dstId)?.status === STATUS.DONE;
-                if (srcDone !== dstDone) {
-                    showToast('只能在同一个模块内排序');
-                    dragSrcEl.classList.remove('dragging');
-                    dragSrcEl = null;
+                const newOrder = [...list.querySelectorAll(':scope > .item')].map(x => x.dataset.id);
+                if (cancelled || newOrder.join() === startOrder.join()) {
+                    if (cancelled) render();
                     return;
                 }
 
-                // 更新本地 items 顺序
-                const allIds = items.map(i => i.id);
-                const srcIdx = allIds.indexOf(srcId);
-                const dstIdx = allIds.indexOf(dstId);
-                if (srcIdx === -1 || dstIdx === -1) return;
-
-                const [moved] = items.splice(srcIdx, 1);
-                items.splice(dstIdx, 0, moved);
-
-                // 构建批量排序数据
-                const reorderList = items.map((it, idx) => ({ id: it.id, sortOrder: idx }));
-
-                dragSrcEl.classList.remove('dragging');
-                dragSrcEl = null;
+                // 列表里的项目（可能被搜索/分类过滤过）按新顺序填回它们在 items 中原来占的位置
+                const idSet = new Set(newOrder);
+                const slots = [];
+                items.forEach((it, idx) => { if (idSet.has(it.id)) slots.push(idx); });
+                const byId = new Map(items.map(it => [it.id, it]));
+                const next = items.slice();
+                newOrder.forEach((id, k) => { next[slots[k]] = byId.get(id); });
+                items = next;
                 render();
 
                 try {
-                    await apiReorder(reorderList);
+                    await apiReorder(items.map((it, idx) => ({ id: it.id, sortOrder: idx })));
                     showToast('排序已保存');
                 } catch (err) {
-                    showToast('排序保存失败');
+                    showToast(err.message || '排序保存失败');
                     await loadItems(false);
                     render();
                 }
-            });
+            }
 
-            app.addEventListener('dragend', () => {
-                document.querySelectorAll('.item.dragging, .item.drag-over').forEach(el => {
-                    el.classList.remove('dragging', 'drag-over');
-                });
-                dragSrcEl = null;
+            // 页面或列表在拖动过程中滚动（惯性滚动、自动滚动）时也要重新判断位置
+            // capture 阶段能收到任何元素的滚动事件
+            document.addEventListener('scroll', () => {
+                if (sort) maybeSwap();
+            }, { passive: true, capture: true });
+
+            document.addEventListener('pointerup', (e) => {
+                if (sort && e.pointerId === sort.pointerId) finishSort(false);
+            });
+            document.addEventListener('pointercancel', (e) => {
+                if (sort && e.pointerId === sort.pointerId) finishSort(true);
+            });
+            // 拖动中按 Esc 取消
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && sort) finishSort(true);
+            });
+            // 手柄上禁用长按菜单（iOS/安卓长按会弹出系统菜单）
+            app.addEventListener('contextmenu', (e) => {
+                if (e.target.closest('.drag-handle')) e.preventDefault();
             });
 
             // 赞助
