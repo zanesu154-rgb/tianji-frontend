@@ -2034,6 +2034,18 @@
             white-space: nowrap;
         }
 
+        .item-thumb-link {
+            display: flex;
+            flex-shrink: 0;
+            border-radius: 6px;
+            transition: opacity 0.15s, transform 0.15s;
+        }
+
+        .item-thumb-link:hover {
+            opacity: 0.85;
+            transform: scale(1.04);
+        }
+
         .item-thumb {
             width: 52px;
             height: 30px;
@@ -4184,7 +4196,7 @@
                         <div class="item-top">
                             ${isAdmin ? `<span class="drag-handle" data-id="${escapeHtml(item.id)}" title="按住拖动排序">⋮⋮</span>` : ''}
                             ${!isDone ? `<span class="status-icon ${iconClass}" data-action="cycle-status" data-id="${escapeHtml(item.id)}" title="点击切换状态">${iconContent}</span>` : ''}
-                            ${cover ? `<img class="item-thumb" src="${escapeHtml(cover)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}
+                            ${cover ? `<a class="item-thumb-link" href="#item/${encodeURIComponent(item.id)}" data-item-link="${escapeHtml(item.id)}" title="查看详情"><img class="item-thumb" src="${escapeHtml(cover)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentElement.remove()"></a>` : ''}
                             <div class="item-name">
                                 ${!isAdmin && isDone ? `<button class="feedback-btn" data-action="feedback" data-id="${escapeHtml(item.id)}" data-name="${escapeHtml(orig)}" title="反馈">💬</button>` : ''}
                                 <a class="item-link" href="#item/${encodeURIComponent(item.id)}" data-item-link="${escapeHtml(item.id)}">${nameHtml}</a>
@@ -4194,10 +4206,10 @@
                             <span class="author-name">${escapeHtml(authorDisplay)}</span>
                             <a class="detail-link-btn" href="#item/${encodeURIComponent(item.id)}" data-item-link="${escapeHtml(item.id)}">详情 ›</a>
                             ${isAdmin ? `<button class="edit-icon-btn" data-action="edit-item" data-id="${escapeHtml(item.id)}" title="编辑">✏️</button>` : ''}
-                            <button class="expand-btn" data-action="expand" data-id="${escapeHtml(item.id)}">${item.expanded ? '▲' : '▼'}</button>
+                            ${isAdmin ? `<button class="expand-btn" data-action="expand" data-id="${escapeHtml(item.id)}" title="展开编辑链接">${item.expanded ? '▲' : '▼'}</button>` : ''}
                         </div>
-                        <div class="item-details${item.expanded ? ' show' : ''}" data-details-id="${escapeHtml(item.id)}"
-                            ${item.expanded ? 'data-loaded="1" style="max-height:none"' : ''}>${item.expanded ? buildDetailsHtml(item) : ''}</div>
+                        ${isAdmin ? `<div class="item-details${item.expanded ? ' show' : ''}" data-details-id="${escapeHtml(item.id)}"
+                            ${item.expanded ? 'data-loaded="1" style="max-height:none"' : ''}>${item.expanded ? buildDetailsHtml(item) : ''}</div>` : ''}
                     </div>
                 `;
             });
@@ -6198,15 +6210,17 @@
                 }
             });
 
-            // 弹窗点外部关闭（投稿/审核等表单弹窗不响应外部点击，避免误触丢失已填内容）
-            ['qrModal', 'loginModal', 'editModal', 'feedbackModal', 'composeModal'].forEach(id => {
+            // 只有纯展示类弹窗允许点外部关闭；编辑、反馈、投稿等需要填写的弹窗只能用按钮或 Esc 关闭，
+            // 避免误触丢失已填内容。
+            // 另外必须是「按下和松开都在遮罩上」才算点外部：在输入框里拖选文字、松手落在框外时不会关闭。
+            ['qrModal', 'loginModal'].forEach(id => {
                 const el = document.getElementById(id);
                 if (!el) return;
+                let downOnOverlay = false;
+                el.addEventListener('pointerdown', (e) => { downOnOverlay = e.target === el; });
                 el.addEventListener('click', (e) => {
-                    if (e.target.id === id) {
-                        el.classList.remove('show');
-                        if (id === 'editModal') editingItemId = null;
-                    }
+                    if (e.target === el && downOnOverlay) el.classList.remove('show');
+                    downOnOverlay = false;
                 });
             });
 
