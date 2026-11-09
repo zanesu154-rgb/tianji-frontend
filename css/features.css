@@ -311,3 +311,207 @@
         font-size: 1.5rem;
     }
 }
+
+/* ==================== 排序栏 ==================== */
+.sort-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0 1.2rem 0.7rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.sort-bar::-webkit-scrollbar {
+    display: none;
+}
+
+.sort-chip {
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-sub);
+    border-radius: 20px;
+    padding: 0.28rem 0.85rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.sort-chip:hover {
+    border-color: var(--accent);
+    color: var(--accent-text);
+}
+
+.sort-chip.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+
+.sort-hint {
+    font-size: 0.72rem;
+    color: var(--text-light);
+    white-space: nowrap;
+    margin-left: 0.3rem;
+}
+
+/* 列表卡片上的评分 / 热度 / 日期小标签 */
+.item-stat {
+    font-size: 0.74rem;
+    color: var(--text-sub);
+    white-space: nowrap;
+    padding: 0.15rem 0.55rem;
+    border-radius: 20px;
+    background: var(--bg-tag);
+}
+
+.item-stat.rating {
+    color: #b7791f;
+    background: #fef6e4;
+}
+
+[data-theme="dark"] .item-stat.rating {
+    color: #f6c453;
+    background: rgba(246, 196, 83, 0.12);
+}
+
+.item-stat.hot {
+    color: #c2410c;
+    background: #fff1e6;
+}
+
+[data-theme="dark"] .item-stat.hot {
+    color: #fb923c;
+    background: rgba(251, 146, 60, 0.12);
+}
+
+/* ==================== 评分 ==================== */
+.stars-static {
+    position: relative;
+    display: inline-block;
+    font-size: 1.1rem;
+    line-height: 1;
+    letter-spacing: 2px;
+    color: var(--border);
+}
+
+.stars-static .fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    color: #f5b301;
+}
+
+.ip-rating {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem 1.4rem;
+    flex-wrap: wrap;
+    margin-top: 1.2rem;
+    padding: 0.9rem 1.1rem;
+    border-radius: 16px;
+    background: var(--bg-tag);
+}
+
+.ip-rating-summary {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.ip-rating-avg {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1;
+}
+
+.ip-rating-count {
+    font-size: 0.78rem;
+    color: var(--text-light);
+    margin-top: 0.25rem;
+}
+
+.ip-rating-mine {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--text-sub);
+    flex-wrap: wrap;
+}
+
+/* 可点击的星星：按 5→1 倒序排列，配合 ~ 选择器实现悬停时点亮左侧所有星 */
+.star-input {
+    display: inline-flex;
+    flex-direction: row-reverse;
+}
+
+.star-input button {
+    background: none;
+    border: none;
+    padding: 0 2px;
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--border);
+    transition: color 0.1s, transform 0.1s;
+}
+
+.star-input button.on {
+    color: #f5b301;
+}
+
+@media (hover: hover) {
+    .star-input:hover button {
+        color: var(--border);
+    }
+
+    .star-input button:hover,
+    .star-input button:hover ~ button {
+        color: #f5b301;
+    }
+
+    .star-input button:hover {
+        transform: scale(1.15);
+    }
+}
+
+.star-input:disabled,
+.star-input.busy {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.ip-unrate {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    font-size: 0.76rem;
+    cursor: pointer;
+    font-family: inherit;
+    text-decoration: underline;
+    padding: 0;
+}
+
+@media (max-width: 640px) {
+    .sort-bar {
+        gap: 0.25rem;
+        padding: 0 0.6rem 0.6rem;
+    }
+
+    .sort-chip {
+        padding: 0.25rem 0.55rem;
+        font-size: 0.75rem;
+    }
+
+    /* 手机上空间不够，排序说明只在桌面显示 */
+    .sort-hint {
+        display: none;
+    }
+}

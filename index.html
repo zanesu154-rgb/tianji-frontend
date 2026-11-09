@@ -20,14 +20,14 @@
             } catch (e) { }
         })();
     </script>
-    <link rel="stylesheet" href="css/base.css?v=20261109a">
-    <link rel="stylesheet" href="css/home.css?v=20261109a">
-    <link rel="stylesheet" href="css/nav.css?v=20261109a">
-    <link rel="stylesheet" href="css/account.css?v=20261109a">
-    <link rel="stylesheet" href="css/item-page.css?v=20261109a">
-    <link rel="stylesheet" href="css/layout.css?v=20261109a">
-    <link rel="stylesheet" href="css/gm.css?v=20261109a">
-    <link rel="stylesheet" href="css/features.css?v=20261109a">
+    <link rel="stylesheet" href="css/base.css?v=20261109b">
+    <link rel="stylesheet" href="css/home.css?v=20261109b">
+    <link rel="stylesheet" href="css/nav.css?v=20261109b">
+    <link rel="stylesheet" href="css/account.css?v=20261109b">
+    <link rel="stylesheet" href="css/item-page.css?v=20261109b">
+    <link rel="stylesheet" href="css/layout.css?v=20261109b">
+    <link rel="stylesheet" href="css/gm.css?v=20261109b">
+    <link rel="stylesheet" href="css/features.css?v=20261109b">
 </head>
 
 
@@ -146,6 +146,13 @@
                             </button>
                             <button class="module-toggle" id="doneToggle" data-module="done" title="展开/收起">▼</button>
                         </div>
+                    </div>
+                    <div class="sort-bar" id="sortBar" role="tablist" aria-label="排序方式">
+                        <button class="sort-chip active" data-sort="default" role="tab">默认</button>
+                        <button class="sort-chip" data-sort="hot" role="tab">🔥 热门</button>
+                        <button class="sort-chip" data-sort="new" role="tab">🕒 最新</button>
+                        <button class="sort-chip" data-sort="rating" role="tab">⭐ 评分</button>
+                        <span class="sort-hint" id="sortHint"></span>
                     </div>
                     <div class="module-body" id="doneList">
                         <!-- 骨架屏 -->
@@ -735,22 +742,23 @@
         </div>
     </div>
 
-    <script src="js/config.js?v=20261109a" defer></script>
-    <script src="js/utils.js?v=20261109a" defer></script>
-    <script src="js/data.js?v=20261109a" defer></script>
-    <script src="js/announcement.js?v=20261109a" defer></script>
-    <script src="js/list.js?v=20261109a" defer></script>
-    <script src="js/edit.js?v=20261109a" defer></script>
-    <script src="js/auth.js?v=20261109a" defer></script>
-    <script src="js/messages.js?v=20261109a" defer></script>
-    <script src="js/submissions.js?v=20261109a" defer></script>
-    <script src="js/gm.js?v=20261109a" defer></script>
-    <script src="js/account.js?v=20261109a" defer></script>
-    <script src="js/item-page.js?v=20261109a" defer></script>
-    <script src="js/router.js?v=20261109a" defer></script>
-    <script src="js/sort.js?v=20261109a" defer></script>
-    <script src="js/ui.js?v=20261109a" defer></script>
-    <script src="js/main.js?v=20261109a" defer></script>
+    <script src="js/config.js?v=20261109b" defer></script>
+    <script src="js/utils.js?v=20261109b" defer></script>
+    <script src="js/data.js?v=20261109b" defer></script>
+    <script src="js/announcement.js?v=20261109b" defer></script>
+    <script src="js/list.js?v=20261109b" defer></script>
+    <script src="js/edit.js?v=20261109b" defer></script>
+    <script src="js/auth.js?v=20261109b" defer></script>
+    <script src="js/messages.js?v=20261109b" defer></script>
+    <script src="js/submissions.js?v=20261109b" defer></script>
+    <script src="js/gm.js?v=20261109b" defer></script>
+    <script src="js/account.js?v=20261109b" defer></script>
+    <script src="js/item-page.js?v=20261109b" defer></script>
+    <script src="js/ratings.js?v=20261109b" defer></script>
+    <script src="js/router.js?v=20261109b" defer></script>
+    <script src="js/sort.js?v=20261109b" defer></script>
+    <script src="js/ui.js?v=20261109b" defer></script>
+    <script src="js/main.js?v=20261109b" defer></script>
 </body>
 
 </html>

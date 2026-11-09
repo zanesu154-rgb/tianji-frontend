@@ -13,6 +13,7 @@ function setupEvents() {
     setupChromeEvents();
     setupSortEvents();
     setupMiscEvents();
+    setupSortBarEvents();
 }
 
 // ==================== 初始化 ====================
@@ -49,7 +50,9 @@ async function init() {
     fetchAnnouncement();
     await tryLogin();
     updateLoginUI();
+    updateSortBar();
     startUnreadPolling();
+    loadMyRatings();
 
     if (currentPage === 'account') {
         if (isLoggedIn()) {

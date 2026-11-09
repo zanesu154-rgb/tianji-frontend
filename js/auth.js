@@ -98,7 +98,9 @@ function switchAuthTab(tab) {
 async function afterAuthSuccess(toastText) {
     closeLoginModal();
     updateLoginUI();
+    updateSortBar();
     startUnreadPolling();
+    loadMyRatings();   // 登录后按账号显示自己的评分
     showToast(toastText);
     await loadItems(false);
     render();
@@ -155,6 +157,8 @@ function logout(silent) {
     stopUnreadPolling();
     messages = [];
     updateLoginUI();
+    updateSortBar();
+    loadMyRatings();
     loadItems(true).then(render);
     showPage('home');
     if (!silent) showToast('已退出');

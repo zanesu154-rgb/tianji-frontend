@@ -58,6 +58,9 @@ function mapItemRow(r) {
         images: r.images || '',
         createdAt: r.created_at,
         updatedAt: r.updated_at,
+        hot: Number(r.hot) || 0,                       // 近 30 天点击
+        ratingAvg: Number(r.rating_avg) || 0,
+        ratingCount: Number(r.rating_count) || 0,
         clicks: r.clicks || null,          // 仅管理员接口返回
         expanded: false
     };

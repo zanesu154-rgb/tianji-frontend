@@ -28,6 +28,7 @@ js/               脚本，普通 <script defer>，按顺序加载，共享全�
   gm.js             GM 面板
   account.js        账户中心设置
   item-page.js      资源详情页
+  ratings.js        排序（默认/热门/最新/评分）与评分
   router.js         页面切换
   sort.js           拖动排序
   ui.js             顶栏、搜索、菜单、公告编辑等界面事件

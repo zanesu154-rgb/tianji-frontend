@@ -125,6 +125,8 @@ function buildItemPageHtml(item) {
                 ${isAdmin ? `<button class="gm-btn" data-ip-edit>✏️ 编辑</button>` : ''}
             </div>
 
+            ${isDone ? ratingSectionHtml(item) : ''}
+
             <section class="ip-section">
                 <h2>简介</h2>
                 ${item.description ? `<div class="ip-desc">${linkifyText(item.description)}</div>` : '<div class="ip-empty">暂无简介</div>'}
@@ -155,6 +157,7 @@ async function renderItemPage(id) {
             <div class="ip-skeleton" style="width:40%;"></div>
             <div class="ip-skeleton" style="width:90%;"></div></article>`;
         item = await fetchSingleItem(id);
+        itemPageFetched = item;
         if (token !== itemPageRenderToken) return;   // 期间又切换了页面
     }
     if (!item) {
@@ -173,8 +176,12 @@ async function renderItemPage(id) {
     root.innerHTML = buildItemPageHtml(item);
 }
 
+// 直接打开分享链接时列表可能还没加载，用单独请求到的条目兜底，保证页面上的按钮立即可用
+let itemPageFetched = null;
+
 function getCurrentPageItem() {
-    return items.find(i => i.id === currentItemId) || null;
+    return items.find(i => i.id === currentItemId)
+        || (itemPageFetched && itemPageFetched.id === currentItemId ? itemPageFetched : null);
 }
 
 // ---------- 图片 ----------
@@ -313,6 +320,10 @@ function setupItemPageEvents() {
             showExternalWarning(href, () => window.open(href, '_blank', 'noopener,noreferrer'));
             return;
         }
+
+        const star = t.closest('[data-ip-star]');
+        if (star) { rateItem(item.id, Number(star.dataset.ipStar)); return; }
+        if (t.closest('[data-ip-unrate]')) { rateItem(item.id, 0); return; }
 
         if (t.closest('[data-ip-share]')) { shareItem(item); return; }
         if (t.closest('[data-ip-feedback]')) { openFeedback(item.id, item.original); return; }

@@ -42,7 +42,7 @@ function render() {
     const allDone = items.filter(i => i.status === STATUS.DONE);
 
     const filteredPending = filterItems(sortedPending);       // 待汉化：只搜索
-    const filteredDone = filterDoneItems(allDone);             // 已汉化：搜索 + 分类
+    const filteredDone = sortDoneItems(filterDoneItems(allDone)); // 已汉化：搜索 + 分类 + 排序
 
     document.getElementById('pendingCount').textContent = allPending.length;
     document.getElementById('doneCount').textContent = allDone.length;
@@ -148,7 +148,7 @@ function renderList(containerId, list, isDoneSection) {
         html += `
             <div class="item" data-id="${escapeHtml(item.id)}">
                 <div class="item-top">
-                    ${isAdmin ? `<span class="drag-handle" data-id="${escapeHtml(item.id)}" title="按住拖动排序">⋮⋮</span>` : ''}
+                    ${isAdmin && (!isDoneSection || currentSort === 'default') ? `<span class="drag-handle" data-id="${escapeHtml(item.id)}" title="按住拖动排序">⋮⋮</span>` : ''}
                     ${!isDone ? `<span class="status-icon ${iconClass}" data-action="cycle-status" data-id="${escapeHtml(item.id)}" title="点击切换状态">${iconContent}</span>` : ''}
                     ${cover ? `<a class="item-thumb-link" href="#item/${encodeURIComponent(item.id)}" data-item-link="${escapeHtml(item.id)}" title="查看详情"><img class="item-thumb" src="${escapeHtml(cover)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentElement.remove()"></a>` : ''}
                     <div class="item-name">
@@ -158,6 +158,7 @@ function renderList(containerId, list, isDoneSection) {
                 </div>
                 <div class="item-bottom">
                     <span class="author-name">${escapeHtml(authorDisplay)}</span>
+                    ${isDoneSection ? itemStatBadges(item) : ''}
                     <a class="detail-link-btn" href="#item/${encodeURIComponent(item.id)}" data-item-link="${escapeHtml(item.id)}">详情 ›</a>
                     ${isAdmin ? `<button class="edit-icon-btn" data-action="edit-item" data-id="${escapeHtml(item.id)}" title="编辑">✏️</button>` : ''}
                     ${isAdmin ? `<button class="expand-btn" data-action="expand" data-id="${escapeHtml(item.id)}" title="展开编辑链接">${item.expanded ? '▲' : '▼'}</button>` : ''}
