@@ -42,3 +42,17 @@ function applyTheme(theme) {
     if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
     try { localStorage.setItem(THEME_KEY, theme); } catch (e) { }
 }
+
+// 展示区显示方式：grid 网格 / list 列表（记住访客的选择）
+const VIEW_KEY = 'tianji_view';
+const DONE_PAGE_SIZE = 24;   // 展示区每批显示的数量
+let doneView = (() => {
+    try {
+        const v = localStorage.getItem(VIEW_KEY);
+        return v === 'list' ? 'list' : 'grid';
+    } catch (e) {
+        return 'grid';
+    }
+})();
+let doneShown = DONE_PAGE_SIZE;
+let lastDoneViewKey = '';

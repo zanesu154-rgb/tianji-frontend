@@ -70,7 +70,9 @@ function updateSortBar() {
         c.setAttribute('aria-selected', active ? 'true' : 'false');
     });
     let hint = SORT_HINTS[currentSort] || '';
-    if (isAdmin && currentSort !== 'default') hint += '（切回默认才能拖动排序）';
+    if (isAdmin && (currentSort !== 'default' || doneView !== 'list')) {
+        hint += (hint ? '　' : '') + '拖动排序需要「默认」排序 + 列表视图';
+    }
     document.getElementById('sortHint').textContent = hint;
 }
 

@@ -41,8 +41,8 @@ function render() {
 
     const allDone = items.filter(i => i.status === STATUS.DONE);
 
-    const filteredPending = filterItems(sortedPending);       // 待汉化：只搜索
-    const filteredDone = sortDoneItems(filterDoneItems(allDone)); // 已汉化：搜索 + 分类 + 排序
+    const filteredPending = filterItems(sortedPending);             // 待汉化：只搜索
+    const filteredDone = sortDoneItems(filterDoneItems(allDone));   // 已汉化：搜索 + 分类 + 排序
 
     document.getElementById('pendingCount').textContent = allPending.length;
     document.getElementById('doneCount').textContent = allDone.length;
@@ -50,8 +50,18 @@ function render() {
     // 访客看不到待汉化模块
     document.getElementById('pendingModule').style.display = isAdmin ? '' : 'none';
 
+    // 展示区分批显示：筛选条件变化时回到第一批
+    const viewKey = [searchQuery, currentCategory, currentSort, doneView].join('|');
+    if (viewKey !== lastDoneViewKey) {
+        doneShown = DONE_PAGE_SIZE;
+        lastDoneViewKey = viewKey;
+    }
+    const visibleDone = filteredDone.slice(0, doneShown);
+
     renderList('pendingList', filteredPending, false);
-    renderList('doneList', filteredDone, true);
+    renderList('doneList', visibleDone, true);
+    updateLoadMore(filteredDone.length - visibleDone.length);
+    updateViewSwitch();
 
     updateModuleStyles();
 
@@ -65,10 +75,8 @@ function updateModuleStyles() {
     const pendingToggle = document.getElementById('pendingToggle');
     const doneToggle = document.getElementById('doneToggle');
 
-    // 处理待汉化模块
+    // 处理待汉化模块（展示区始终完整显示，用「显示更多」分批加载）
     handleModuleToggle(pendingModule, pendingToggle, moduleExpanded.pending);
-    // 处理已汉化模块
-    handleModuleToggle(doneModule, doneToggle, moduleExpanded.done);
 }
 
 function handleModuleToggle(moduleEl, toggleBtn, expanded) {
@@ -105,70 +113,100 @@ function handleModuleToggle(moduleEl, toggleBtn, expanded) {
 
 function renderList(containerId, list, isDoneSection) {
     const container = document.getElementById(containerId);
+    // 展示区按当前视图显示网格或列表；待汉化（管理员）始终是列表
+    const view = isDoneSection ? doneView : 'list';
+    container.classList.toggle('view-grid', view === 'grid');
+    container.classList.toggle('view-list', view === 'list');
+
     if (!list.length) {
         let msg = searchQuery ? '没有匹配的搜索结果' : (isDoneSection ? '暂无已汉化项目' : '还没有项目');
         container.innerHTML = `<div class="empty-msg">${msg}</div>`;
         return;
     }
 
+    // 拖动排序只在列表视图 + 默认排序下可用；展开编辑链接只在列表视图
+    const canDrag = isAdmin && (!isDoneSection || (view === 'list' && currentSort === 'default'));
+    const canExpand = isAdmin && view === 'list';
+
     let html = '';
     list.forEach(item => {
+        const id = escapeHtml(item.id);
+        const href = `#item/${encodeURIComponent(item.id)}`;
         const orig = item.original || '未知';
         const trans = item.translated || '';
-        const authorDisplay = item.author || '佚名';
+        const author = item.author || '佚名';
         const status = item.status || STATUS.TODO;
         const isDone = status === STATUS.DONE;
         const isDoing = status === STATUS.DOING;
-        const expanded = item.expanded ? 'show' : '';
+        const cat = item.category || 'addon';
         const cover = itemImages(item)[0] || '';
 
-        let nameHtml = '';
-        if (isDone && trans) {
-            nameHtml = `<span class="orig">${escapeHtml(orig)}</span> <span class="trans">(${escapeHtml(trans)})</span>`;
-        } else if (isDone && !trans) {
-            nameHtml = `<span class="orig">${escapeHtml(orig)}</span> <span class="trans">(未填写中译名)</span>`;
-        } else {
-            nameHtml = `<span class="orig">${escapeHtml(orig)}</span>`;
-        }
+        const statusIcon = isDone ? '' : `<span class="status-icon ${isDoing ? 'in-progress' : ''}" data-action="cycle-status" data-id="${id}" title="点击切换状态">${isDoing ? '⏳' : '□'}</span>`;
 
-        let iconClass = '';
-        let iconContent = '';
-        if (isDone) {
-            iconClass = 'done';
-            iconContent = '✅';
-        } else if (isDoing) {
-            iconClass = 'in-progress';
-            iconContent = '⏳';
-        } else {
-            iconClass = '';
-            iconContent = '□';
-        }
+        const sub = trans
+            ? `<div class="card-sub" title="${escapeHtml(trans)}">${escapeHtml(trans)}</div>`
+            : (isAdmin && isDone ? '<div class="card-sub muted">未填写中译名</div>' : '');
 
+        const admin = isAdmin ? `
+                <div class="card-admin">
+                    ${canDrag ? `<span class="drag-handle" data-id="${id}" title="按住拖动排序">⋮⋮</span>` : ''}
+                    ${statusIcon}
+                    <span class="card-admin-spacer"></span>
+                    <button class="edit-icon-btn" data-action="edit-item" data-id="${id}" title="编辑">✏️</button>
+                    ${canExpand ? `<button class="expand-btn" data-action="expand" data-id="${id}" title="展开编辑链接">${item.expanded ? '▲' : '▼'}</button>` : ''}
+                </div>` : '';
+
+        const details = canExpand ? `<div class="item-details${item.expanded ? ' show' : ''}" data-details-id="${id}"
+                    ${item.expanded ? 'data-loaded="1" style="max-height:none"' : ''}>${item.expanded ? buildDetailsHtml(item) : ''}</div>` : '';
 
         html += `
-            <div class="item" data-id="${escapeHtml(item.id)}">
-                <div class="item-top">
-                    ${isAdmin && (!isDoneSection || currentSort === 'default') ? `<span class="drag-handle" data-id="${escapeHtml(item.id)}" title="按住拖动排序">⋮⋮</span>` : ''}
-                    ${!isDone ? `<span class="status-icon ${iconClass}" data-action="cycle-status" data-id="${escapeHtml(item.id)}" title="点击切换状态">${iconContent}</span>` : ''}
-                    ${cover ? `<a class="item-thumb-link" href="#item/${encodeURIComponent(item.id)}" data-item-link="${escapeHtml(item.id)}" title="查看详情"><img class="item-thumb" src="${escapeHtml(cover)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentElement.remove()"></a>` : ''}
-                    <div class="item-name">
-                        ${!isAdmin && isDone ? `<button class="feedback-btn" data-action="feedback" data-id="${escapeHtml(item.id)}" data-name="${escapeHtml(orig)}" title="反馈">💬</button>` : ''}
-                        <a class="item-link" href="#item/${encodeURIComponent(item.id)}" data-item-link="${escapeHtml(item.id)}">${nameHtml}</a>
+            <div class="item card${isDone ? '' : ' pending'}" data-id="${id}">
+                <div class="card-cover cat-${cat}${cover ? '' : ' no-img'}">
+                    ${cover ? `<img src="${escapeHtml(cover)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('no-img'); this.remove()">` : ''}
+                    <span class="card-cover-ph" aria-hidden="true">${CATEGORY_EMOJI[cat] || '🧩'}</span>
+                    ${isDoneSection ? `<span class="card-cat">${CATEGORY_LABELS[cat] || '附加包'}</span>` : ''}
+                </div>
+                <div class="card-body">
+                    <div class="item-name"><a class="item-link card-link" href="${href}" data-item-link="${id}" title="${escapeHtml(orig)}"><span class="orig">${escapeHtml(orig)}</span></a></div>
+                    ${sub}
+                    <div class="card-meta">
+                        <span class="author-name" title="作者：${escapeHtml(author)}">${escapeHtml(author)}</span>
+                        ${isDoneSection ? itemStatBadges(item) : ''}
                     </div>
-                </div>
-                <div class="item-bottom">
-                    <span class="author-name">${escapeHtml(authorDisplay)}</span>
-                    ${isDoneSection ? itemStatBadges(item) : ''}
-                    <a class="detail-link-btn" href="#item/${encodeURIComponent(item.id)}" data-item-link="${escapeHtml(item.id)}">详情 ›</a>
-                    ${isAdmin ? `<button class="edit-icon-btn" data-action="edit-item" data-id="${escapeHtml(item.id)}" title="编辑">✏️</button>` : ''}
-                    ${isAdmin ? `<button class="expand-btn" data-action="expand" data-id="${escapeHtml(item.id)}" title="展开编辑链接">${item.expanded ? '▲' : '▼'}</button>` : ''}
-                </div>
-                ${isAdmin ? `<div class="item-details${item.expanded ? ' show' : ''}" data-details-id="${escapeHtml(item.id)}"
-                    ${item.expanded ? 'data-loaded="1" style="max-height:none"' : ''}>${item.expanded ? buildDetailsHtml(item) : ''}</div>` : ''}
+                </div>${admin}
+                ${details}
             </div>
         `;
     });
     container.innerHTML = html;
+}
+
+// ---------- 视图切换与分批显示 ----------
+function updateLoadMore(remaining) {
+    const btn = document.getElementById('doneMore');
+    if (remaining > 0) {
+        btn.textContent = `显示更多（还有 ${remaining} 个）`;
+        btn.style.display = '';
+    } else {
+        btn.style.display = 'none';
+    }
+}
+
+function updateViewSwitch() {
+    document.querySelectorAll('#viewSwitch .view-btn').forEach(b => {
+        const active = b.dataset.view === doneView;
+        b.classList.toggle('active', active);
+        b.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+}
+
+function setDoneView(view) {
+    if (view !== 'grid' && view !== 'list') return;
+    if (view === doneView) return;
+    doneView = view;
+    try { localStorage.setItem(VIEW_KEY, view); } catch (e) { }
+    render();
+    updateSortBar();
 }
 
 function buildDetailsHtml(item) {
@@ -319,6 +357,15 @@ function openFeedback(id, name) {
 }
 
 function setupListEvents() {
+    document.getElementById('viewSwitch').addEventListener('click', (e) => {
+        const b = e.target.closest('.view-btn');
+        if (b) setDoneView(b.dataset.view);
+    });
+    document.getElementById('doneMore').addEventListener('click', () => {
+        doneShown += DONE_PAGE_SIZE;
+        render();
+    });
+
     document.getElementById('editStatus').addEventListener('change', syncEditTranslatedField);
 
     const app = document.querySelector('.app');

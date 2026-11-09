@@ -20,14 +20,15 @@
             } catch (e) { }
         })();
     </script>
-    <link rel="stylesheet" href="css/base.css?v=20261109b">
-    <link rel="stylesheet" href="css/home.css?v=20261109b">
-    <link rel="stylesheet" href="css/nav.css?v=20261109b">
-    <link rel="stylesheet" href="css/account.css?v=20261109b">
-    <link rel="stylesheet" href="css/item-page.css?v=20261109b">
-    <link rel="stylesheet" href="css/layout.css?v=20261109b">
-    <link rel="stylesheet" href="css/gm.css?v=20261109b">
-    <link rel="stylesheet" href="css/features.css?v=20261109b">
+    <link rel="stylesheet" href="css/base.css?v=20261109c">
+    <link rel="stylesheet" href="css/home.css?v=20261109c">
+    <link rel="stylesheet" href="css/nav.css?v=20261109c">
+    <link rel="stylesheet" href="css/account.css?v=20261109c">
+    <link rel="stylesheet" href="css/item-page.css?v=20261109c">
+    <link rel="stylesheet" href="css/layout.css?v=20261109c">
+    <link rel="stylesheet" href="css/gm.css?v=20261109c">
+    <link rel="stylesheet" href="css/features.css?v=20261109c">
+    <link rel="stylesheet" href="css/cards.css?v=20261109c">
 </head>
 
 
@@ -144,7 +145,16 @@
                                 <span class="archive-btn-label" id="archiveBtnLabel">全部</span>
                                 <span class="archive-arrow">▼</span>
                             </button>
-                            <button class="module-toggle" id="doneToggle" data-module="done" title="展开/收起">▼</button>
+                            <div class="view-switch" id="viewSwitch" role="group" aria-label="显示方式">
+                                <button class="view-btn" data-view="grid" title="网格视图" aria-label="网格视图">
+                                    <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+                                </button>
+                                <button class="view-btn" data-view="list" title="列表视图" aria-label="列表视图">
+                                    <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><rect x="1" y="2" width="4" height="3" rx="1"/><rect x="7" y="2.5" width="8" height="2" rx="1"/><rect x="1" y="6.5" width="4" height="3" rx="1"/><rect x="7" y="7" width="8" height="2" rx="1"/><rect x="1" y="11" width="4" height="3" rx="1"/><rect x="7" y="11.5" width="8" height="2" rx="1"/></svg>
+                                </button>
+                            </div>
+                            <!-- 展示区不再收起，保留按钮供旧逻辑引用 -->
+                            <button class="module-toggle" id="doneToggle" data-module="done" style="display:none;" aria-hidden="true">▼</button>
                         </div>
                     </div>
                     <div class="sort-bar" id="sortBar" role="tablist" aria-label="排序方式">
@@ -154,7 +164,7 @@
                         <button class="sort-chip" data-sort="rating" role="tab">⭐ 评分</button>
                         <span class="sort-hint" id="sortHint"></span>
                     </div>
-                    <div class="module-body" id="doneList">
+                    <div class="module-body view-grid" id="doneList">
                         <!-- 骨架屏 -->
                         <div class="skeleton-item">
                             <div class="skeleton-line"></div>
@@ -169,6 +179,7 @@
                             <div class="skeleton-line short"></div>
                         </div>
                     </div>
+                    <button class="load-more" id="doneMore" style="display:none;"></button>
                 </div>
             </div>
 
@@ -742,23 +753,23 @@
         </div>
     </div>
 
-    <script src="js/config.js?v=20261109b" defer></script>
-    <script src="js/utils.js?v=20261109b" defer></script>
-    <script src="js/data.js?v=20261109b" defer></script>
-    <script src="js/announcement.js?v=20261109b" defer></script>
-    <script src="js/list.js?v=20261109b" defer></script>
-    <script src="js/edit.js?v=20261109b" defer></script>
-    <script src="js/auth.js?v=20261109b" defer></script>
-    <script src="js/messages.js?v=20261109b" defer></script>
-    <script src="js/submissions.js?v=20261109b" defer></script>
-    <script src="js/gm.js?v=20261109b" defer></script>
-    <script src="js/account.js?v=20261109b" defer></script>
-    <script src="js/item-page.js?v=20261109b" defer></script>
-    <script src="js/ratings.js?v=20261109b" defer></script>
-    <script src="js/router.js?v=20261109b" defer></script>
-    <script src="js/sort.js?v=20261109b" defer></script>
-    <script src="js/ui.js?v=20261109b" defer></script>
-    <script src="js/main.js?v=20261109b" defer></script>
+    <script src="js/config.js?v=20261109c" defer></script>
+    <script src="js/utils.js?v=20261109c" defer></script>
+    <script src="js/data.js?v=20261109c" defer></script>
+    <script src="js/announcement.js?v=20261109c" defer></script>
+    <script src="js/list.js?v=20261109c" defer></script>
+    <script src="js/edit.js?v=20261109c" defer></script>
+    <script src="js/auth.js?v=20261109c" defer></script>
+    <script src="js/messages.js?v=20261109c" defer></script>
+    <script src="js/submissions.js?v=20261109c" defer></script>
+    <script src="js/gm.js?v=20261109c" defer></script>
+    <script src="js/account.js?v=20261109c" defer></script>
+    <script src="js/item-page.js?v=20261109c" defer></script>
+    <script src="js/ratings.js?v=20261109c" defer></script>
+    <script src="js/router.js?v=20261109c" defer></script>
+    <script src="js/sort.js?v=20261109c" defer></script>
+    <script src="js/ui.js?v=20261109c" defer></script>
+    <script src="js/main.js?v=20261109c" defer></script>
 </body>
 
 </html>

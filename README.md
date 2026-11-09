@@ -15,6 +15,7 @@ css/              样式，按 index.html 里的顺序加载（顺序会影响�
   layout.css        页面切换动画、响应式、登录注册 Tab
   gm.css            GM 面板
   features.css      消息、投稿、排序、点击量、评分等
+  cards.css         主页资源卡片（网格 / 列表视图），最后加载
 js/               脚本，普通 <script defer>，按顺序加载，共享全局作用域
   config.js         后端地址 API_BASE、全局状态、主题
   utils.js          工具函数、外部链接提醒
