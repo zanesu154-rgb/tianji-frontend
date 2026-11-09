@@ -1,0 +1,237 @@
+/* GM 面板 */
+/* ==================== GM 面板 ==================== */
+.gm-stats {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.gm-stat-card {
+    flex: 1;
+    min-width: 140px;
+    background: var(--bg-tag);
+    border-radius: 14px;
+    padding: 1.2rem 1.4rem;
+    text-align: center;
+}
+
+.gm-stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent-text);
+    line-height: 1.2;
+}
+
+.gm-stat-label {
+    font-size: 0.85rem;
+    color: var(--text-sub);
+    margin-top: 0.3rem;
+}
+
+.gm-section {
+    margin-bottom: 1.5rem;
+}
+
+.gm-section h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-title);
+    margin-bottom: 0.8rem;
+}
+
+.gm-chart-wrap {
+    background: var(--bg-tag);
+    border-radius: 12px;
+    padding: 1rem;
+    overflow: hidden;
+}
+
+.gm-chart {
+    width: 100%;
+    height: 180px;
+    display: block;
+}
+
+.gm-chart polyline {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.gm-chart .chart-area {
+    fill: var(--accent);
+    opacity: 0.12;
+}
+
+.gm-chart circle {
+    fill: var(--accent);
+    stroke: var(--bg-card);
+    stroke-width: 2;
+}
+
+.gm-chart text {
+    font-size: 9px;
+    fill: var(--text-light);
+    font-family: inherit;
+}
+
+.gm-chart line.grid {
+    stroke: var(--border-light);
+    stroke-width: 1;
+    stroke-dasharray: 2 2;
+}
+
+
+.gm-user-list {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.gm-user-row {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid var(--border-light);
+    flex-wrap: wrap;
+}
+
+.gm-user-row:last-child {
+    border-bottom: none;
+}
+
+.gm-user-name {
+    flex: 1;
+    min-width: 100px;
+    font-weight: 500;
+    color: var(--text-main);
+}
+
+.gm-user-role {
+    font-size: 0.75rem;
+    padding: 0.15rem 0.6rem;
+    border-radius: 20px;
+    background: var(--bg-tag);
+    color: var(--text-sub);
+}
+
+.gm-user-role.admin {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.gm-user-date {
+    font-size: 0.75rem;
+    color: var(--text-light);
+}
+
+.gm-user-actions {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.gm-btn {
+    background: var(--bg-tag);
+    border: none;
+    border-radius: 8px;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.75rem;
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: 0.15s;
+    font-family: inherit;
+}
+
+.gm-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-main);
+}
+
+.gm-btn.danger {
+    color: var(--danger-text);
+}
+
+.gm-btn.danger:hover {
+    background: var(--danger-bg-hover);
+}
+
+.feedback-btn {
+    background: transparent;
+    border: none;
+    font-size: 0.8rem;
+    color: var(--text-light);
+    cursor: pointer;
+    padding: 0 0.3rem 0 0;
+    border-radius: 4px;
+    transition: 0.15s;
+    vertical-align: middle;
+    margin-right: 0.2rem;
+}
+
+.feedback-btn:hover {
+    color: var(--accent);
+    background: var(--bg-hover);
+}
+
+.gm-feedback-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.gm-feedback-card {
+    background: var(--bg-tag);
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+    border-left: 3px solid var(--accent);
+}
+
+.gm-feedback-card.resolved {
+    border-left-color: #16a34a;
+    opacity: 0.65;
+}
+
+.gm-feedback-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.78rem;
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.gm-feedback-item-name {
+    color: var(--accent-text);
+    font-weight: 500;
+}
+
+.gm-feedback-content {
+    font-size: 0.88rem;
+    color: var(--text-main);
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.gm-feedback-actions {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+    justify-content: flex-end;
+}
+
+.gm-feedback-reply {
+    margin-top: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--text-sub);
+    background: var(--bg-card);
+    border-radius: 8px;
+    padding: 0.4rem 0.6rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+}

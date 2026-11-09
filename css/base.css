@@ -1,0 +1,108 @@
+/* 主题变量与基础样式 */
+/* ==================== 主题变量 ==================== */
+:root {
+    --bg-page: #f5f7fb;
+    --bg-card: #ffffff;
+    --bg-module: #fafdff;
+    --bg-header: #f0f6fd;
+    --bg-input: #ffffff;
+    --bg-search: #f9fcff;
+    --bg-hover: #e9f0f8;
+    --bg-tag: #ecf3fa;
+    --text-main: #1e2b3a;
+    --text-title: #2c3e50;
+    --text-sub: #4f6b84;
+    --text-muted: #6d8aa8;
+    --text-light: #8fa2b5;
+    --text-item: #1c2e40;
+    --text-orig: #1e3d5e;
+    --text-trans: #426c8a;
+    --border: #e2e9f0;
+    --border-light: #eef2f6;
+    --border-input: #ccdceb;
+    --border-soft: #e8eef5;
+    --accent: #1e4d6b;
+    --accent-hover: #123a52;
+    --accent-light: #dbeafe;
+    --accent-text: #1d4e7a;
+    --accent-border: #c2daf5;
+    --shadow: 0 20px 40px -10px rgba(0, 20, 40, 0.15);
+    --shadow-soft: 0 2px 6px rgba(0, 0, 0, 0.02);
+    --scrollbar-track: #eef2f6;
+    --scrollbar-thumb: #bdd3e6;
+    --danger-bg: #fee2e2;
+    --danger-text: #b91c1c;
+    --danger-bg-hover: #fecaca;
+    --announce-bg: linear-gradient(90deg, #e0f2fe, #f0f9ff);
+    --announce-border: #bae6fd;
+    --announce-text: #075985;
+}
+
+[data-theme="dark"] {
+    --bg-page: #0f1218;
+    --bg-card: #181c24;
+    --bg-module: #1a1f28;
+    --bg-header: #232936;
+    --bg-input: #232936;
+    --bg-search: #1e242e;
+    --bg-hover: #2a3240;
+    --bg-tag: #252c38;
+    --text-main: #e4e9f0;
+    --text-title: #d8dfe8;
+    --text-sub: #a8b5c4;
+    --text-muted: #8894a4;
+    --text-light: #78859a;
+    --text-item: #dde4ec;
+    --text-orig: #e8eef5;
+    --text-trans: #9ab4cc;
+    --border: #2a313c;
+    --border-light: #232830;
+    --border-input: #333b48;
+    --border-soft: #262c36;
+    --accent: #3b7a9e;
+    --accent-hover: #4a8fb5;
+    --accent-light: #2a3a4a;
+    --accent-text: #9bc4e0;
+    --accent-border: #34506a;
+    --shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+    --shadow-soft: 0 2px 6px rgba(0, 0, 0, 0.2);
+    --scrollbar-track: #232830;
+    --scrollbar-thumb: #3a4351;
+    --danger-bg: #3d1f22;
+    --danger-text: #f0a8a8;
+    --danger-bg-hover: #4a2529;
+    --announce-bg: linear-gradient(90deg, #1e3a5f, #1e293b);
+    --announce-border: #334155;
+    --announce-text: #cbd5e1;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--bg-page);
+    color: var(--text-main);
+    padding: 5rem 1rem 2rem;
+    /* 顶部从 2rem 改成 5rem，留出导航栏高度 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    transition: background 0.2s, color 0.2s;
+}
+
+.app {
+    max-width: 900px;
+    width: 100%;
+    background: var(--bg-card);
+    border-radius: 28px;
+    box-shadow: var(--shadow);
+    padding: 1.5rem 1.8rem 2rem;
+    display: flex;
+    flex-direction: column;
+    transition: background 0.2s;
+}

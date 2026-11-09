@@ -1,0 +1,482 @@
+/* 资源详情页、列表缩略图、大图查看 */
+/* ==================== 资源详情页 ==================== */
+#pageItem {
+    width: 100%;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 1rem 2rem;
+    box-sizing: border-box;
+    flex-direction: column;
+    transition: opacity 0.28s ease, transform 0.28s ease;
+}
+
+.ip-back {
+    align-self: flex-start;
+    background: none;
+    border: none;
+    color: var(--text-sub);
+    font-size: 0.88rem;
+    padding: 0.4rem 0.2rem;
+    margin-bottom: 0.6rem;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.ip-back:hover {
+    color: var(--accent-text);
+}
+
+.ip-card {
+    background: var(--bg-card);
+    border-radius: 28px;
+    box-shadow: var(--shadow);
+    padding: 1.6rem;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.ip-gallery {
+    margin-bottom: 1.3rem;
+}
+
+.ip-cover {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 18px;
+    overflow: hidden;
+    background: var(--bg-tag);
+    cursor: zoom-in;
+    display: block;
+    border: none;
+    padding: 0;
+}
+
+.ip-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.ip-thumbs {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.6rem;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: thin;
+}
+
+.ip-thumb {
+    flex: 0 0 auto;
+    width: 84px;
+    height: 48px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    padding: 0;
+    background: var(--bg-tag);
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.ip-thumb.active {
+    border-color: var(--accent);
+    opacity: 1;
+}
+
+.ip-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.ip-tags {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.6rem;
+}
+
+.ip-tag {
+    font-size: 0.74rem;
+    padding: 0.15rem 0.65rem;
+    border-radius: 20px;
+    background: var(--accent-light);
+    color: var(--accent-text);
+}
+
+.ip-tag.muted {
+    background: var(--bg-tag);
+    color: var(--text-sub);
+}
+
+.ip-title {
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1.3;
+    margin: 0;
+    word-break: break-word;
+}
+
+.ip-subtitle {
+    font-size: 1.05rem;
+    color: var(--text-trans);
+    margin-top: 0.25rem;
+    word-break: break-word;
+}
+
+.ip-byline {
+    margin-top: 0.7rem;
+    font-size: 0.86rem;
+    color: var(--text-sub);
+    display: flex;
+    gap: 0.4rem 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.ip-author-link {
+    color: var(--accent-text);
+    cursor: pointer;
+    text-decoration: none;
+    border-bottom: 1px dashed currentColor;
+}
+
+.ip-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.ip-actions .gm-btn {
+    padding: 0.4rem 0.9rem;
+    font-size: 0.82rem;
+}
+
+.ip-section {
+    margin-top: 1.6rem;
+}
+
+.ip-section h2 {
+    font-size: 1.02rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin: 0 0 0.7rem;
+    padding-left: 0.6rem;
+    border-left: 3px solid var(--accent);
+}
+
+.ip-desc {
+    font-size: 0.92rem;
+    line-height: 1.8;
+    color: var(--text-sub);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.ip-desc a {
+    color: var(--accent-text);
+    cursor: pointer;
+    word-break: break-all;
+}
+
+.ip-empty {
+    color: var(--text-light);
+    font-size: 0.88rem;
+}
+
+.ip-downloads {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.ip-dl {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--bg-tag);
+    border-radius: 16px;
+    padding: 0.5rem 0.5rem 0.5rem 1rem;
+}
+
+.ip-dl.primary {
+    background: var(--accent-light);
+}
+
+.ip-dl-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.ip-dl-label {
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: var(--text-main);
+}
+
+.ip-dl-url {
+    font-size: 0.74rem;
+    color: var(--text-light);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ip-dl-btns {
+    display: flex;
+    gap: 0.4rem;
+    flex-shrink: 0;
+}
+
+.ip-dl-go {
+    border: none;
+    border-radius: 12px;
+    padding: 0.6rem 1.1rem;
+    font-size: 0.86rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    background: var(--accent);
+    color: #fff;
+    white-space: nowrap;
+}
+
+.ip-dl-copy {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.82rem;
+    cursor: pointer;
+    font-family: inherit;
+    background: var(--bg-card);
+    color: var(--text-sub);
+    white-space: nowrap;
+}
+
+.ip-meta {
+    margin-top: 1.4rem;
+    font-size: 0.76rem;
+    color: var(--text-light);
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.ip-related {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 0.8rem;
+}
+
+.ip-rel-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.ip-rel-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-soft);
+}
+
+.ip-rel-thumb {
+    aspect-ratio: 16 / 9;
+    background: var(--bg-tag);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    overflow: hidden;
+}
+
+.ip-rel-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ip-rel-body {
+    padding: 0.6rem 0.8rem 0.7rem;
+}
+
+.ip-rel-name {
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: var(--text-orig);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ip-rel-sub {
+    font-size: 0.76rem;
+    color: var(--text-light);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 0.15rem;
+}
+
+.ip-related-wrap {
+    margin-top: 1.4rem;
+    width: 100%;
+}
+
+.ip-related-wrap h2 {
+    font-size: 1.02rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin: 0 0 0.8rem 0.3rem;
+}
+
+.ip-skeleton {
+    height: 1rem;
+    border-radius: 8px;
+    background: var(--bg-tag);
+    margin-bottom: 0.8rem;
+    animation: ipPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes ipPulse {
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* 列表卡片上的「详情」入口和封面缩略图 */
+.item-name .item-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.item-name .item-link:hover .orig {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.detail-link-btn {
+    font-size: 0.76rem;
+    color: var(--accent-text);
+    text-decoration: none;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    background: var(--accent-light);
+    white-space: nowrap;
+}
+
+.item-thumb-link {
+    display: flex;
+    flex-shrink: 0;
+    border-radius: 6px;
+    transition: opacity 0.15s, transform 0.15s;
+}
+
+.item-thumb-link:hover {
+    opacity: 0.85;
+    transform: scale(1.04);
+}
+
+.item-thumb {
+    width: 52px;
+    height: 30px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: var(--bg-tag);
+    margin-top: 1px;
+}
+
+/* 图片大图查看 */
+.lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.88);
+    z-index: 3000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.lightbox.show {
+    display: flex;
+}
+
+.lightbox img {
+    max-width: 94vw;
+    max-height: 88vh;
+    border-radius: 8px;
+    object-fit: contain;
+}
+
+.lightbox button {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    font-size: 1.4rem;
+    cursor: pointer;
+}
+
+.lightbox .lb-close {
+    top: 16px;
+    right: 16px;
+}
+
+.lightbox .lb-prev {
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.lightbox .lb-next {
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.lightbox .lb-count {
+    position: absolute;
+    bottom: 18px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.85rem;
+}
+
+@media (max-width: 640px) {
+    .ip-card {
+        padding: 1.1rem;
+        border-radius: 22px;
+    }
+
+    .ip-title {
+        font-size: 1.25rem;
+    }
+
+    .ip-dl {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0.8rem;
+    }
+
+    .ip-dl-btns .ip-dl-go {
+        flex: 1;
+    }
+
+    .ip-related {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.6rem;
+    }
+}
