@@ -1,0 +1,248 @@
+/* 顶部导航栏、搜索面板 */
+/* ============ 顶部固定导航栏 ============ */
+.top-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 100;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-light);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+    transform: translateY(0);
+    box-shadow: 0 2px 12px rgba(0, 20, 40, 0.04);
+}
+
+.top-nav.hidden {
+    transform: translateY(-100%);
+    box-shadow: none;
+}
+
+[data-theme="dark"] .top-nav {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+    border-bottom-color: var(--border);
+}
+
+.top-nav-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.2rem;
+}
+
+.top-nav-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.top-nav-logo {
+    font-size: 1.3rem;
+    line-height: 1;
+}
+
+.top-nav-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-main);
+    letter-spacing: 0.5px;
+    margin: 0;
+    border: none;
+    padding: 0;
+}
+
+.top-nav-right {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* 图标按钮（🔍 🌙 ☰） */
+.nav-icon-btn {
+    background: transparent;
+    border: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    font-size: 1.05rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-main);
+    transition: background 0.15s;
+}
+
+.nav-icon-btn:hover {
+    background: var(--bg-hover);
+}
+
+/* 下拉菜单 */
+.menu-wrap {
+    position: relative;
+}
+
+.menu-dropdown {
+    display: block;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 180px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    /* ← 矩形：圆角很小 */
+    box-shadow: 0 10px 30px rgba(0, 20, 40, 0.12);
+    padding: 6px;
+    z-index: 200;
+    /* ↓ 收起状态 */
+    opacity: 0;
+    transform: translateY(-8px) scaleY(0.96);
+    transform-origin: top right;
+    pointer-events: none;
+    transition:
+        opacity 0.2s ease,
+        transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="dark"] .menu-dropdown {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.menu-dropdown.show {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+    pointer-events: auto;
+}
+
+@keyframes menuPop {
+    0% {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.menu-item {
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 0.6rem 0.8rem;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    color: var(--text-main);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-align: left;
+    transition: background 0.12s;
+    font-family: inherit;
+}
+
+.menu-item:hover {
+    background: var(--bg-hover);
+}
+
+.menu-item-icon {
+    font-size: 1rem;
+    line-height: 1;
+    width: 18px;
+    display: inline-flex;
+    justify-content: center;
+}
+
+.menu-badge {
+    margin-left: auto;
+    font-size: 0.68rem;
+    background: var(--bg-tag);
+    color: var(--text-light);
+    padding: 0.1rem 0.45rem;
+    border-radius: 20px;
+}
+
+/* ============ 搜索面板 ============ */
+.search-panel {
+    max-height: 0;
+    overflow: hidden;
+    background: var(--bg-card);
+    border-bottom: 1px solid transparent;
+    transition: max-height 0.28s cubic-bezier(0.4, 0, 0.2, 1), border-bottom-color 0.28s;
+}
+
+.search-panel.show {
+    max-height: 90px;
+    border-bottom-color: var(--border-light);
+}
+
+.search-panel-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0.6rem 1.2rem 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+}
+
+.search-panel-icon {
+    position: absolute;
+    left: 1.7rem;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+.search-panel-input {
+    width: 100%;
+    padding: 0.7rem 2.5rem 0.7rem 2.5rem;
+    border: 1px solid var(--border-input);
+    border-radius: 40px;
+    font-size: 0.9rem;
+    background: var(--bg-search);
+    color: var(--text-main);
+    transition: 0.15s;
+    font-family: inherit;
+}
+
+.search-panel-input::placeholder {
+    color: var(--text-light);
+}
+
+.search-panel-input:focus {
+    outline: 2px solid var(--accent-border);
+    border-color: transparent;
+    background: var(--bg-input);
+}
+
+.search-panel-clear {
+    position: absolute;
+    right: 1.8rem;
+    background: transparent;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.2rem;
+    line-height: 1;
+}
+
+/* 隐藏 input[type=search] 的原生清除按钮 */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+input[type="search"] {
+    -moz-appearance: textfield;
+    -webkit-appearance: none;
+    appearance: none;
+}

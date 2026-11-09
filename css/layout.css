@@ -1,0 +1,183 @@
+/* 页面切换动画、响应式、登录注册 Tab、危险操作 */
+/* ==================== 页面切换过渡 ==================== */
+#pageHome,
+#pageAccount {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: opacity 0.28s ease, transform 0.28s ease;
+    box-sizing: border-box;
+    /* ⭐ 防溢出 */
+}
+
+#pageAccount {
+    max-width: 1000px;
+    padding: 0 1rem;
+    /* ⭐ 手机端左右留白 */
+    box-sizing: border-box;
+}
+
+/* 页面淡出 */
+.page-leaving {
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+}
+
+/* 页面淡入 */
+.page-entering {
+    animation: pageEnter 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes pageEnter {
+    0% {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==================== 账户中心宽度约束 ==================== */
+.account-layout {
+    width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+    /* ⭐ flex 子元素可收缩 */
+}
+
+.account-main {
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.account-field input,
+.account-field select,
+.account-field textarea {
+    box-sizing: border-box;
+    max-width: 100%;
+    min-width: 0;
+}
+
+/* ==================== 响应式：窄屏 ==================== */
+@media (max-width: 640px) {
+    #pageAccount {
+        padding: 0 0.75rem;
+    }
+
+    .account-layout {
+        flex-direction: column;
+        border-radius: 20px;
+    }
+
+    .account-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-light);
+        padding: 0.8rem;
+        box-sizing: border-box;
+    }
+
+    .account-nav {
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 0.4rem;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .account-nav-item {
+        white-space: nowrap;
+        width: auto;
+        padding: 0.5rem 0.8rem;
+        flex-shrink: 0;
+    }
+
+    .account-main {
+        padding: 1.2rem 1rem;
+    }
+
+    .account-nav-badge {
+        display: none;
+    }
+
+    .account-field-row {
+        flex-wrap: wrap;
+        /* ⭐ 输入框+按钮 挤不下时换行 */
+    }
+
+    .account-field-row input {
+        flex: 1 1 100%;
+        /* 输入框占满一行 */
+    }
+
+    .account-field-row .btn {
+        flex: 1 1 100%;
+    }
+}
+
+/* ==================== 登录/注册 Tab ==================== */
+.auth-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 1.5rem;
+    background: var(--bg-tag);
+    border-radius: 12px;
+    padding: 4px;
+}
+
+.auth-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    font-weight: 500;
+}
+
+.auth-tab:hover {
+    color: var(--text-main);
+}
+
+.auth-tab.active {
+    background: var(--bg-card);
+    color: var(--accent-text);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] .auth-tab.active {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* ==================== 账户中心 - 危险操作 ==================== */
+.account-danger-box {
+    border: 1px solid var(--danger-bg-hover);
+    background: var(--danger-bg);
+    border-radius: 14px;
+    padding: 1.2rem 1.4rem;
+}
+
+.account-danger-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--danger-text);
+    margin-bottom: 0.6rem;
+}
+
+.account-danger-desc {
+    font-size: 0.85rem;
+    color: var(--text-sub);
+    line-height: 1.6;
+}
+
+.account-danger-box .account-field-row input {
+    background: var(--bg-card);
+}
