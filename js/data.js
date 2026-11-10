@@ -58,6 +58,10 @@ function mapItemRow(r) {
         images: r.images || '',
         createdAt: r.created_at,
         updatedAt: r.updated_at,
+        mcVersion: r.mc_version || '',                 // 适用版本
+        packVersion: r.pack_version || '',             // 包体版本
+        authorUpdated: r.author_updated || '',         // 作者更新日期 YYYY-MM-DD
+        translationVersion: r.translation_version || '', // 汉化版本
         hot: Number(r.hot) || 0,                       // 近 30 天点击
         ratingAvg: Number(r.rating_avg) || 0,
         ratingCount: Number(r.rating_count) || 0,

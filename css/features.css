@@ -515,3 +515,37 @@
         display: none;
     }
 }
+
+/* 弹窗内的分组标题 */
+.modal-group-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-sub);
+    margin: 0.4rem 0 0.6rem;
+    padding-top: 0.8rem;
+    border-top: 1px dashed var(--border-light);
+}
+
+.modal-field input[type="date"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--border-input);
+    border-radius: 12px;
+    font-size: 0.9rem;
+    background: var(--bg-input);
+    color: var(--text-main);
+    font-family: inherit;
+    color-scheme: light dark;
+}
+
+/* 长表单弹窗（编辑、投稿、审核等）滚动时，底部按钮始终可见 */
+.modal-card .modal-actions {
+    position: sticky;
+    bottom: -1.8rem;              /* 抵消 .modal-card 的底部内边距，贴住弹窗底边 */
+    margin: 1.5rem -2rem -1.8rem;
+    padding: 0.9rem 2rem 1.4rem;
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-light);
+    z-index: 5;
+}

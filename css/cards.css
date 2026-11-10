@@ -413,3 +413,29 @@
 #pendingList .card-meta {
     padding-top: 0.25rem;
 }
+
+/* 封面右下角：适用版本 */
+.card-ver {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    max-width: calc(100% - 16px);
+    font-size: 0.66rem;
+    line-height: 1;
+    padding: 0.28rem 0.45rem;
+    border-radius: 6px;
+    background: rgba(15, 23, 42, 0.62);
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.view-list .card-ver {
+    right: 4px;
+    bottom: 4px;
+    font-size: 0.6rem;
+    padding: 0.2rem 0.35rem;
+}

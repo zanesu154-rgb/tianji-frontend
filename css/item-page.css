@@ -480,3 +480,38 @@
         gap: 0.6rem;
     }
 }
+
+/* 版本信息 */
+.ip-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.6rem;
+    margin: 1.2rem 0 0;
+}
+
+.ip-info-item {
+    background: var(--bg-tag);
+    border-radius: 12px;
+    padding: 0.6rem 0.85rem;
+    min-width: 0;
+}
+
+.ip-info dt {
+    font-size: 0.74rem;
+    color: var(--text-light);
+    margin-bottom: 0.2rem;
+}
+
+.ip-info dd {
+    margin: 0;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text-main);
+    word-break: break-word;
+}
+
+@media (max-width: 640px) {
+    .ip-info {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
