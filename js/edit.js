@@ -1,5 +1,13 @@
 // 编辑弹窗、复制/跳转、导入、导出
 
+// 编辑弹窗里的版本信息输入框 → 条目字段
+const EDIT_VERSION_FIELDS = [
+    ['editMcVersion', 'mcVersion'],
+    ['editPackVersion', 'packVersion'],
+    ['editAuthorUpdated', 'authorUpdated'],
+    ['editTranslationVersion', 'translationVersion']
+];
+
 // ==================== 编辑弹窗 ====================
 function openEditModal(id) {
     if (!isAdmin) return;
@@ -14,6 +22,9 @@ function openEditModal(id) {
     document.getElementById('editCategory').value = item.category || 'addon';
     document.getElementById('editStatus').value = item.status || STATUS.TODO;
     document.getElementById('editImages').value = item.images || '';
+    EDIT_VERSION_FIELDS.forEach(([elId, key]) => {
+        document.getElementById(elId).value = item[key] || '';
+    });
     syncEditTranslatedField();
 
     document.getElementById('editModal').classList.add('show');
@@ -43,7 +54,8 @@ async function saveEditModal() {
         category: document.getElementById('editCategory').value,
         status: document.getElementById('editStatus').value,
         translated: document.getElementById('editTranslated').value.trim(),
-        images: document.getElementById('editImages').value.trim()
+        images: document.getElementById('editImages').value.trim(),
+        ...Object.fromEntries(EDIT_VERSION_FIELDS.map(([elId, key]) => [key, document.getElementById(elId).value.trim()]))
     };
 
     try {
@@ -211,7 +223,11 @@ function exportData() {
         description: item.description || '',
         status: item.status || STATUS.TODO,
         category: item.category || 'addon',
-        images: item.images || ''
+        images: item.images || '',
+        mcVersion: item.mcVersion || '',
+        packVersion: item.packVersion || '',
+        authorUpdated: item.authorUpdated || '',
+        translationVersion: item.translationVersion || ''
     }));
     const dataStr = `// 天际译栈 汉化数据导出\n// 导出时间: ${new Date().toLocaleString()}\nconst TRANSLATION_DATA = ${JSON.stringify(exportItems, null, 2)};\n`;
     const blob = new Blob([dataStr], { type: 'application/javascript' });

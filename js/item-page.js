@@ -49,6 +49,25 @@ function relatedItems(item, n = 6) {
     return ordered.filter(i => i.id !== item.id).slice(0, n);
 }
 
+// 版本信息：只显示填写了的字段
+function versionInfoHtml(item) {
+    const rows = [
+        ['适用版本', item.mcVersion, 'Minecraft 基岩版'],
+        ['包体版本', item.packVersion, '原作者发布的版本'],
+        ['作者更新', item.authorUpdated ? fmtIsoDate(item.authorUpdated) : '', '原作者最近一次更新'],
+        ['汉化版本', item.translationVersion, '本站汉化的版本']
+    ].filter(([, v]) => v);
+    if (!rows.length) return '';
+    return `<dl class="ip-info">${rows.map(([k, v, tip]) =>
+        `<div class="ip-info-item" title="${tip}"><dt>${k}</dt><dd>${escapeHtml(v)}</dd></div>`).join('')}</dl>`;
+}
+
+// 2026-03-05 → 2026年3月5日
+function fmtIsoDate(s) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || '');
+    return m ? `${m[1]}年${Number(m[2])}月${Number(m[3])}日` : (s || '');
+}
+
 function buildItemPageHtml(item) {
     const imgs = itemImages(item);
     const isDone = item.status === STATUS.DONE;
@@ -126,6 +145,7 @@ function buildItemPageHtml(item) {
             </div>
 
             ${isDone ? ratingSectionHtml(item) : ''}
+            ${versionInfoHtml(item)}
 
             <section class="ip-section">
                 <h2>简介</h2>
@@ -138,7 +158,7 @@ function buildItemPageHtml(item) {
             </section>
 
             <div class="ip-meta">
-                ${item.updatedAt ? `<span>更新于 ${fmtDate(item.updatedAt)}</span>` : ''}
+                ${item.updatedAt ? `<span>本站更新于 ${fmtDate(item.updatedAt)}</span>` : ''}
                 ${item.createdAt ? `<span>收录于 ${fmtDate(item.createdAt)}</span>` : ''}
             </div>
         </article>

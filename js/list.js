@@ -9,7 +9,8 @@ function filterItems(list) {
         const trans = (item.translated || '').toLowerCase();
         const author = (item.author || '').toLowerCase();
         const desc = (item.description || '').toLowerCase();
-        return orig.includes(q) || trans.includes(q) || author.includes(q) || desc.includes(q);
+        const ver = (item.mcVersion || '').toLowerCase();
+        return orig.includes(q) || trans.includes(q) || author.includes(q) || desc.includes(q) || ver.includes(q);
     });
 }
 
@@ -19,18 +20,8 @@ function filterDoneItems(list) {
     if (currentCategory && currentCategory !== 'all') {
         result = result.filter(item => (item.category || 'addon') === currentCategory);
     }
-    // 再按搜索关键词筛选
-    if (searchQuery) {
-        const q = searchQuery.toLowerCase();
-        result = result.filter(item => {
-            const orig = (item.original || '').toLowerCase();
-            const trans = (item.translated || '').toLowerCase();
-            const author = (item.author || '').toLowerCase();
-            const desc = (item.description || '').toLowerCase();
-            return orig.includes(q) || trans.includes(q) || author.includes(q) || desc.includes(q);
-        });
-    }
-    return result;
+    // 再按搜索关键词筛选（与待汉化共用同一套搜索规则）
+    return filterItems(result);
 }
 
 function render() {
@@ -165,6 +156,7 @@ function renderList(containerId, list, isDoneSection) {
                     ${cover ? `<img src="${escapeHtml(cover)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('no-img'); this.remove()">` : ''}
                     <span class="card-cover-ph" aria-hidden="true">${CATEGORY_EMOJI[cat] || '🧩'}</span>
                     ${isDoneSection ? `<span class="card-cat">${CATEGORY_LABELS[cat] || '附加包'}</span>` : ''}
+                    ${isDoneSection && item.mcVersion ? `<span class="card-ver" title="适用版本 ${escapeHtml(item.mcVersion)}">${escapeHtml(item.mcVersion)}</span>` : ''}
                 </div>
                 <div class="card-body">
                     <div class="item-name"><a class="item-link card-link" href="${href}" data-item-link="${id}" title="${escapeHtml(orig)}"><span class="orig">${escapeHtml(orig)}</span></a></div>

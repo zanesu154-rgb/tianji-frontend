@@ -20,15 +20,15 @@
             } catch (e) { }
         })();
     </script>
-    <link rel="stylesheet" href="css/base.css?v=20261109c">
-    <link rel="stylesheet" href="css/home.css?v=20261109c">
-    <link rel="stylesheet" href="css/nav.css?v=20261109c">
-    <link rel="stylesheet" href="css/account.css?v=20261109c">
-    <link rel="stylesheet" href="css/item-page.css?v=20261109c">
-    <link rel="stylesheet" href="css/layout.css?v=20261109c">
-    <link rel="stylesheet" href="css/gm.css?v=20261109c">
-    <link rel="stylesheet" href="css/features.css?v=20261109c">
-    <link rel="stylesheet" href="css/cards.css?v=20261109c">
+    <link rel="stylesheet" href="css/base.css?v=20261111a">
+    <link rel="stylesheet" href="css/home.css?v=20261111a">
+    <link rel="stylesheet" href="css/nav.css?v=20261111a">
+    <link rel="stylesheet" href="css/account.css?v=20261111a">
+    <link rel="stylesheet" href="css/item-page.css?v=20261111a">
+    <link rel="stylesheet" href="css/layout.css?v=20261111a">
+    <link rel="stylesheet" href="css/gm.css?v=20261111a">
+    <link rel="stylesheet" href="css/features.css?v=20261111a">
+    <link rel="stylesheet" href="css/cards.css?v=20261111a">
 </head>
 
 
@@ -547,6 +547,27 @@
                 <label>图片链接（每行一个，第一张作为封面）</label>
                 <textarea id="editImages" autocomplete="off" placeholder="https://.../cover.png&#10;https://.../screenshot1.png" style="min-height:70px;font-size:0.8rem;"></textarea>
             </div>
+            <div class="modal-group-title">版本信息（选填）</div>
+            <div class="modal-field-row">
+                <div class="modal-field">
+                    <label>适用版本</label>
+                    <input type="text" id="editMcVersion" maxlength="50" autocomplete="off" placeholder="如 1.21.0+">
+                </div>
+                <div class="modal-field">
+                    <label>包体版本</label>
+                    <input type="text" id="editPackVersion" maxlength="50" autocomplete="off" placeholder="如 v2.3.1">
+                </div>
+            </div>
+            <div class="modal-field-row">
+                <div class="modal-field">
+                    <label>作者更新日期</label>
+                    <input type="date" id="editAuthorUpdated" min="2000-01-01" max="2100-12-31">
+                </div>
+                <div class="modal-field">
+                    <label>汉化版本</label>
+                    <input type="text" id="editTranslationVersion" maxlength="50" autocomplete="off" placeholder="如 v1.2">
+                </div>
+            </div>
             <div class="modal-actions">
                 <button class="btn btn-danger" id="editDeleteBtn">🗑️ 移除</button>
                 <button class="btn" id="editCancelBtn"
@@ -753,23 +774,23 @@
         </div>
     </div>
 
-    <script src="js/config.js?v=20261109c" defer></script>
-    <script src="js/utils.js?v=20261109c" defer></script>
-    <script src="js/data.js?v=20261109c" defer></script>
-    <script src="js/announcement.js?v=20261109c" defer></script>
-    <script src="js/list.js?v=20261109c" defer></script>
-    <script src="js/edit.js?v=20261109c" defer></script>
-    <script src="js/auth.js?v=20261109c" defer></script>
-    <script src="js/messages.js?v=20261109c" defer></script>
-    <script src="js/submissions.js?v=20261109c" defer></script>
-    <script src="js/gm.js?v=20261109c" defer></script>
-    <script src="js/account.js?v=20261109c" defer></script>
-    <script src="js/item-page.js?v=20261109c" defer></script>
-    <script src="js/ratings.js?v=20261109c" defer></script>
-    <script src="js/router.js?v=20261109c" defer></script>
-    <script src="js/sort.js?v=20261109c" defer></script>
-    <script src="js/ui.js?v=20261109c" defer></script>
-    <script src="js/main.js?v=20261109c" defer></script>
+    <script src="js/config.js?v=20261111a" defer></script>
+    <script src="js/utils.js?v=20261111a" defer></script>
+    <script src="js/data.js?v=20261111a" defer></script>
+    <script src="js/announcement.js?v=20261111a" defer></script>
+    <script src="js/list.js?v=20261111a" defer></script>
+    <script src="js/edit.js?v=20261111a" defer></script>
+    <script src="js/auth.js?v=20261111a" defer></script>
+    <script src="js/messages.js?v=20261111a" defer></script>
+    <script src="js/submissions.js?v=20261111a" defer></script>
+    <script src="js/gm.js?v=20261111a" defer></script>
+    <script src="js/account.js?v=20261111a" defer></script>
+    <script src="js/item-page.js?v=20261111a" defer></script>
+    <script src="js/ratings.js?v=20261111a" defer></script>
+    <script src="js/router.js?v=20261111a" defer></script>
+    <script src="js/sort.js?v=20261111a" defer></script>
+    <script src="js/ui.js?v=20261111a" defer></script>
+    <script src="js/main.js?v=20261111a" defer></script>
 </body>
 
 </html>
