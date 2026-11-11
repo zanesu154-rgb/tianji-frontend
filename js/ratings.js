@@ -5,7 +5,7 @@ const VOTER_KEY = 'tianji_voter_id';
 const SORT_MODES = ['default', 'hot', 'new', 'rating'];
 const SORT_HINTS = {
     hot: '按近 30 天点击量',
-    new: '按收录时间',
+    new: '按最近更新（本站更新汉化或原作者更新，取较新的）',
     rating: '按评分（评分人数少时向全站平均靠拢）'
 };
 // 评分排序的先验权重：相当于每个资源先有 5 个「全站平均分」的虚拟评分，
@@ -38,6 +38,15 @@ function getVoterId() {
 }
 
 // ---------- 排序 ----------
+// 最近更新时间（秒）：本站内容更新 与 原作者更新日期 取较新的
+function lastUpdatedSec(item) {
+    const site = Number(item.contentUpdated) || Number(item.createdAt) || 0;
+    let author = 0;
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(item.authorUpdated || '');
+    if (m) author = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]), 12).getTime() / 1000;
+    return Math.max(site, author);
+}
+
 function bayesRating(item, mean) {
     const n = item.ratingCount || 0;
     if (!n) return -1;   // 没人评分的排在最后
@@ -52,7 +61,7 @@ function sortDoneItems(list) {
     if (currentSort === 'hot') {
         arr.sort((a, b) => (b.hot || 0) - (a.hot || 0) || tie(a, b));
     } else if (currentSort === 'new') {
-        arr.sort((a, b) => (Number(b.createdAt) || 0) - (Number(a.createdAt) || 0) || tie(a, b));
+        arr.sort((a, b) => lastUpdatedSec(b) - lastUpdatedSec(a) || tie(a, b));
     } else if (currentSort === 'rating') {
         const rated = items.filter(i => i.status === STATUS.DONE && i.ratingCount);
         const total = rated.reduce((s, i) => s + i.ratingCount, 0);
@@ -96,8 +105,9 @@ function itemStatBadges(item) {
     if (currentSort === 'hot' && item.hot) {
         html += `<span class="item-stat hot" title="近 30 天点击 ${item.hot} 次">🔥 ${item.hot}</span>`;
     }
-    if (currentSort === 'new' && item.createdAt) {
-        html += `<span class="item-stat" title="收录于 ${escapeHtml(new Date(item.createdAt * 1000).toLocaleDateString())}">${fmtShortDate(item.createdAt)}</span>`;
+    if (currentSort === 'new') {
+        const t = lastUpdatedSec(item);
+        if (t) html += `<span class="item-stat" title="最近更新 ${fmtDate(t)}">${fmtShortDate(t)}</span>`;
     }
     if (item.ratingCount) {
         html += `<span class="item-stat rating" title="${item.ratingCount} 人评分">★ ${item.ratingAvg.toFixed(1)}</span>`;

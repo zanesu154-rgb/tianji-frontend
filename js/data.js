@@ -58,6 +58,7 @@ function mapItemRow(r) {
         images: r.images || '',
         createdAt: r.created_at,
         updatedAt: r.updated_at,
+        contentUpdated: Number(r.content_updated) || Number(r.created_at) || 0,   // 内容最后修改（不含排序）
         mcVersion: r.mc_version || '',                 // 适用版本
         packVersion: r.pack_version || '',             // 包体版本
         authorUpdated: r.author_updated || '',         // 作者更新日期 YYYY-MM-DD

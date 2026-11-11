@@ -157,7 +157,7 @@ function buildItemPageHtml(item) {
 
             <div class="ip-meta">
                 ${item.authorUpdated ? `<span>作者更新于 ${fmtIsoDate(item.authorUpdated)}</span>` : ''}
-                ${item.updatedAt ? `<span>本站更新于 ${fmtDate(item.updatedAt)}</span>` : ''}
+                ${item.contentUpdated ? `<span>本站更新于 ${fmtDate(item.contentUpdated)}</span>` : ''}
                 ${item.createdAt ? `<span>收录于 ${fmtDate(item.createdAt)}</span>` : ''}
             </div>
         </article>
@@ -254,19 +254,68 @@ function jumpToDownloads() {
     }
 }
 
-async function shareItem(item) {
-    const url = itemPreviewUrl(item);
+// ---------- 分享 ----------
+// 只分享链接本身：聊天软件收到「单独的链接」才会抓取页面生成卡片，夹带文字会变成普通文本消息
+let shareTarget = null;
+
+function shareSummary(item) {
+    const text = String(item.description || '').replace(/https?:\/\/\S+/g, '').replace(/\s+/g, ' ').trim();
+    const summary = text.length > 60 ? text.slice(0, 60) + '…' : text;
+    return summary || `${CATEGORY_LABELS[item.category || 'addon'] || '附加包'}汉化版下载 · 作者：${item.author || '佚名'}`;
+}
+
+function shareItem(item) {
+    shareTarget = { url: itemPreviewUrl(item), item };
     const title = item.translated ? `${item.translated}（${item.original}）` : item.original;
-    // 手机上优先用系统分享面板
-    if (navigator.share && window.matchMedia('(pointer: coarse)').matches) {
-        try {
-            await navigator.share({ title: `${title} - 天际译栈`, url });
-            return;
-        } catch (e) {
-            if (e && e.name === 'AbortError') return;
+    const cover = itemImages(item)[0] || '';
+    document.getElementById('sharePreview').innerHTML = `
+        <div class="share-preview-text">
+            <div class="share-preview-title">${escapeHtml(title)} - 天际译栈</div>
+            <div class="share-preview-desc">${escapeHtml(shareSummary(item))}</div>
+            <div class="share-preview-site">🌌 天际译栈</div>
+        </div>
+        <div class="share-preview-img">${cover
+            ? `<img src="${escapeHtml(cover)}" alt="" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'🌌'}))">`
+            : '<span>🌌</span>'}</div>`;
+    document.getElementById('shareUrl').textContent = shareTarget.url;
+    document.getElementById('shareSystemBtn').style.display = navigator.share ? '' : 'none';
+    document.getElementById('shareModal').classList.add('show');
+}
+
+function closeShareModal() {
+    document.getElementById('shareModal').classList.remove('show');
+}
+
+function setupShareEvents() {
+    document.getElementById('shareCopyBtn').addEventListener('click', () => {
+        if (!shareTarget) return;
+        const url = shareTarget.url;
+        const done = () => { showToast('链接已复制，单独发送即可显示为卡片'); closeShareModal(); };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(done).catch(() => { fallbackCopy(url); closeShareModal(); });
+        } else {
+            fallbackCopy(url);
+            closeShareModal();
         }
-    }
-    copyText(`${title} - 天际译栈\n${url}`);
+    });
+    document.getElementById('shareSystemBtn').addEventListener('click', async () => {
+        if (!shareTarget || !navigator.share) return;
+        try {
+            // 只传 url，不传 text：接收方（QQ 等）才会把它当作链接卡片
+            await navigator.share({ url: shareTarget.url });
+            closeShareModal();
+        } catch (e) {
+            if (!e || e.name !== 'AbortError') showToast('当前浏览器不支持系统分享，请复制链接');
+        }
+    });
+    document.getElementById('shareCloseBtn').addEventListener('click', closeShareModal);
+    const modal = document.getElementById('shareModal');
+    let downOnOverlay = false;
+    modal.addEventListener('pointerdown', (e) => { downOnOverlay = e.target === modal; });
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal && downOnOverlay) closeShareModal();
+        downOnOverlay = false;
+    });
 }
 
 // ---------- 路由 ----------

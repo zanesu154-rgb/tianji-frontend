@@ -14,6 +14,7 @@ function setupEvents() {
     setupSortEvents();
     setupMiscEvents();
     setupSortBarEvents();
+    setupShareEvents();
 }
 
 // ==================== 初始化 ====================
