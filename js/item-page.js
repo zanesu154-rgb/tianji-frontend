@@ -21,9 +21,11 @@ function itemPreviewUrl(item) {
         : itemShareUrl(item.id);   // 未上架的只有管理员能看，分享页不提供
 }
 
+// 秒级时间戳 → YYYY/MM/DD
 function fmtDate(sec) {
     if (!sec) return '';
-    return new Date(Number(sec) * 1000).toLocaleDateString();
+    const d = new Date(Number(sec) * 1000);
+    return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
 }
 
 // 简介里的网址变成可点击链接（同样走外链提醒）
@@ -49,23 +51,16 @@ function relatedItems(item, n = 6) {
     return ordered.filter(i => i.id !== item.id).slice(0, n);
 }
 
-// 版本信息：只显示填写了的字段
-function versionInfoHtml(item) {
-    const rows = [
-        ['适用版本', item.mcVersion, 'Minecraft 基岩版'],
-        ['包体版本', item.packVersion, '原作者发布的版本'],
-        ['作者更新', item.authorUpdated ? fmtIsoDate(item.authorUpdated) : '', '原作者最近一次更新'],
-        ['汉化版本', item.translationVersion, '本站汉化的版本']
-    ].filter(([, v]) => v);
-    if (!rows.length) return '';
-    return `<dl class="ip-info">${rows.map(([k, v, tip]) =>
-        `<div class="ip-info-item" title="${tip}"><dt>${k}</dt><dd>${escapeHtml(v)}</dd></div>`).join('')}</dl>`;
+// 版本小框：只显示值，不写文字；悬停/长按可看说明
+function versionChip(value, kind, tip) {
+    if (!value) return '';
+    return `<span class="ip-ver ip-ver-${kind}" title="${tip}：${escapeHtml(value)}" aria-label="${tip} ${escapeHtml(value)}">${escapeHtml(value)}</span>`;
 }
 
-// 2026-03-05 → 2026年3月5日
+// 2026-03-05 → 2026/03/05
 function fmtIsoDate(s) {
     const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || '');
-    return m ? `${m[1]}年${Number(m[2])}月${Number(m[3])}日` : (s || '');
+    return m ? `${m[1]}/${m[2]}/${m[3]}` : (s || '');
 }
 
 function buildItemPageHtml(item) {
@@ -133,10 +128,11 @@ function buildItemPageHtml(item) {
             ${gallery}
             <div class="ip-tags">
                 <span class="ip-tag">${CATEGORY_EMOJI[cat] || ''} ${CATEGORY_LABELS[cat] || '附加包'}</span>
+                ${versionChip(item.mcVersion, 'mc', '适用版本')}
                 ${!isDone ? `<span class="ip-tag muted">${STATUS_LABELS[item.status] || ''}</span>` : ''}
             </div>
             <h1 class="ip-title">${escapeHtml(title)}</h1>
-            ${item.translated ? `<div class="ip-subtitle">${escapeHtml(item.translated)}</div>` : ''}
+            ${item.translated || item.packVersion ? `<div class="ip-subtitle">${item.translated ? `<span>${escapeHtml(item.translated)}</span>` : ''}${versionChip(item.packVersion, 'pack', '包体版本')}</div>` : ''}
             <div class="ip-byline"><span>作者：${author}</span></div>
             <div class="ip-actions">
                 <button class="gm-btn" data-ip-share>🔗 分享</button>
@@ -144,8 +140,7 @@ function buildItemPageHtml(item) {
                 ${isAdmin ? `<button class="gm-btn" data-ip-edit>✏️ 编辑</button>` : ''}
             </div>
 
-            ${isDone ? ratingSectionHtml(item) : ''}
-            ${versionInfoHtml(item)}
+            ${item.translationVersion ? `<div class="ip-ver-row">${versionChip(item.translationVersion, 'trans', '汉化版本')}</div>` : ''}
 
             <section class="ip-section">
                 <h2>简介</h2>
@@ -157,7 +152,10 @@ function buildItemPageHtml(item) {
                 <div class="ip-downloads">${downloads}</div>
             </section>
 
+            ${isDone ? ratingSectionHtml(item) : ''}
+
             <div class="ip-meta">
+                ${item.authorUpdated ? `<span>作者更新于 ${fmtIsoDate(item.authorUpdated)}</span>` : ''}
                 ${item.updatedAt ? `<span>本站更新于 ${fmtDate(item.updatedAt)}</span>` : ''}
                 ${item.createdAt ? `<span>收录于 ${fmtDate(item.createdAt)}</span>` : ''}
             </div>
