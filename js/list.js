@@ -203,11 +203,8 @@ function setDoneView(view) {
 
 function buildDetailsHtml(item) {
     const isDone = item.status === STATUS.DONE;
+    // 展开区只用于快速编辑链接，不显示简介（简介在详情页查看、在编辑弹窗修改）
     let detailsHtml = '';
-
-    if (item.description) {
-        detailsHtml += `<div class="item-description">${escapeHtml(item.description)}</div>`;
-    }
 
     const linkFields = isDone
         ? [

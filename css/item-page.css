@@ -534,3 +534,30 @@
 .ip-ver-row {
     margin-top: 0.8rem;
 }
+
+/* 顶部「前往下载」按钮 */
+.ip-actions .ip-jump-btn {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    font-weight: 600;
+}
+
+.ip-actions .ip-jump-btn:hover {
+    filter: brightness(1.08);
+}
+
+/* 滚动定位时给顶部导航栏留出空间 */
+#ipDownloads {
+    scroll-margin-top: 84px;
+}
+
+.ip-downloads.ip-flash {
+    animation: ipFlash 1.2s ease;
+    border-radius: 18px;
+}
+
+@keyframes ipFlash {
+    0%, 100% { box-shadow: 0 0 0 0 transparent; }
+    25% { box-shadow: 0 0 0 4px var(--accent-light); }
+}

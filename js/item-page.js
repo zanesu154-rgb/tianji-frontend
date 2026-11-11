@@ -135,6 +135,7 @@ function buildItemPageHtml(item) {
             ${item.translated || item.packVersion ? `<div class="ip-subtitle">${item.translated ? `<span>${escapeHtml(item.translated)}</span>` : ''}${versionChip(item.packVersion, 'pack', '包体版本')}</div>` : ''}
             <div class="ip-byline"><span>作者：${author}</span></div>
             <div class="ip-actions">
+                ${links.length ? '<button class="gm-btn ip-jump-btn" data-ip-jump>⬇ 前往下载</button>' : ''}
                 <button class="gm-btn" data-ip-share>🔗 分享</button>
                 ${!isAdmin && isDone ? `<button class="gm-btn" data-ip-feedback>💬 反馈问题</button>` : ''}
                 ${isAdmin ? `<button class="gm-btn" data-ip-edit>✏️ 编辑</button>` : ''}
@@ -147,7 +148,7 @@ function buildItemPageHtml(item) {
                 ${item.description ? `<div class="ip-desc">${linkifyText(item.description)}</div>` : '<div class="ip-empty">暂无简介</div>'}
             </section>
 
-            <section class="ip-section">
+            <section class="ip-section" id="ipDownloads">
                 <h2>下载</h2>
                 <div class="ip-downloads">${downloads}</div>
             </section>
@@ -238,6 +239,19 @@ function stepLightbox(d) {
 
 function closeLightbox() {
     document.getElementById('lightbox').classList.remove('show');
+}
+
+// 顶部「前往下载」：平滑滚动到下载区并短暂高亮
+function jumpToDownloads() {
+    const sec = document.getElementById('ipDownloads');
+    if (!sec) return;
+    sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const box = sec.querySelector('.ip-downloads');
+    if (box) {
+        box.classList.remove('ip-flash');
+        void box.offsetWidth;   // 重新触发动画
+        box.classList.add('ip-flash');
+    }
 }
 
 async function shareItem(item) {
@@ -343,6 +357,7 @@ function setupItemPageEvents() {
         if (star) { rateItem(item.id, Number(star.dataset.ipStar)); return; }
         if (t.closest('[data-ip-unrate]')) { rateItem(item.id, 0); return; }
 
+        if (t.closest('[data-ip-jump]')) { jumpToDownloads(); return; }
         if (t.closest('[data-ip-share]')) { shareItem(item); return; }
         if (t.closest('[data-ip-feedback]')) { openFeedback(item.id, item.original); return; }
         if (t.closest('[data-ip-edit]')) { openEditModal(item.id); return; }
