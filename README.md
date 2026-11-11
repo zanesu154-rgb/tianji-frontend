@@ -42,3 +42,17 @@ js/               脚本，普通 <script defer>，按顺序加载，共享全�
 
 `index.html` 里引用 css/js 时带有 `?v=日期` 参数。改了 css/js 后把它改成新的值（全部替换即可），
 访客的浏览器才会加载新文件，而不是继续用缓存的旧版本。
+
+## 部署与分享页
+
+网站由 `.github/workflows/deploy.yml` 部署到 GitHub Pages（仓库 Settings → Pages → Source 需选择 **GitHub Actions**）。
+
+部署时 `scripts/build-site.mjs` 会从后端拉取已上架的资源，为每个资源生成分享页 `s/<id>.html`：
+页面里带有该资源的标题、简介和封面，QQ / Telegram / Discord 等发送链接时据此显示成卡片，打开后自动跳到详情页。
+
+- 推送到 main：立即部署
+- 每 30 分钟：自动重新生成分享页（内容没变时跳过部署）
+- 也可以在 Actions 页面手动运行 **Deploy site**
+- 还没生成分享页的新资源，链接由 `404.html` 兜底跳转到详情页
+
+本地构建预览：`node scripts/build-site.mjs _site`
