@@ -1,0 +1,62 @@
+# 部署网站到 GitHub Pages，并为每个资源生成分享页 s/<id>.html
+#
+# 需要在仓库 Settings → Pages → Build and deployment → Source 选择「GitHub Actions」
+#
+# 触发方式：
+#   - 推送到 main：立即部署
+#   - 每 30 分钟：重新生成分享页，内容没变化时跳过部署
+#   - 手动：Actions 页面里点 Run workflow
+#   - 后端通知（repository_dispatch，可选）：后台编辑资源后几分钟内更新
+name: Deploy site
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+  repository_dispatch:
+    types: [items-changed]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 构建站点与分享页
+        id: build
+        run: node scripts/build-site.mjs _site
+        env:
+          # 定时任务 / 后端通知：内容没变就不部署；后端连不上时直接失败，保留线上旧版本
+          SKIP_IF_UNCHANGED: ${{ (github.event_name == 'schedule' || github.event_name == 'repository_dispatch') && '1' || '0' }}
+          # 推送代码时：后端连不上也照常部署网站（分享页暂时用 404 兜底跳转）
+          ALLOW_API_FAILURE: ${{ github.event_name == 'push' && '1' || '0' }}
+
+      - uses: actions/configure-pages@v5
+        if: steps.build.outputs.changed != 'false'
+
+      - uses: actions/upload-pages-artifact@v3
+        if: steps.build.outputs.changed != 'false'
+        with:
+          path: _site
+
+      - id: deployment
+        if: steps.build.outputs.changed != 'false'
+        uses: actions/deploy-pages@v4

@@ -13,12 +13,15 @@ function itemShareUrl(id) {
     return location.origin + location.pathname + '#item/' + encodeURIComponent(id);
 }
 
-// 后端分享页：聊天软件能读到这个资源的标题/简介/封面生成预览，打开后自动跳到详情页
-const SHARE_BASE = API_BASE.replace(/\/api\/?$/, '');
+// 分享链接：GitHub Pages 上为每个资源生成的静态分享页 s/<id>.html
+// （QQ 会拦截 railway.app 域名的链接，所以分享页放在网站自己的域名下）
+// 页面里有该资源的标题/简介/封面，聊天软件据此生成卡片；打开后自动跳到详情页。
+// 新资源的分享页要等下次部署才生成，在此之前链接由 404.html 兜底跳到详情页。
 function itemPreviewUrl(item) {
+    const base = location.origin + location.pathname.replace(/[^/]*$/, '');
     return item.status === STATUS.DONE
-        ? `${SHARE_BASE}/s/${encodeURIComponent(item.id)}`
-        : itemShareUrl(item.id);   // 未上架的只有管理员能看，分享页不提供
+        ? `${base}s/${encodeURIComponent(item.id)}.html`
+        : itemShareUrl(item.id);   // 未上架的只有管理员能看，不生成分享页
 }
 
 // 秒级时间戳 → YYYY/MM/DD
