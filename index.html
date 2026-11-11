@@ -11,6 +11,20 @@
     <meta name="description" content="天际译栈是栈主整理的 Minecraft 基岩版附加包汉化列表，包含光影、材质包、地图、附加包等资源。">
     <meta name="keywords" content="我的世界,基岩版,附加包,汉化,光影,材质包,地图,Minecraft">
     <meta name="author" content="栈主">
+    <!-- 分享卡片（QQ / Telegram / Discord 等发送链接时显示） -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="天际译栈">
+    <meta property="og:title" content="天际译栈 - 我的世界基岩版附加包汉化分享">
+    <meta property="og:description" content="栈主整理的 Minecraft 基岩版附加包汉化列表：附加包、材质包、光影、地图。">
+    <meta property="og:url" content="https://zanesu154-rgb.github.io/tianji-frontend/">
+    <meta property="og:image" content="https://zanesu154-rgb.github.io/tianji-frontend/img/share-card.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta itemprop="name" content="天际译栈 - 我的世界基岩版附加包汉化分享">
+    <meta itemprop="description" content="栈主整理的 Minecraft 基岩版附加包汉化列表：附加包、材质包、光影、地图。">
+    <meta itemprop="image" content="https://zanesu154-rgb.github.io/tianji-frontend/img/share-icon.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://zanesu154-rgb.github.io/tianji-frontend/img/share-card.jpg">
     <!-- 防暗黑模式闪烁 -->
     <script>
         (function () {
@@ -20,15 +34,15 @@
             } catch (e) { }
         })();
     </script>
-    <link rel="stylesheet" href="css/base.css?v=20261111c">
-    <link rel="stylesheet" href="css/home.css?v=20261111c">
-    <link rel="stylesheet" href="css/nav.css?v=20261111c">
-    <link rel="stylesheet" href="css/account.css?v=20261111c">
-    <link rel="stylesheet" href="css/item-page.css?v=20261111c">
-    <link rel="stylesheet" href="css/layout.css?v=20261111c">
-    <link rel="stylesheet" href="css/gm.css?v=20261111c">
-    <link rel="stylesheet" href="css/features.css?v=20261111c">
-    <link rel="stylesheet" href="css/cards.css?v=20261111c">
+    <link rel="stylesheet" href="css/base.css?v=20261111d">
+    <link rel="stylesheet" href="css/home.css?v=20261111d">
+    <link rel="stylesheet" href="css/nav.css?v=20261111d">
+    <link rel="stylesheet" href="css/account.css?v=20261111d">
+    <link rel="stylesheet" href="css/item-page.css?v=20261111d">
+    <link rel="stylesheet" href="css/layout.css?v=20261111d">
+    <link rel="stylesheet" href="css/gm.css?v=20261111d">
+    <link rel="stylesheet" href="css/features.css?v=20261111d">
+    <link rel="stylesheet" href="css/cards.css?v=20261111d">
 </head>
 
 
@@ -224,6 +238,22 @@
     <div id="pageItem" style="display:none;">
         <button class="ip-back" id="itemBackBtn">← 返回列表</button>
         <div id="itemPageContent"></div>
+    </div>
+
+    <!-- 分享弹窗 -->
+    <div class="modal-overlay" id="shareModal">
+        <div class="modal-card share-card-modal">
+            <h3>分享这个资源</h3>
+            <div class="share-preview" id="sharePreview"></div>
+            <div class="share-url" id="shareUrl"></div>
+            <div class="share-actions">
+                <button class="btn btn-primary" id="shareCopyBtn">📋 复制链接</button>
+                <button class="btn" id="shareSystemBtn" style="display:none;">📤 分享到…</button>
+            </div>
+            <p class="share-tip">单独发送这条链接，QQ、Telegram、Discord 等会显示成上面这样的卡片，点击即可打开。
+                微信只能显示为普通链接。</p>
+            <button class="share-close" id="shareCloseBtn" aria-label="关闭">✕</button>
+        </div>
     </div>
 
     <!-- 图片大图 -->
@@ -774,23 +804,23 @@
         </div>
     </div>
 
-    <script src="js/config.js?v=20261111c" defer></script>
-    <script src="js/utils.js?v=20261111c" defer></script>
-    <script src="js/data.js?v=20261111c" defer></script>
-    <script src="js/announcement.js?v=20261111c" defer></script>
-    <script src="js/list.js?v=20261111c" defer></script>
-    <script src="js/edit.js?v=20261111c" defer></script>
-    <script src="js/auth.js?v=20261111c" defer></script>
-    <script src="js/messages.js?v=20261111c" defer></script>
-    <script src="js/submissions.js?v=20261111c" defer></script>
-    <script src="js/gm.js?v=20261111c" defer></script>
-    <script src="js/account.js?v=20261111c" defer></script>
-    <script src="js/item-page.js?v=20261111c" defer></script>
-    <script src="js/ratings.js?v=20261111c" defer></script>
-    <script src="js/router.js?v=20261111c" defer></script>
-    <script src="js/sort.js?v=20261111c" defer></script>
-    <script src="js/ui.js?v=20261111c" defer></script>
-    <script src="js/main.js?v=20261111c" defer></script>
+    <script src="js/config.js?v=20261111d" defer></script>
+    <script src="js/utils.js?v=20261111d" defer></script>
+    <script src="js/data.js?v=20261111d" defer></script>
+    <script src="js/announcement.js?v=20261111d" defer></script>
+    <script src="js/list.js?v=20261111d" defer></script>
+    <script src="js/edit.js?v=20261111d" defer></script>
+    <script src="js/auth.js?v=20261111d" defer></script>
+    <script src="js/messages.js?v=20261111d" defer></script>
+    <script src="js/submissions.js?v=20261111d" defer></script>
+    <script src="js/gm.js?v=20261111d" defer></script>
+    <script src="js/account.js?v=20261111d" defer></script>
+    <script src="js/item-page.js?v=20261111d" defer></script>
+    <script src="js/ratings.js?v=20261111d" defer></script>
+    <script src="js/router.js?v=20261111d" defer></script>
+    <script src="js/sort.js?v=20261111d" defer></script>
+    <script src="js/ui.js?v=20261111d" defer></script>
+    <script src="js/main.js?v=20261111d" defer></script>
 </body>
 
 </html>
