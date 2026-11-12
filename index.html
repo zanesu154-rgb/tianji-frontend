@@ -60,16 +60,17 @@
             timers.push(setTimeout(window.tianjiSplashDone, 12000));   // 兜底：最多 12 秒
         })();
     </script>
-    <link rel="stylesheet" href="css/base.css?v=20261112b">
-    <link rel="stylesheet" href="css/splash.css?v=20261112b">
-    <link rel="stylesheet" href="css/home.css?v=20261112b">
-    <link rel="stylesheet" href="css/nav.css?v=20261112b">
-    <link rel="stylesheet" href="css/account.css?v=20261112b">
-    <link rel="stylesheet" href="css/item-page.css?v=20261112b">
-    <link rel="stylesheet" href="css/layout.css?v=20261112b">
-    <link rel="stylesheet" href="css/gm.css?v=20261112b">
-    <link rel="stylesheet" href="css/features.css?v=20261112b">
-    <link rel="stylesheet" href="css/cards.css?v=20261112b">
+    <link rel="stylesheet" href="css/base.css?v=20261113a">
+    <link rel="stylesheet" href="css/splash.css?v=20261113a">
+    <link rel="stylesheet" href="css/home.css?v=20261113a">
+    <link rel="stylesheet" href="css/nav.css?v=20261113a">
+    <link rel="stylesheet" href="css/account.css?v=20261113a">
+    <link rel="stylesheet" href="css/item-page.css?v=20261113a">
+    <link rel="stylesheet" href="css/layout.css?v=20261113a">
+    <link rel="stylesheet" href="css/gm.css?v=20261113a">
+    <link rel="stylesheet" href="css/features.css?v=20261113a">
+    <link rel="stylesheet" href="css/cards.css?v=20261113a">
+    <link rel="stylesheet" href="css/comments.css?v=20261113a">
 </head>
 
 
@@ -394,8 +395,11 @@
                 <section class="account-section" id="section-my-submissions" style="display:none;">
                     <h2>我的投稿</h2>
                     <div class="section-toolbar">
-                        <span class="section-toolbar-info">发现好资源？投稿给栈主，审核通过后会上架到展示区。</span>
-                        <button class="btn btn-primary" id="newSubmissionBtn">➕ 新投稿</button>
+                        <span class="section-toolbar-info">发现好资源？投稿给栈主，审核通过后会上架到展示区；想要汉化某个资源，可以提「求汉化」。</span>
+                        <div class="sub-toolbar-btns">
+                            <button class="btn" id="newRequestBtn">🙋 求汉化</button>
+                            <button class="btn btn-primary" id="newSubmissionBtn">➕ 新投稿</button>
+                        </div>
                     </div>
                     <div class="sub-list" id="mySubList"><div class="account-empty">加载中...</div></div>
                 </section>
@@ -457,6 +461,10 @@
                         <h3>收到的反馈 <span id="gmFeedbackCount"
                                 style="font-size:0.8rem;color:var(--text-light);font-weight:400;"></span></h3>
                         <div class="gm-feedback-list" id="gmFeedbackList">加载中...</div>
+                        <details class="gm-recent-comments" id="gmRecentWrap">
+                            <summary>最近评论 <span id="gmRecentCount" class="gm-count-badge"></span></summary>
+                            <div class="gm-feedback-list" id="gmRecentComments"></div>
+                        </details>
                     </div>
 
                     <!-- 链接点击统计 -->
@@ -711,13 +719,18 @@
     <!-- 投稿弹窗（用户） -->
     <div class="modal-overlay" id="submitModal">
         <div class="modal-card wide">
-            <h3>投稿资源</h3>
+            <h3 id="subModalTitle">投稿资源</h3>
+            <div class="sub-kind-tabs" id="subKindTabs" role="tablist">
+                <button type="button" class="sub-kind-tab active" data-sub-kind="full">📤 投成品</button>
+                <button type="button" class="sub-kind-tab" data-sub-kind="request">🙋 求汉化</button>
+            </div>
+            <p class="sub-kind-hint" id="subKindHint">分享你找到的汉化资源，审核通过后会上架到展示区。</p>
             <div class="modal-field">
                 <label>资源名称（英文原名）<span class="required-mark">*</span></label>
                 <input type="text" id="subOriginal" autocomplete="off" maxlength="200" placeholder="例如：Better On Bedrock">
             </div>
             <div class="modal-field-row">
-                <div class="modal-field">
+                <div class="modal-field sub-full-only">
                     <label>中文译名</label>
                     <input type="text" id="subTranslated" autocomplete="off" maxlength="200" placeholder="可选">
                 </div>
@@ -731,23 +744,23 @@
                     </select>
                 </div>
             </div>
-            <div class="modal-field">
+            <div class="modal-field sub-full-only">
                 <label>原作者</label>
                 <input type="text" id="subAuthor" autocomplete="off" maxlength="100" placeholder="不知道可以留空">
             </div>
-            <div class="modal-field">
+            <div class="modal-field sub-full-only">
                 <label>原版链接</label>
                 <input type="text" id="subOriginalLink" autocomplete="off" maxlength="1000" placeholder="https://...">
             </div>
-            <div class="modal-field">
+            <div class="modal-field sub-full-only">
                 <label>汉化版链接</label>
                 <input type="text" id="subTranslationLink" autocomplete="off" maxlength="1000" placeholder="https://...（原版/汉化至少填一个）">
             </div>
             <div class="modal-field">
-                <label>作者直链</label>
+                <label id="subAuthorLinkLabel">作者直链</label>
                 <input type="text" id="subAuthorLink" autocomplete="off" maxlength="1000" placeholder="可选">
             </div>
-            <div class="modal-field">
+            <div class="modal-field sub-full-only">
                 <label>简介</label>
                 <textarea id="subDescription" maxlength="2000" placeholder="简单介绍一下这个资源，以及推荐理由～"></textarea>
             </div>
@@ -761,7 +774,7 @@
     <!-- 投稿审核弹窗（管理员） -->
     <div class="modal-overlay" id="reviewModal">
         <div class="modal-card wide">
-            <h3>审核投稿</h3>
+            <h3 id="reviewTitle">审核投稿</h3>
             <div class="account-hint" id="reviewMeta" style="text-align:center;margin:-0.6rem 0 1rem;"></div>
             <div class="modal-field">
                 <label>英文原名</label>
@@ -787,7 +800,7 @@
                         <option value="map">地图</option>
                     </select>
                 </div>
-                <div class="modal-field">
+                <div class="modal-field review-full-only">
                     <label>通过后放到</label>
                     <select id="reviewStatus">
                         <option value="done">展示区（已汉化）</option>
@@ -799,7 +812,7 @@
                 <label>原版链接</label>
                 <input type="text" id="reviewOriginalLink" autocomplete="off" maxlength="1000">
             </div>
-            <div class="modal-field">
+            <div class="modal-field review-full-only">
                 <label>汉化链接</label>
                 <input type="text" id="reviewTranslationLink" autocomplete="off" maxlength="1000">
             </div>
@@ -812,7 +825,7 @@
                 <textarea id="reviewDescription" maxlength="5000"></textarea>
             </div>
             <div class="modal-field">
-                <label>给投稿人的留言 / 驳回原因</label>
+                <label id="reviewNoteLabel">给投稿人的留言 / 驳回原因</label>
                 <textarea id="reviewNote" maxlength="500" placeholder="可选，会通过站内消息发送给投稿人"
                     style="min-height:60px;"></textarea>
             </div>
@@ -843,23 +856,24 @@
         </div>
     </div>
 
-    <script src="js/config.js?v=20261112b" defer></script>
-    <script src="js/utils.js?v=20261112b" defer></script>
-    <script src="js/data.js?v=20261112b" defer></script>
-    <script src="js/announcement.js?v=20261112b" defer></script>
-    <script src="js/list.js?v=20261112b" defer></script>
-    <script src="js/edit.js?v=20261112b" defer></script>
-    <script src="js/auth.js?v=20261112b" defer></script>
-    <script src="js/messages.js?v=20261112b" defer></script>
-    <script src="js/submissions.js?v=20261112b" defer></script>
-    <script src="js/gm.js?v=20261112b" defer></script>
-    <script src="js/account.js?v=20261112b" defer></script>
-    <script src="js/item-page.js?v=20261112b" defer></script>
-    <script src="js/ratings.js?v=20261112b" defer></script>
-    <script src="js/router.js?v=20261112b" defer></script>
-    <script src="js/sort.js?v=20261112b" defer></script>
-    <script src="js/ui.js?v=20261112b" defer></script>
-    <script src="js/main.js?v=20261112b" defer></script>
+    <script src="js/config.js?v=20261113a" defer></script>
+    <script src="js/utils.js?v=20261113a" defer></script>
+    <script src="js/data.js?v=20261113a" defer></script>
+    <script src="js/announcement.js?v=20261113a" defer></script>
+    <script src="js/list.js?v=20261113a" defer></script>
+    <script src="js/edit.js?v=20261113a" defer></script>
+    <script src="js/auth.js?v=20261113a" defer></script>
+    <script src="js/messages.js?v=20261113a" defer></script>
+    <script src="js/submissions.js?v=20261113a" defer></script>
+    <script src="js/gm.js?v=20261113a" defer></script>
+    <script src="js/account.js?v=20261113a" defer></script>
+    <script src="js/item-page.js?v=20261113a" defer></script>
+    <script src="js/ratings.js?v=20261113a" defer></script>
+    <script src="js/comments.js?v=20261113a" defer></script>
+    <script src="js/router.js?v=20261113a" defer></script>
+    <script src="js/sort.js?v=20261113a" defer></script>
+    <script src="js/ui.js?v=20261113a" defer></script>
+    <script src="js/main.js?v=20261113a" defer></script>
 </body>
 
 </html>

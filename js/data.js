@@ -67,6 +67,7 @@ function mapItemRow(r) {
         hot: Number(r.hot) || 0,                       // 近 30 天点击
         ratingAvg: Number(r.rating_avg) || 0,
         ratingCount: Number(r.rating_count) || 0,
+        wantCount: Number(r.want_count) || 0,            // 汉化请求「想要」人数（仅管理员接口返回）
         clicks: r.clicks || null,          // 仅管理员接口返回
         expanded: false
     };

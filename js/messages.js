@@ -59,20 +59,28 @@ function renderMessages() {
         listEl.innerHTML = '<div class="account-empty">还没有消息～<br>反馈被处理、投稿被审核时会在这里通知你</div>';
         return;
     }
-    const icons = { feedback: '💬', submission: '📤', admin: '📢', system: '🔔' };
-    listEl.innerHTML = messages.map(m => `
+    const icons = { feedback: '💬', comment: '💬', submission: '📤', admin: '📢', system: '🔔' };
+    // 消息末尾的 #item/<id> 变成「查看」按钮
+    const splitLink = c => {
+        const m = /\n*#item\/([^\s]+)\s*$/.exec(c || '');
+        return m ? [c.slice(0, m.index), m[1]] : [c, ''];
+    };
+    listEl.innerHTML = messages.map(m => {
+        const [text, itemId] = splitLink(m.content);
+        return `
         <div class="msg-card ${m.is_read ? '' : 'unread'}" data-msg-id="${escapeHtml(m.id)}">
             <div class="msg-head">
                 <span>${icons[m.type] || '🔔'}</span>
                 <span class="msg-title">${escapeHtml(m.title)}</span>
                 <span class="msg-time" title="${escapeHtml(new Date(m.created_at * 1000).toLocaleString())}">${formatTime(m.created_at)}</span>
             </div>
-            ${m.content ? `<div class="msg-content">${escapeHtml(m.content)}</div>` : ''}
+            ${text ? `<div class="msg-content">${escapeHtml(text)}</div>` : ''}
             <div class="msg-actions">
+                ${itemId ? `<a class="gm-btn" href="#item/${encodeURIComponent(itemId)}">查看 →</a>` : ''}
                 <button class="gm-btn danger" data-msg-delete="${escapeHtml(m.id)}">删除</button>
             </div>
-        </div>
-    `).join('');
+        </div>`;
+    }).join('');
 }
 
 async function markMessageRead(id) {
