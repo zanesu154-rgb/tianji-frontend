@@ -151,6 +151,11 @@ function buildItemPageHtml(item) {
                 ${item.description ? `<div class="ip-desc">${linkifyText(item.description)}</div>` : '<div class="ip-empty">暂无简介</div>'}
             </section>
 
+            ${item.detailDesc ? `<section class="ip-section">
+                <h2>描述</h2>
+                <div class="ip-desc">${linkifyText(item.detailDesc)}</div>
+            </section>` : ''}
+
             <section class="ip-section" id="ipDownloads">
                 <h2>下载</h2>
                 <div class="ip-downloads">${downloads}</div>
