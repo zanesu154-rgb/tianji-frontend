@@ -53,6 +53,7 @@ function mapItemRow(r) {
         translationLink: r.translation_link,
         originalLink: r.original_link,
         description: r.description,
+        detailDesc: r.detail_desc || '',              // 详情页「描述」
         status: r.status,
         category: r.category || 'addon',
         images: r.images || '',

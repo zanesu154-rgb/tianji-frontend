@@ -10,7 +10,8 @@ function filterItems(list) {
         const author = (item.author || '').toLowerCase();
         const desc = (item.description || '').toLowerCase();
         const ver = (item.mcVersion || '').toLowerCase();
-        return orig.includes(q) || trans.includes(q) || author.includes(q) || desc.includes(q) || ver.includes(q);
+        const detail = (item.detailDesc || '').toLowerCase();
+        return orig.includes(q) || trans.includes(q) || author.includes(q) || desc.includes(q) || ver.includes(q) || detail.includes(q);
     });
 }
 
@@ -212,7 +213,7 @@ function buildDetailsHtml(item) {
             { label: '汉化链接', field: 'translationLink' },
             { label: '原版链接', field: 'originalLink' }
         ]
-        : [{ label: '原版链接', field: 'originalLink' }];
+        : [{ label: '作者直链', field: 'authorLink' }];   // 待汉化：显示作者直链
 
     linkFields.forEach(({ label, field }) => {
         const val = item[field] || '';

@@ -19,6 +19,7 @@ function openEditModal(id) {
     document.getElementById('editTranslated').value = item.translated || '';
     document.getElementById('editAuthor').value = item.author || '佚名';
     document.getElementById('editDescription').value = item.description || '';
+    document.getElementById('editDetailDesc').value = item.detailDesc || '';
     document.getElementById('editCategory').value = item.category || 'addon';
     document.getElementById('editStatus').value = item.status || STATUS.TODO;
     document.getElementById('editImages').value = item.images || '';
@@ -51,6 +52,7 @@ async function saveEditModal() {
         original: document.getElementById('editOriginal').value.trim() || item.original,
         author: document.getElementById('editAuthor').value.trim() || '佚名',
         description: document.getElementById('editDescription').value.trim(),
+        detailDesc: document.getElementById('editDetailDesc').value.trim(),
         category: document.getElementById('editCategory').value,
         status: document.getElementById('editStatus').value,
         translated: document.getElementById('editTranslated').value.trim(),
@@ -221,6 +223,7 @@ function exportData() {
         translationLink: item.translationLink,
         originalLink: item.originalLink,
         description: item.description || '',
+        detailDesc: item.detailDesc || '',
         status: item.status || STATUS.TODO,
         category: item.category || 'addon',
         images: item.images || '',
