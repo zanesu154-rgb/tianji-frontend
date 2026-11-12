@@ -169,7 +169,8 @@ function buildItemPageHtml(item) {
                 ${item.createdAt ? `<span>收录于 ${fmtDate(item.createdAt)}</span>` : ''}
             </div>
         </article>
-        ${relatedHtml}`;
+        ${relatedHtml}
+        ${isDone || isAdmin ? commentsSectionHtml() : ''}`;
 }
 
 async function renderItemPage(id) {
@@ -201,6 +202,7 @@ async function renderItemPage(id) {
     itemPageImages = itemImages(item);
     itemPageImageIdx = 0;
     root.innerHTML = buildItemPageHtml(item);
+    if (document.getElementById('ipComments')) loadComments(item.id);
 }
 
 // 直接打开分享链接时列表可能还没加载，用单独请求到的条目兜底，保证页面上的按钮立即可用
@@ -416,7 +418,7 @@ function setupItemPageEvents() {
 
         if (t.closest('[data-ip-jump]')) { jumpToDownloads(); return; }
         if (t.closest('[data-ip-share]')) { shareItem(item); return; }
-        if (t.closest('[data-ip-feedback]')) { openFeedback(item.id, item.original); return; }
+        if (t.closest('[data-ip-feedback]')) { focusCommentBox(true); return; }
         if (t.closest('[data-ip-edit]')) { openEditModal(item.id); return; }
     });
 

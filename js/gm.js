@@ -92,7 +92,17 @@ function openReviewModal(id) {
     document.getElementById('reviewCategory').value = s.category || 'addon';
     document.getElementById('reviewStatus').value = (s.translation_link || s.translated) ? 'done' : 'todo';
     document.getElementById('reviewNote').value = '';
-    document.getElementById('reviewMeta').textContent = `投稿人：${s.username} · ${new Date(s.created_at * 1000).toLocaleString()}`;
+    const isRequest = s.kind === 'request';
+    const modal = document.getElementById('reviewModal');
+    modal.classList.toggle('is-request', isRequest);
+    document.getElementById('reviewTitle').textContent = isRequest ? '处理汉化请求' : '审核投稿';
+    document.getElementById('reviewNoteLabel').textContent = isRequest ? '留言 / 拒绝原因' : '给投稿人的留言 / 驳回原因';
+    document.getElementById('reviewNote').placeholder = isRequest ? '可选，会通过站内消息发送给所有想要的人' : '可选，会通过站内消息发送给投稿人';
+    document.getElementById('reviewApproveBtn').textContent = isRequest ? '✓ 接受（加入待汉化）' : '✓ 通过';
+    document.getElementById('reviewRejectBtn').textContent = isRequest ? '✕ 拒绝' : '✕ 驳回';
+    if (isRequest) document.getElementById('reviewStatus').value = 'todo';
+    const wants = Number(s.want_count) || 1;
+    document.getElementById('reviewMeta').textContent = `${isRequest ? '提出人' : '投稿人'}：${s.username}${isRequest ? ` · ${wants} 人想要` : ''} · ${new Date(s.created_at * 1000).toLocaleString()}`;
     document.getElementById('reviewModal').classList.add('show');
 }
 
@@ -119,8 +129,9 @@ async function approveSubmission() {
     if (!body.original) { showToast('英文原名不能为空'); return; }
     try {
         await api('PUT', `/submissions/${encodeURIComponent(reviewingSubmission.id)}/approve`, body);
+        const wasRequest = reviewingSubmission.kind === 'request';
         closeReviewModal();
-        showToast('已通过并上架');
+        showToast(wasRequest ? '已接受，已加入待汉化列表' : '已通过并上架');
         loadGmSubmissions();
         loadGmStats();
         await loadItems(false);
@@ -133,11 +144,12 @@ async function approveSubmission() {
 async function rejectSubmission() {
     if (!reviewingSubmission) return;
     const reason = document.getElementById('reviewNote').value.trim();
-    if (!reason && !confirm('没有填写驳回原因，确定直接驳回吗？')) return;
+    if (!reason && !confirm(reviewingSubmission.kind === 'request' ? '没有填写拒绝原因，确定直接拒绝吗？' : '没有填写驳回原因，确定直接驳回吗？')) return;
     try {
         await api('PUT', `/submissions/${encodeURIComponent(reviewingSubmission.id)}/reject`, { reason });
+        const wasRequest = reviewingSubmission.kind === 'request';
         closeReviewModal();
-        showToast('已驳回');
+        showToast(wasRequest ? '已拒绝' : '已驳回');
         loadGmSubmissions();
         loadGmStats();
     } catch (e) {
@@ -145,22 +157,52 @@ async function rejectSubmission() {
     }
 }
 
+// 反馈：评论区里勾了「反馈」的楼层 + 以前私下提交的旧反馈
+function gmCommentCardHtml(c, isFeedback) {
+    const resolved = isFeedback && c.status === 'resolved';
+    const replies = Number(c.reply_count) || 0;
+    return `
+        <div class="gm-feedback-card ${resolved ? 'resolved' : ''}">
+            <div class="gm-feedback-meta">
+                <span>👤 ${escapeHtml(c.username)}</span>
+                <span>📦 <a class="gm-feedback-item-name" href="#item/${encodeURIComponent(c.item_id)}">${escapeHtml(c.item_name || '已删除的资源')}</a></span>
+                <span>🕐 ${escapeHtml(new Date(c.created_at * 1000).toLocaleString())}</span>
+                ${!isFeedback && Number(c.is_feedback) === 1 ? '<span class="cm-tag fb">反馈</span>' : ''}
+                ${!isFeedback && c.parent_id ? '<span class="cm-tag">回复</span>' : ''}
+                ${resolved ? '<span style="color:#16a34a;">✅ 已处理</span>' : ''}
+                ${replies ? `<span>💬 ${replies} 条回复${Number(c.admin_replies) ? '（含栈主）' : ''}</span>` : ''}
+            </div>
+            <div class="gm-feedback-content">${escapeHtml(c.content)}</div>
+            <div class="gm-feedback-actions">
+                <a class="gm-btn" href="#item/${encodeURIComponent(c.item_id)}">查看</a>
+                ${isFeedback && !resolved ? `<button class="gm-btn" data-cm-gm-resolve="${escapeHtml(c.id)}">回复并处理</button>` : ''}
+                <button class="gm-btn danger" data-cm-gm-delete="${escapeHtml(c.id)}">删除</button>
+            </div>
+        </div>`;
+}
+
 async function loadGmFeedback() {
     const listEl = document.getElementById('gmFeedbackList');
     const countEl = document.getElementById('gmFeedbackCount');
+    const recentEl = document.getElementById('gmRecentComments');
     try {
-        const list = await api('GET', '/feedback/all');
-        const pendingCount = list.filter(f => f.status === 'pending').length;
-        countEl.textContent = `（待处理 ${pendingCount} / 共 ${list.length}）`;
-        if (list.length === 0) {
+        const [cm, old] = await Promise.all([api('GET', '/comments/admin'), api('GET', '/feedback/all')]);
+        const openCount = cm.feedback.filter(f => f.status === 'open').length + old.filter(f => f.status === 'pending').length;
+        countEl.textContent = `（待处理 ${openCount} / 共 ${cm.feedback.length + old.length}）`;
+        document.getElementById('gmRecentCount').textContent = cm.recent.length || '';
+        recentEl.innerHTML = cm.recent.length
+            ? cm.recent.map(c => gmCommentCardHtml(c, false)).join('')
+            : '<div class="account-empty">还没有评论</div>';
+        if (!cm.feedback.length && !old.length) {
             listEl.innerHTML = '<div class="account-empty">暂无反馈</div>';
             return;
         }
-        listEl.innerHTML = list.map(f => {
+        const oldHtml = old.map(f => {
             const resolved = f.status === 'resolved';
             return `
                 <div class="gm-feedback-card ${resolved ? 'resolved' : ''}">
                     <div class="gm-feedback-meta">
+                        <span class="cm-tag">旧反馈 · 仅你可见</span>
                         <span>👤 ${escapeHtml(f.username)}</span>
                         <span>📦 <span class="gm-feedback-item-name">${escapeHtml(f.item_name)}</span></span>
                         <span>🕐 ${escapeHtml(new Date(f.created_at * 1000).toLocaleString())}</span>
@@ -174,6 +216,7 @@ async function loadGmFeedback() {
                     </div>
                 </div>`;
         }).join('');
+        listEl.innerHTML = cm.feedback.map(c => gmCommentCardHtml(c, true)).join('') + oldHtml;
     } catch (e) {
         listEl.innerHTML = `<div class="account-empty">${escapeHtml(e.message || '加载失败')}</div>`;
     }
@@ -317,6 +360,34 @@ function setupGmEvents() {
     document.getElementById('reviewApproveBtn').addEventListener('click', approveSubmission);
     document.getElementById('reviewRejectBtn').addEventListener('click', rejectSubmission);
     document.getElementById('reviewCancelBtn').addEventListener('click', closeReviewModal);
+
+    // 评论区反馈 / 最近评论
+    const onGmComment = async (e) => {
+        const r = e.target.closest('[data-cm-gm-resolve]');
+        if (r) {
+            const reply = prompt('回复反馈人（可留空；回复会显示在评论区，并通过站内消息通知对方）：', '');
+            if (reply === null) return;
+            try {
+                await api('PUT', `/comments/${encodeURIComponent(r.dataset.cmGmResolve)}/resolve`, { reply: reply.trim() });
+                showToast('已处理');
+                loadGmFeedback();
+                loadGmStats();
+            } catch (err) { showToast(err.message); }
+            return;
+        }
+        const d = e.target.closest('[data-cm-gm-delete]');
+        if (d) {
+            if (!confirm('确定删除这条评论吗？（楼层下的回复会一起删除）')) return;
+            try {
+                await api('DELETE', `/comments/${encodeURIComponent(d.dataset.cmGmDelete)}`);
+                showToast('已删除');
+                loadGmFeedback();
+                loadGmStats();
+            } catch (err) { showToast(err.message); }
+        }
+    };
+    document.getElementById('gmFeedbackList').addEventListener('click', onGmComment);
+    document.getElementById('gmRecentComments').addEventListener('click', onGmComment);
 
     document.getElementById('gmFeedbackList').addEventListener('click', async (e) => {
         const resolveBtn = e.target.closest('[data-fb-resolve]');

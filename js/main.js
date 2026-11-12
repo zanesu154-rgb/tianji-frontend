@@ -15,6 +15,7 @@ function setupEvents() {
     setupMiscEvents();
     setupSortBarEvents();
     setupShareEvents();
+    setupCommentEvents();
 }
 
 // ==================== 初始化 ====================

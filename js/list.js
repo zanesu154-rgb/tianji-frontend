@@ -165,6 +165,7 @@ function renderList(containerId, list, isDoneSection) {
                     <div class="card-meta">
                         <span class="author-name" title="作者：${escapeHtml(author)}">${escapeHtml(author)}</span>
                         ${isDoneSection ? itemStatBadges(item) : ''}
+                        ${!isDoneSection && item.wantCount ? `<span class="want-chip" title="${item.wantCount} 人请求汉化">🙋 ${item.wantCount}</span>` : ''}
                     </div>
                 </div>${admin}
                 ${details}
@@ -333,6 +334,12 @@ function toggleExpand(id) {
 }
 
 function openFeedback(id, name) {
+    // 反馈已并入详情页评论区：跳到详情页并勾选「反馈」
+    if (typeof focusCommentBox === 'function') {
+        if (currentPage !== 'item' || currentItemId !== id) location.hash = '#item/' + id;
+        setTimeout(() => focusCommentBox(true), currentPage === 'item' && currentItemId === id ? 0 : 500);
+        return;
+    }
     if (!isLoggedIn()) {
         showToast('登录后才能反馈哦');
         openLoginModal();
