@@ -1,0 +1,63 @@
+/* ==================== 开屏（加载状态） ====================
+   只有首次打开且数据 350ms 内没加载完时才会出现；网速快时完全看不到。 */
+.splash { display: none; }
+html.splash-armed .splash {
+    display: flex;
+    position: fixed; inset: 0; z-index: 9999;
+    flex-direction: column; align-items: center; justify-content: center; gap: 0.9rem;
+    background: var(--bg-page);
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transition: opacity 0.35s ease, visibility 0s linear 0.35s;
+}
+html.splash-armed.splash-show .splash {
+    opacity: 1; visibility: visible; pointer-events: auto;
+    transition: opacity 0.25s ease;
+}
+html.splash-armed.splash-leave .splash { opacity: 0; transform: scale(1.02); transition: opacity 0.4s ease, transform 0.4s ease; }
+html.splash-armed.splash-show { overflow: hidden; }
+
+.splash-orbit { position: relative; width: 96px; height: 96px; display: grid; place-items: center; }
+.splash-orbit::before {
+    content: ''; position: absolute; inset: 0; border-radius: 50%;
+    border: 2px solid var(--accent-border);
+}
+.splash-orbit::after {
+    content: ''; position: absolute; inset: -2px; border-radius: 50%;
+    border: 2px solid transparent; border-top-color: var(--accent);
+    animation: splash-spin 1.1s linear infinite;
+}
+.splash-logo {
+    width: 72px; height: 72px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 2.4rem;
+    background: var(--accent-light);
+    animation: splash-breathe 2.2s ease-in-out infinite;
+}
+.splash-title {
+    margin: 0.3rem 0 0; font-size: 1.45rem; font-weight: 700; letter-spacing: 0.32em;
+    padding-left: 0.32em; color: var(--text-title);
+}
+.splash-sub { margin: 0; font-size: 0.82rem; color: var(--text-muted); letter-spacing: 0.08em; }
+.splash-bar {
+    width: 140px; height: 3px; border-radius: 3px; overflow: hidden; margin-top: 0.4rem;
+    background: var(--border);
+}
+.splash-bar::before {
+    content: ''; display: block; width: 40%; height: 100%; border-radius: 3px;
+    background: var(--accent); animation: splash-slide 1.2s ease-in-out infinite;
+}
+.splash-slow {
+    margin: 0.2rem 0 0; font-size: 0.78rem; color: var(--text-light);
+    opacity: 0; transition: opacity 0.4s ease;
+}
+html.splash-slow-net .splash-slow { opacity: 1; }
+
+@keyframes splash-spin { to { transform: rotate(360deg); } }
+@keyframes splash-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+@keyframes splash-slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
+
+/* 系统设置了「减少动态效果」：只显示静态标志 */
+@media (prefers-reduced-motion: reduce) {
+    .splash-orbit::after, .splash-logo, .splash-bar::before { animation: none; }
+    .splash-bar::before { width: 100%; opacity: 0.5; }
+    html.splash-armed .splash, html.splash-armed.splash-leave .splash { transition: none; transform: none; }
+}
