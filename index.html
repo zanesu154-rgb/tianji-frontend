@@ -33,21 +33,56 @@
                 document.documentElement.setAttribute('data-theme', t);
             } catch (e) { }
         })();
+        // 开屏：只在本次访问第一次打开主页、且数据 350ms 内没加载完时出现
+        // （从分享链接直接进详情页不显示，详情页有自己的骨架屏）
+        (function () {
+            var d = document.documentElement, shownAt = 0, done = false, timers = [];
+            window.tianjiSplashDone = function () { };
+            try {
+                if (/^#item\//.test(location.hash) || sessionStorage.getItem('tianji_splash_seen')) return;
+                sessionStorage.setItem('tianji_splash_seen', '1');
+            } catch (e) { return; }
+            d.classList.add('splash-armed');
+            function clear() { d.classList.remove('splash-armed', 'splash-show', 'splash-leave', 'splash-slow-net'); }
+            window.tianjiSplashDone = function () {
+                if (done) return;
+                done = true;
+                timers.forEach(clearTimeout);
+                if (!shownAt) { clear(); return; }
+                // 已经出现了就至少停留 0.7 秒，避免一闪而过
+                setTimeout(function () {
+                    d.classList.add('splash-leave');
+                    setTimeout(clear, 420);
+                }, Math.max(0, 700 - (Date.now() - shownAt)));
+            };
+            timers.push(setTimeout(function () { shownAt = Date.now(); d.classList.add('splash-show'); }, 350));
+            timers.push(setTimeout(function () { d.classList.add('splash-slow-net'); }, 4000));
+            timers.push(setTimeout(window.tianjiSplashDone, 12000));   // 兜底：最多 12 秒
+        })();
     </script>
-    <link rel="stylesheet" href="css/base.css?v=20261112a">
-    <link rel="stylesheet" href="css/home.css?v=20261112a">
-    <link rel="stylesheet" href="css/nav.css?v=20261112a">
-    <link rel="stylesheet" href="css/account.css?v=20261112a">
-    <link rel="stylesheet" href="css/item-page.css?v=20261112a">
-    <link rel="stylesheet" href="css/layout.css?v=20261112a">
-    <link rel="stylesheet" href="css/gm.css?v=20261112a">
-    <link rel="stylesheet" href="css/features.css?v=20261112a">
-    <link rel="stylesheet" href="css/cards.css?v=20261112a">
+    <link rel="stylesheet" href="css/base.css?v=20261112b">
+    <link rel="stylesheet" href="css/splash.css?v=20261112b">
+    <link rel="stylesheet" href="css/home.css?v=20261112b">
+    <link rel="stylesheet" href="css/nav.css?v=20261112b">
+    <link rel="stylesheet" href="css/account.css?v=20261112b">
+    <link rel="stylesheet" href="css/item-page.css?v=20261112b">
+    <link rel="stylesheet" href="css/layout.css?v=20261112b">
+    <link rel="stylesheet" href="css/gm.css?v=20261112b">
+    <link rel="stylesheet" href="css/features.css?v=20261112b">
+    <link rel="stylesheet" href="css/cards.css?v=20261112b">
 </head>
 
 
 
 <body>
+    <!-- 开屏（加载状态），由 <head> 里的脚本控制是否出现 -->
+    <div class="splash" aria-hidden="true">
+        <div class="splash-orbit"><div class="splash-logo">🌌</div></div>
+        <h2 class="splash-title">天际译栈</h2>
+        <p class="splash-sub">我的世界基岩版附加包汉化分享</p>
+        <div class="splash-bar"></div>
+        <p class="splash-slow">网络有点慢，正在努力加载…</p>
+    </div>
     <!-- ==================== 顶部导航栏（两页共用） ==================== -->
     <header class="top-nav">
         <div class="top-nav-inner">
@@ -808,23 +843,23 @@
         </div>
     </div>
 
-    <script src="js/config.js?v=20261112a" defer></script>
-    <script src="js/utils.js?v=20261112a" defer></script>
-    <script src="js/data.js?v=20261112a" defer></script>
-    <script src="js/announcement.js?v=20261112a" defer></script>
-    <script src="js/list.js?v=20261112a" defer></script>
-    <script src="js/edit.js?v=20261112a" defer></script>
-    <script src="js/auth.js?v=20261112a" defer></script>
-    <script src="js/messages.js?v=20261112a" defer></script>
-    <script src="js/submissions.js?v=20261112a" defer></script>
-    <script src="js/gm.js?v=20261112a" defer></script>
-    <script src="js/account.js?v=20261112a" defer></script>
-    <script src="js/item-page.js?v=20261112a" defer></script>
-    <script src="js/ratings.js?v=20261112a" defer></script>
-    <script src="js/router.js?v=20261112a" defer></script>
-    <script src="js/sort.js?v=20261112a" defer></script>
-    <script src="js/ui.js?v=20261112a" defer></script>
-    <script src="js/main.js?v=20261112a" defer></script>
+    <script src="js/config.js?v=20261112b" defer></script>
+    <script src="js/utils.js?v=20261112b" defer></script>
+    <script src="js/data.js?v=20261112b" defer></script>
+    <script src="js/announcement.js?v=20261112b" defer></script>
+    <script src="js/list.js?v=20261112b" defer></script>
+    <script src="js/edit.js?v=20261112b" defer></script>
+    <script src="js/auth.js?v=20261112b" defer></script>
+    <script src="js/messages.js?v=20261112b" defer></script>
+    <script src="js/submissions.js?v=20261112b" defer></script>
+    <script src="js/gm.js?v=20261112b" defer></script>
+    <script src="js/account.js?v=20261112b" defer></script>
+    <script src="js/item-page.js?v=20261112b" defer></script>
+    <script src="js/ratings.js?v=20261112b" defer></script>
+    <script src="js/router.js?v=20261112b" defer></script>
+    <script src="js/sort.js?v=20261112b" defer></script>
+    <script src="js/ui.js?v=20261112b" defer></script>
+    <script src="js/main.js?v=20261112b" defer></script>
 </body>
 
 </html>

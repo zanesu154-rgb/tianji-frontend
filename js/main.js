@@ -71,6 +71,7 @@ async function init() {
 
     await loadItems(true);
     render();
+    if (window.tianjiSplashDone) window.tianjiSplashDone();
 }
 
 init();
