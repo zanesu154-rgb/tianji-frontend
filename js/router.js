@@ -56,7 +56,8 @@ function setTopNavForPage(page) {
     document.getElementById('homeBtn').style.display = onHome ? 'none' : '';
 }
 
-const PAGE_IDS = { home: 'pageHome', account: 'pageAccount', item: 'pageItem' };
+const PAGE_IDS = { home: 'pageHome', account: 'pageAccount', item: 'pageItem', addons: 'pageAddons' };
+let currentAddonsArg = null;
 // 离开主页时记住滚动位置（含两个列表模块内部的滚动），回来时恢复
 let homeScrollState = null;
 
@@ -86,6 +87,12 @@ function showPage(page, arg) {
             renderItemPage(arg);
             window.scrollTo({ top: 0, behavior: 'instant' });
         }
+        if (page === 'addons' && (arg || '') !== currentAddonsArg) {
+            const sameAddon = (arg || '').split('/')[0] === (currentAddonsArg || '').split('/')[0];
+            currentAddonsArg = arg || '';
+            renderAddonsPage(currentAddonsArg);
+            if (!sameAddon) window.scrollTo({ top: 0, behavior: 'instant' });
+        }
         return;
     }
     if (isSwitching) return;
@@ -98,9 +105,11 @@ function showPage(page, arg) {
     const enteringEl = document.getElementById(PAGE_IDS[page]);
     if (currentPage === 'home') saveHomeScroll();
     if (currentPage === 'item') { closeLightbox(); document.title = DEFAULT_TITLE; currentItemId = null; }
+    if (currentPage === 'addons') { document.title = DEFAULT_TITLE; currentAddonsArg = null; }
 
     // 详情页内容先渲染，切换动画结束时已经准备好
     if (page === 'item') renderItemPage(arg);
+    if (page === 'addons') { currentAddonsArg = arg || ''; renderAddonsPage(currentAddonsArg); }
 
     isSwitching = true;
     currentPage = page;
@@ -128,7 +137,8 @@ function showPage(page, arg) {
             isSwitching = false;
             // 动画期间如果地址又变了（快速点后退），以地址为准
             const r = parseRoute();
-            if (r.page !== currentPage || (r.page === 'item' && r.id !== currentItemId)) routeFromLocation();
+            if (r.page !== currentPage || (r.page === 'item' && r.id !== currentItemId)
+                || (r.page === 'addons' && (r.arg || '') !== currentAddonsArg)) routeFromLocation();
         }, 340);
     }, 280);
 }

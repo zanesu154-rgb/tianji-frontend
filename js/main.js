@@ -16,6 +16,7 @@ function setupEvents() {
     setupSortBarEvents();
     setupShareEvents();
     setupCommentEvents();
+    setupMyAddonsEvents();
 }
 
 // ==================== 初始化 ====================
@@ -35,7 +36,7 @@ async function init() {
     const route = parseRoute();
     const wantAccount = route.page === 'account' && isLoggedIn();
     const initialSection = route.section || 'profile';
-    const initialPage = wantAccount ? 'account' : (route.page === 'item' ? 'item' : 'home');
+    const initialPage = wantAccount ? 'account' : (['item', 'addons'].includes(route.page) ? route.page : 'home');
     document.getElementById('searchPanel').classList.remove('show');
     document.getElementById('menuDropdown').classList.remove('show');
     Object.entries(PAGE_IDS).forEach(([pg, elId]) => {
@@ -47,6 +48,7 @@ async function init() {
         history.replaceState(null, '', location.pathname + location.search);
     }
     if (initialPage === 'item') renderItemPage(route.id);
+    if (initialPage === 'addons') { currentAddonsArg = route.arg || ''; renderAddonsPage(currentAddonsArg); }
 
     // 公告和登录状态并行请求
     fetchAnnouncement();

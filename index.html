@@ -39,7 +39,7 @@
             var d = document.documentElement, shownAt = 0, done = false, timers = [];
             window.tianjiSplashDone = function () { };
             try {
-                if (/^#item\//.test(location.hash) || sessionStorage.getItem('tianji_splash_seen')) return;
+                if (/^#(item\/|addons)/.test(location.hash) || sessionStorage.getItem('tianji_splash_seen')) return;
                 sessionStorage.setItem('tianji_splash_seen', '1');
             } catch (e) { return; }
             d.classList.add('splash-armed');
@@ -60,17 +60,18 @@
             timers.push(setTimeout(window.tianjiSplashDone, 12000));   // 兜底：最多 12 秒
         })();
     </script>
-    <link rel="stylesheet" href="css/base.css?v=20261113a">
-    <link rel="stylesheet" href="css/splash.css?v=20261113a">
-    <link rel="stylesheet" href="css/home.css?v=20261113a">
-    <link rel="stylesheet" href="css/nav.css?v=20261113a">
-    <link rel="stylesheet" href="css/account.css?v=20261113a">
-    <link rel="stylesheet" href="css/item-page.css?v=20261113a">
-    <link rel="stylesheet" href="css/layout.css?v=20261113a">
-    <link rel="stylesheet" href="css/gm.css?v=20261113a">
-    <link rel="stylesheet" href="css/features.css?v=20261113a">
-    <link rel="stylesheet" href="css/cards.css?v=20261113a">
-    <link rel="stylesheet" href="css/comments.css?v=20261113a">
+    <link rel="stylesheet" href="css/base.css?v=20261113b">
+    <link rel="stylesheet" href="css/splash.css?v=20261113b">
+    <link rel="stylesheet" href="css/home.css?v=20261113b">
+    <link rel="stylesheet" href="css/nav.css?v=20261113b">
+    <link rel="stylesheet" href="css/account.css?v=20261113b">
+    <link rel="stylesheet" href="css/item-page.css?v=20261113b">
+    <link rel="stylesheet" href="css/layout.css?v=20261113b">
+    <link rel="stylesheet" href="css/gm.css?v=20261113b">
+    <link rel="stylesheet" href="css/features.css?v=20261113b">
+    <link rel="stylesheet" href="css/cards.css?v=20261113b">
+    <link rel="stylesheet" href="css/comments.css?v=20261113b">
+    <link rel="stylesheet" href="css/my-addons.css?v=20261113b">
 </head>
 
 
@@ -158,6 +159,9 @@
                 <div class="top-left">
                     <button class="sponsor-btn" id="sponsorBtn">
                         ☕ 请栈主喝一杯咖啡
+                    </button>
+                    <button class="myaddons-btn" id="myAddonsBtn">
+                        🧩 栈主的附加包
                     </button>
                 </div>
             </div>
@@ -274,6 +278,12 @@
     <div id="pageItem" style="display:none;">
         <button class="ip-back" id="itemBackBtn">← 返回列表</button>
         <div id="itemPageContent"></div>
+    </div>
+
+    <!-- 栈主的附加包：#addons 列表 / #addons/<id> 详情 -->
+    <div id="pageAddons" style="display:none;">
+        <button class="ip-back" id="addonsBackBtn">← 返回</button>
+        <div id="addonsContent"></div>
     </div>
 
     <!-- 分享弹窗 -->
@@ -856,24 +866,25 @@
         </div>
     </div>
 
-    <script src="js/config.js?v=20261113a" defer></script>
-    <script src="js/utils.js?v=20261113a" defer></script>
-    <script src="js/data.js?v=20261113a" defer></script>
-    <script src="js/announcement.js?v=20261113a" defer></script>
-    <script src="js/list.js?v=20261113a" defer></script>
-    <script src="js/edit.js?v=20261113a" defer></script>
-    <script src="js/auth.js?v=20261113a" defer></script>
-    <script src="js/messages.js?v=20261113a" defer></script>
-    <script src="js/submissions.js?v=20261113a" defer></script>
-    <script src="js/gm.js?v=20261113a" defer></script>
-    <script src="js/account.js?v=20261113a" defer></script>
-    <script src="js/item-page.js?v=20261113a" defer></script>
-    <script src="js/ratings.js?v=20261113a" defer></script>
-    <script src="js/comments.js?v=20261113a" defer></script>
-    <script src="js/router.js?v=20261113a" defer></script>
-    <script src="js/sort.js?v=20261113a" defer></script>
-    <script src="js/ui.js?v=20261113a" defer></script>
-    <script src="js/main.js?v=20261113a" defer></script>
+    <script src="js/config.js?v=20261113b" defer></script>
+    <script src="js/utils.js?v=20261113b" defer></script>
+    <script src="js/data.js?v=20261113b" defer></script>
+    <script src="js/announcement.js?v=20261113b" defer></script>
+    <script src="js/list.js?v=20261113b" defer></script>
+    <script src="js/edit.js?v=20261113b" defer></script>
+    <script src="js/auth.js?v=20261113b" defer></script>
+    <script src="js/messages.js?v=20261113b" defer></script>
+    <script src="js/submissions.js?v=20261113b" defer></script>
+    <script src="js/gm.js?v=20261113b" defer></script>
+    <script src="js/account.js?v=20261113b" defer></script>
+    <script src="js/item-page.js?v=20261113b" defer></script>
+    <script src="js/ratings.js?v=20261113b" defer></script>
+    <script src="js/comments.js?v=20261113b" defer></script>
+    <script src="js/my-addons.js?v=20261113b" defer></script>
+    <script src="js/router.js?v=20261113b" defer></script>
+    <script src="js/sort.js?v=20261113b" defer></script>
+    <script src="js/ui.js?v=20261113b" defer></script>
+    <script src="js/main.js?v=20261113b" defer></script>
 </body>
 
 </html>
