@@ -31,6 +31,7 @@ function updateLoginUI() {
     if (!regular) setUnread(0);
     // 登录状态变化后刷新评论区（显示输入框 / 我的评论可删除等）
     if (currentPage === 'item' && typeof cmState !== 'undefined' && cmState.itemId) loadComments(cmState.itemId);
+    if (currentPage === 'addons' && typeof renderAddonsPage === 'function') renderAddonsPage(currentAddonsArg || '');
 }
 
 function saveSession(token, username, role) {
