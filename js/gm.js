@@ -234,9 +234,10 @@ async function loadGmUsers() {
             <div class="gm-user-row">
                 <span class="gm-user-name">${escapeHtml(u.username)}</span>
                 <span class="gm-user-role ${u.role === 'admin' ? 'admin' : ''}">${u.role === 'admin' ? '管理员' : '普通用户'}</span>
+                ${Number(u.blocked) ? '<span class="chat-blocked-tag">已拉黑</span>' : ''}
                 <span class="gm-user-date">${escapeHtml(new Date(u.created_at * 1000).toLocaleDateString())}</span>
                 <div class="gm-user-actions">
-                    <button class="gm-btn" data-gm-message="${escapeHtml(u.id)}" data-gm-name="${escapeHtml(u.username)}">发消息</button>
+                    <button class="gm-btn" data-gm-message="${escapeHtml(u.id)}" data-gm-name="${escapeHtml(u.username)}">私信</button>
                     <button class="gm-btn" data-gm-reset="${escapeHtml(u.id)}" data-gm-name="${escapeHtml(u.username)}">重置密码</button>
                     <button class="gm-btn danger" data-gm-delete="${escapeHtml(u.id)}" data-gm-name="${escapeHtml(u.username)}">删除</button>
                 </div>
@@ -422,7 +423,8 @@ function setupGmEvents() {
     document.getElementById('gmUserList').addEventListener('click', async (e) => {
         const msgBtn = e.target.closest('[data-gm-message]');
         if (msgBtn) {
-            openCompose({ id: msgBtn.dataset.gmMessage, name: msgBtn.dataset.gmName });
+            // 私信：打开和这个用户的对话（对方可以回复）
+            openChatWith(msgBtn.dataset.gmMessage);
             return;
         }
 
