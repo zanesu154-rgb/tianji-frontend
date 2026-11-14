@@ -60,18 +60,19 @@
             timers.push(setTimeout(window.tianjiSplashDone, 12000));   // 兜底：最多 12 秒
         })();
     </script>
-    <link rel="stylesheet" href="css/base.css?v=20261113b">
-    <link rel="stylesheet" href="css/splash.css?v=20261113b">
-    <link rel="stylesheet" href="css/home.css?v=20261113b">
-    <link rel="stylesheet" href="css/nav.css?v=20261113b">
-    <link rel="stylesheet" href="css/account.css?v=20261113b">
-    <link rel="stylesheet" href="css/item-page.css?v=20261113b">
-    <link rel="stylesheet" href="css/layout.css?v=20261113b">
-    <link rel="stylesheet" href="css/gm.css?v=20261113b">
-    <link rel="stylesheet" href="css/features.css?v=20261113b">
-    <link rel="stylesheet" href="css/cards.css?v=20261113b">
-    <link rel="stylesheet" href="css/comments.css?v=20261113b">
-    <link rel="stylesheet" href="css/my-addons.css?v=20261113b">
+    <link rel="stylesheet" href="css/base.css?v=20261114a">
+    <link rel="stylesheet" href="css/splash.css?v=20261114a">
+    <link rel="stylesheet" href="css/home.css?v=20261114a">
+    <link rel="stylesheet" href="css/nav.css?v=20261114a">
+    <link rel="stylesheet" href="css/account.css?v=20261114a">
+    <link rel="stylesheet" href="css/item-page.css?v=20261114a">
+    <link rel="stylesheet" href="css/layout.css?v=20261114a">
+    <link rel="stylesheet" href="css/gm.css?v=20261114a">
+    <link rel="stylesheet" href="css/features.css?v=20261114a">
+    <link rel="stylesheet" href="css/cards.css?v=20261114a">
+    <link rel="stylesheet" href="css/comments.css?v=20261114a">
+    <link rel="stylesheet" href="css/my-addons.css?v=20261114a">
+    <link rel="stylesheet" href="css/chat.css?v=20261114a">
 </head>
 
 
@@ -325,7 +326,7 @@
                         <span class="account-nav-icon">🔐</span>
                         <span>安全设置</span>
                     </button>
-                    <button class="account-nav-item" data-section="messages" data-user-only="1">
+                    <button class="account-nav-item" data-section="messages">
                         <span class="account-nav-icon">📬</span>
                         <span>消息</span>
                         <span class="unread-badge" id="msgNavBadge"></span>
@@ -391,7 +392,7 @@
                 <!-- 消息 -->
                 <section class="account-section" id="section-messages" style="display:none;">
                     <h2>消息</h2>
-                    <div class="section-toolbar">
+                    <div class="section-toolbar" id="msgToolbar">
                         <span class="section-toolbar-info" id="msgSummary"></span>
                         <div class="section-toolbar-actions">
                             <button class="gm-btn" id="msgReadAllBtn">全部已读</button>
@@ -399,6 +400,7 @@
                         </div>
                     </div>
                     <div class="msg-list" id="msgList"><div class="account-empty">加载中...</div></div>
+                    <div class="chat-view" id="chatView" style="display:none;"></div>
                 </section>
 
                 <!-- 我的投稿 -->
@@ -866,25 +868,25 @@
         </div>
     </div>
 
-    <script src="js/config.js?v=20261113b" defer></script>
-    <script src="js/utils.js?v=20261113b" defer></script>
-    <script src="js/data.js?v=20261113b" defer></script>
-    <script src="js/announcement.js?v=20261113b" defer></script>
-    <script src="js/list.js?v=20261113b" defer></script>
-    <script src="js/edit.js?v=20261113b" defer></script>
-    <script src="js/auth.js?v=20261113b" defer></script>
-    <script src="js/messages.js?v=20261113b" defer></script>
-    <script src="js/submissions.js?v=20261113b" defer></script>
-    <script src="js/gm.js?v=20261113b" defer></script>
-    <script src="js/account.js?v=20261113b" defer></script>
-    <script src="js/item-page.js?v=20261113b" defer></script>
-    <script src="js/ratings.js?v=20261113b" defer></script>
-    <script src="js/comments.js?v=20261113b" defer></script>
-    <script src="js/my-addons.js?v=20261113b" defer></script>
-    <script src="js/router.js?v=20261113b" defer></script>
-    <script src="js/sort.js?v=20261113b" defer></script>
-    <script src="js/ui.js?v=20261113b" defer></script>
-    <script src="js/main.js?v=20261113b" defer></script>
+    <script src="js/config.js?v=20261114a" defer></script>
+    <script src="js/utils.js?v=20261114a" defer></script>
+    <script src="js/data.js?v=20261114a" defer></script>
+    <script src="js/announcement.js?v=20261114a" defer></script>
+    <script src="js/list.js?v=20261114a" defer></script>
+    <script src="js/edit.js?v=20261114a" defer></script>
+    <script src="js/auth.js?v=20261114a" defer></script>
+    <script src="js/messages.js?v=20261114a" defer></script>
+    <script src="js/submissions.js?v=20261114a" defer></script>
+    <script src="js/gm.js?v=20261114a" defer></script>
+    <script src="js/account.js?v=20261114a" defer></script>
+    <script src="js/item-page.js?v=20261114a" defer></script>
+    <script src="js/ratings.js?v=20261114a" defer></script>
+    <script src="js/comments.js?v=20261114a" defer></script>
+    <script src="js/my-addons.js?v=20261114a" defer></script>
+    <script src="js/router.js?v=20261114a" defer></script>
+    <script src="js/sort.js?v=20261114a" defer></script>
+    <script src="js/ui.js?v=20261114a" defer></script>
+    <script src="js/main.js?v=20261114a" defer></script>
 </body>
 
 </html>

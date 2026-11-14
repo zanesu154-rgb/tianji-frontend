@@ -28,7 +28,7 @@ function sectionAllowed(section) {
     if (!ACCOUNT_SECTIONS.includes(section)) return false;
     const isAdminUser = currentRole === 'admin';
     if (section === 'gm') return isAdminUser;
-    if (['messages', 'my-submissions', 'danger'].includes(section)) return !isAdminUser;
+    if (['my-submissions', 'danger'].includes(section)) return !isAdminUser;
     return true;
 }
 

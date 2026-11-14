@@ -26,9 +26,10 @@ function updateLoginUI() {
     }
 
     const regular = isRegularUser();
-    document.getElementById('menuMessagesBtn').style.display = regular ? '' : 'none';
+    // 消息：普通用户看通知和私信，栈主看所有私信对话
+    document.getElementById('menuMessagesBtn').style.display = isLoggedIn() ? '' : 'none';
     document.getElementById('menuSubmitBtn').style.display = regular ? '' : 'none';
-    if (!regular) setUnread(0);
+    if (!isLoggedIn()) setUnread(0);
     // 登录状态变化后刷新评论区（显示输入框 / 我的评论可删除等）
     if (currentPage === 'item' && typeof cmState !== 'undefined' && cmState.itemId) loadComments(cmState.itemId);
     if (currentPage === 'addons' && typeof renderAddonsPage === 'function') renderAddonsPage(currentAddonsArg || '');
