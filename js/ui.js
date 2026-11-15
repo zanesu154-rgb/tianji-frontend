@@ -316,6 +316,10 @@ function setupMiscEvents() {
     const closeMenu = () => menuDropdown.classList.remove('show');
     document.getElementById('menuProfileBtn').addEventListener('click', () => { closeMenu(); showPage('account', 'profile'); });
     document.getElementById('menuRequestBtn').addEventListener('click', () => { closeMenu(); openSubmitModal('request'); });
+    document.getElementById('menuSpaceBtn').addEventListener('click', () => {
+        closeMenu();
+        if (currentUserId) location.hash = '#user/' + encodeURIComponent(currentUserId);
+    });
     menuDropdown.querySelectorAll('[data-menu-go]').forEach(b => b.addEventListener('click', () => {
         closeMenu();
         showPage('account', b.dataset.menuGo);

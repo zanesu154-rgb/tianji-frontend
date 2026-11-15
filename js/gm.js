@@ -8,37 +8,104 @@ async function loadGmData() {
 let gmClickDays = 7;
 const LINK_FIELD_LABELS = { translationLink: '汉化', originalLink: '原版', authorLink: '作者直链' };
 
+// 点击排行的一行：点整行进入这个资源的点击详情
+function clickRowHtml(r, idx) {
+    const name = r.translated ? `${r.original}（${r.translated}）` : r.original;
+    const detail = Object.entries(r.fields)
+        .sort((a, b) => (b[1].open + b[1].copy) - (a[1].open + a[1].copy))
+        .map(([f, v]) => `<span>${LINK_FIELD_LABELS[f] || f}：跳转 ${v.open} · 复制 ${v.copy}</span>`)
+        .join('');
+    return `
+        <a class="click-rank-row clickable" href="#account/gm-click/${encodeURIComponent(r.id)}" title="查看「${escapeHtml(name)}」的点击详情">
+            <span class="click-rank-no">${idx + 1}</span>
+            <div class="click-rank-main">
+                <div class="click-rank-name">${escapeHtml(name)}</div>
+                <div class="click-rank-detail">${detail}</div>
+            </div>
+            <span class="click-rank-total">${r.total}</span>
+            <span class="click-rank-go">›</span>
+        </a>`;
+}
+
+const GM_PREVIEW_CLICKS = 10;
 async function loadGmClicks() {
     const summary = document.getElementById('gmClickSummary');
     const listEl = document.getElementById('gmClickList');
+    const more = document.getElementById('gmClickMore');
     try {
         const data = await api('GET', `/gm/clicks?days=${gmClickDays}`);
         const rangeText = data.days ? `近 ${data.days} 天` : '全部时间';
         summary.textContent = `${rangeText}共 ${data.total} 次点击，涉及 ${data.itemCount} 个项目 · 今日 ${data.today} 次（同一访客对同一链接每天只计一次）`;
         renderVisitChart(data.trend, 'gmClickChart', '次点击');
+        more.style.display = data.itemCount > GM_PREVIEW_CLICKS ? '' : 'none';
+        more.textContent = `查看全部 ${data.itemCount} 个项目 ›`;
         if (!data.ranking.length) {
             listEl.innerHTML = '<div class="account-empty">这段时间还没有点击记录</div>';
             return;
         }
-        listEl.innerHTML = data.ranking.map((r, idx) => {
-            const name = r.translated ? `${r.original}（${r.translated}）` : r.original;
-            const detail = Object.entries(r.fields)
-                .sort((a, b) => (b[1].open + b[1].copy) - (a[1].open + a[1].copy))
-                .map(([f, v]) => `<span>${LINK_FIELD_LABELS[f] || f}：跳转 ${v.open} · 复制 ${v.copy}</span>`)
-                .join('');
-            return `
-                <div class="click-rank-row">
-                    <span class="click-rank-no">${idx + 1}</span>
-                    <div class="click-rank-main">
-                        <div class="click-rank-name" title="${escapeHtml(name)}">${escapeHtml(name)}</div>
-                        <div class="click-rank-detail">${detail}</div>
-                    </div>
-                    <span class="click-rank-total">${r.total}</span>
-                </div>`;
-        }).join('');
+        listEl.innerHTML = data.ranking.slice(0, GM_PREVIEW_CLICKS).map(clickRowHtml).join('');
     } catch (e) {
         summary.textContent = e.message || '加载失败';
         listEl.innerHTML = '';
+    }
+}
+
+// ---------- 点击量详情页（全部 + 搜索） ----------
+let gmClicksPageDays = 7;
+let gmClicksPageData = null;
+async function loadGmClicksPage() {
+    const summary = document.getElementById('gmClicksSummary');
+    document.querySelectorAll('#gmClicksTabs .gm-tab').forEach(t => t.classList.toggle('active', Number(t.dataset.days) === gmClicksPageDays));
+    summary.textContent = '加载中...';
+    try {
+        gmClicksPageData = await api('GET', `/gm/clicks?days=${gmClicksPageDays}&all=1`);
+        renderGmClicksPage();
+    } catch (e) {
+        summary.textContent = e.message || '加载失败';
+    }
+}
+function renderGmClicksPage() {
+    const data = gmClicksPageData;
+    if (!data) return;
+    const q = document.getElementById('gmClicksSearch').value.trim().toLowerCase();
+    // 排名按全部数据算，搜索只是筛选
+    const rows = data.ranking.map((r, i) => [r, i]).filter(([r]) => !q
+        || (r.original || '').toLowerCase().includes(q) || (r.translated || '').toLowerCase().includes(q));
+    const rangeText = data.days ? `近 ${data.days} 天` : '全部时间';
+    document.getElementById('gmClicksSummary').textContent = q
+        ? `找到 ${rows.length} 个项目（${rangeText}共 ${data.itemCount} 个有点击）`
+        : `${rangeText}共 ${data.total} 次点击，涉及 ${data.itemCount} 个项目 · 点任意一行查看详情`;
+    document.getElementById('gmClicksList').innerHTML = rows.length
+        ? rows.map(([r, i]) => clickRowHtml(r, i)).join('')
+        : `<div class="account-empty">${q ? '没有匹配的资源' : '这段时间还没有点击记录'}</div>`;
+}
+
+// ---------- 单个资源的点击详情 ----------
+let gmClickItemDays = 30;
+let gmClickItemId = null;
+async function loadGmClickItem(itemId) {
+    if (itemId) gmClickItemId = itemId;
+    const summary = document.getElementById('gmClickItemSummary');
+    const fieldsEl = document.getElementById('gmClickItemFields');
+    document.querySelectorAll('#gmClickItemTabs .gm-tab').forEach(t => t.classList.toggle('active', Number(t.dataset.days) === gmClickItemDays));
+    summary.textContent = '加载中...';
+    fieldsEl.innerHTML = '';
+    try {
+        const d = await api('GET', `/gm/clicks/${encodeURIComponent(gmClickItemId)}?days=${gmClickItemDays}`);
+        const name = d.item.translated ? `${d.item.original}（${d.item.translated}）` : d.item.original;
+        document.getElementById('gmClickItemTitle').textContent = name;
+        document.getElementById('gmClickItemLink').href = '#item/' + encodeURIComponent(d.item.id);
+        const rangeText = d.days ? `近 ${d.days} 天` : '全部时间';
+        summary.textContent = `${rangeText}共 ${d.total} 次点击${d.firstDate ? ` · 最早记录 ${d.firstDate}` : ''}${d.days ? '' : '（走势图显示最近 90 天）'}`;
+        renderVisitChart(d.trend, 'gmClickItemChart', '次点击');
+        const fieldOrder = ['translationLink', 'authorLink', 'originalLink'];
+        const entries = Object.entries(d.fields).sort((a, b) => fieldOrder.indexOf(a[0]) - fieldOrder.indexOf(b[0]));
+        fieldsEl.innerHTML = entries.length ? `
+            <div class="gm-field-row head"><span>链接</span><span>跳转</span><span>复制</span><span>合计</span></div>
+            ${entries.map(([f, v]) => `<div class="gm-field-row"><span>${LINK_FIELD_LABELS[f] || escapeHtml(f)}</span><span>${v.open}</span><span>${v.copy}</span><span><b>${v.open + v.copy}</b></span></div>`).join('')}`
+            : '<div class="account-empty">这段时间没有点击</div>';
+    } catch (e) {
+        summary.textContent = e.message || '加载失败';
     }
 }
 
@@ -222,30 +289,75 @@ async function loadGmFeedback() {
     }
 }
 
+// 用户行：用户名可点击进入空间
+function gmUserRowHtml(u) {
+    const subs = Number(u.approved_subs) || 0;
+    const comments = Number(u.comments) || 0;
+    return `
+        <div class="gm-user-row">
+            <a class="gm-user-link" href="#user/${encodeURIComponent(u.id)}" title="查看空间">
+                ${avatarHtml(u.avatar, u.username, 'gm-user-avatar')}
+                <span class="gm-user-name">${escapeHtml(u.username)}</span>
+            </a>
+            <span class="gm-user-role ${u.role === 'admin' ? 'admin' : ''}">${u.role === 'admin' ? '管理员' : '普通用户'}</span>
+            ${Number(u.blocked) ? '<span class="chat-blocked-tag">已拉黑</span>' : ''}
+            <span class="gm-user-stat" title="审核通过的投稿 / 评论数">📤 ${subs} · 💬 ${comments}</span>
+            <span class="gm-user-date">${escapeHtml(new Date(u.created_at * 1000).toLocaleDateString())}</span>
+            <div class="gm-user-actions">
+                <button class="gm-btn" data-gm-message="${escapeHtml(u.id)}" data-gm-name="${escapeHtml(u.username)}">私信</button>
+                <button class="gm-btn" data-gm-reset="${escapeHtml(u.id)}" data-gm-name="${escapeHtml(u.username)}">重置密码</button>
+                <button class="gm-btn danger" data-gm-delete="${escapeHtml(u.id)}" data-gm-name="${escapeHtml(u.username)}">删除</button>
+            </div>
+        </div>`;
+}
+
+const GM_PREVIEW_USERS = 8;
+let gmUsersCache = [];
 async function loadGmUsers() {
     const listEl = document.getElementById('gmUserList');
+    const more = document.getElementById('gmUserMore');
     try {
-        const users = await api('GET', '/gm/users');
-        if (users.length === 0) {
+        gmUsersCache = await api('GET', '/gm/users');
+        if (gmUsersCache.length === 0) {
             listEl.innerHTML = '<div style="padding:1rem;color:var(--text-light);text-align:center;">暂无注册用户</div>';
+            more.style.display = 'none';
             return;
         }
-        listEl.innerHTML = users.map(u => `
-            <div class="gm-user-row">
-                <span class="gm-user-name">${escapeHtml(u.username)}</span>
-                <span class="gm-user-role ${u.role === 'admin' ? 'admin' : ''}">${u.role === 'admin' ? '管理员' : '普通用户'}</span>
-                ${Number(u.blocked) ? '<span class="chat-blocked-tag">已拉黑</span>' : ''}
-                <span class="gm-user-date">${escapeHtml(new Date(u.created_at * 1000).toLocaleDateString())}</span>
-                <div class="gm-user-actions">
-                    <button class="gm-btn" data-gm-message="${escapeHtml(u.id)}" data-gm-name="${escapeHtml(u.username)}">私信</button>
-                    <button class="gm-btn" data-gm-reset="${escapeHtml(u.id)}" data-gm-name="${escapeHtml(u.username)}">重置密码</button>
-                    <button class="gm-btn danger" data-gm-delete="${escapeHtml(u.id)}" data-gm-name="${escapeHtml(u.username)}">删除</button>
-                </div>
-            </div>
-        `).join('');
+        listEl.innerHTML = gmUsersCache.slice(0, GM_PREVIEW_USERS).map(gmUserRowHtml).join('');
+        more.style.display = gmUsersCache.length > GM_PREVIEW_USERS ? '' : 'none';
+        more.textContent = `查看全部 ${gmUsersCache.length} 位用户 ›`;
     } catch (e) {
         listEl.innerHTML = `<div class="account-empty">${escapeHtml(e.message || '加载失败')}</div>`;
     }
+}
+
+// ---------- 全部用户页（搜索 + 排序） ----------
+async function loadGmUsersPage() {
+    const listEl = document.getElementById('gmUsersList');
+    if (!gmUsersCache.length) listEl.innerHTML = '加载中...';
+    try {
+        gmUsersCache = await api('GET', '/gm/users');
+        renderGmUsersPage();
+    } catch (e) {
+        listEl.innerHTML = `<div class="account-empty">${escapeHtml(e.message || '加载失败')}</div>`;
+    }
+}
+function renderGmUsersPage() {
+    const q = document.getElementById('gmUsersSearch').value.trim().toLowerCase();
+    const sort = document.getElementById('gmUsersSort').value;
+    let rows = gmUsersCache.filter(u => !q || u.username.toLowerCase().includes(q));
+    const by = {
+        new: (a, b) => b.created_at - a.created_at,
+        old: (a, b) => a.created_at - b.created_at,
+        subs: (a, b) => (Number(b.approved_subs) - Number(a.approved_subs)) || (b.created_at - a.created_at),
+        comments: (a, b) => (Number(b.comments) - Number(a.comments)) || (b.created_at - a.created_at),
+        blocked: (a, b) => (Number(b.blocked) - Number(a.blocked)) || (b.created_at - a.created_at)
+    }[sort];
+    rows = rows.slice().sort(by);
+    document.getElementById('gmUsersCount').textContent = q ? `${rows.length} / ${gmUsersCache.length}` : `共 ${gmUsersCache.length} 位`;
+    document.getElementById('gmUsersList').innerHTML = rows.length
+        ? rows.map(gmUserRowHtml).join('')
+        : `<div class="account-empty">${q ? '没有匹配的用户' : '暂无注册用户'}</div>`;
 }
 
 function renderVisitChart(trend, svgId = 'gmChart', unit = '位访客') {
@@ -280,8 +392,10 @@ function renderVisitChart(trend, svgId = 'gmChart', unit = '位访客') {
     let labels = '';
     const last = points.length - 1;
     points.forEach((p, i) => {
-        dots += `<circle cx="${p.x}" cy="${p.y}" r="3"><title>${p.date}：${p.count} ${unit}</title></circle>`;
-        if (i % 3 === 0 || i === last) {
+        dots += `<circle cx="${p.x}" cy="${p.y}" r="${points.length > 40 ? 1.8 : 3}"><title>${p.date}：${p.count} ${unit}</title></circle>`;
+        // 点多时标签稀疏一点，最多 8 个左右
+        const every = Math.max(3, Math.ceil(points.length / 8));
+        if ((i % every === 0 && last - i >= every / 2) || i === last) {
             labels += `<text x="${p.x}" y="${H - 8}" text-anchor="middle">${p.date.slice(5)}</text>`;
         }
     });
@@ -420,7 +534,32 @@ function setupGmEvents() {
         document.getElementById('composeModal').classList.remove('show');
     });
 
-    document.getElementById('gmUserList').addEventListener('click', async (e) => {
+    // 统计卡片 → 详情页
+    document.querySelectorAll('[data-gm-go]').forEach(card => {
+        card.addEventListener('click', () => { location.hash = '#account/' + card.dataset.gmGo; });
+    });
+    document.getElementById('gmClicksTabs').addEventListener('click', (e) => {
+        const tab = e.target.closest('.gm-tab');
+        if (!tab) return;
+        gmClicksPageDays = Number(tab.dataset.days);
+        loadGmClicksPage();
+    });
+    document.getElementById('gmClicksSearch').addEventListener('input', renderGmClicksPage);
+    document.getElementById('gmClickItemTabs').addEventListener('click', (e) => {
+        const tab = e.target.closest('.gm-tab');
+        if (!tab) return;
+        gmClickItemDays = Number(tab.dataset.days);
+        loadGmClickItem();
+    });
+    document.getElementById('gmUsersSearch').addEventListener('input', renderGmUsersPage);
+    document.getElementById('gmUsersSort').addEventListener('change', renderGmUsersPage);
+    document.getElementById('gmUsersList').addEventListener('click', onGmUserAction);
+
+    document.getElementById('gmUserList').addEventListener('click', onGmUserAction);
+}
+
+async function onGmUserAction(e) {
+    {
         const msgBtn = e.target.closest('[data-gm-message]');
         if (msgBtn) {
             // 私信：打开和这个用户的对话（对方可以回复）
@@ -446,9 +585,9 @@ function setupGmEvents() {
             try {
                 await api('DELETE', `/gm/users/${encodeURIComponent(deleteBtn.dataset.gmDelete)}`);
                 showToast('用户已删除');
-                loadGmUsers();
-                loadGmStats();
+                if (currentPage === 'account' && location.hash.startsWith('#account/gm-users')) loadGmUsersPage();
+                else { loadGmUsers(); loadGmStats(); }
             } catch (err) { showToast(err.message || '删除失败'); }
         }
-    });
+    }
 }

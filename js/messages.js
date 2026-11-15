@@ -20,7 +20,7 @@ async function refreshUnread() {
         setUnread(data.unread);
         // 对话开着时有新消息：刷新对话（会顺便标为已读）
         if (data.unread > 0 && chatState.open && currentPage === 'account') {
-            if (isAdmin || data.chat > 0) loadChat(true);
+            if (isAdmin || (chatState.peerId ? data.dm > 0 : data.chat > 0)) loadChat(true);
         }
         if (data.unread > 0 && isAdmin && !chatState.open && currentPage === 'account'
             && document.getElementById('section-messages').style.display !== 'none') loadAdminInbox();
@@ -55,17 +55,40 @@ async function loadMessages() {
         openChat(isAdmin ? uid : null);
         return;
     }
+    if (pendingPeer) {
+        const pid = pendingPeer;
+        pendingPeer = null;
+        openPeerChat(pid);
+        return;
+    }
     closeChatView();
     if (isAdmin) { loadAdminInbox(); return; }
     try {
-        const data = await api('GET', '/messages');
+        const [data, peers] = await Promise.all([api('GET', '/messages'), api('GET', '/social/dms').catch(() => [])]);
         messages = data.list || [];
         chatSummary = data.chat || null;
-        setUnread(data.unread + (chatSummary ? chatSummary.unread : 0));
+        peerConversations = peers;
+        setUnread(data.unread + (chatSummary ? chatSummary.unread : 0) + (data.dm || 0));
         renderMessages();
     } catch (e) {
         listEl.innerHTML = `<div class="account-empty">${escapeHtml(e.message || '加载失败')}</div>`;
     }
+}
+
+let peerConversations = [];
+let pendingPeer = null;
+
+// 用户之间的对话入口
+function peerCardsHtml() {
+    return peerConversations.map(c => `
+        <button class="chat-entry${c.unread ? ' unread' : ''}" data-peer-open="${escapeHtml(c.user_id)}">
+            ${avatarHtml(c.avatar, c.username, 'chat-entry-avatar')}
+            <span class="chat-entry-main">
+                <span class="chat-entry-title">${escapeHtml(c.username)}${c.unread ? `<span class="chat-unread">${c.unread}</span>` : ''}</span>
+                <span class="chat-entry-last">${c.last_mine ? '我：' : ''}${escapeHtml(c.last_content)}</span>
+            </span>
+            <span class="msg-time">${formatTime(c.last_at)}</span>
+        </button>`).join('');
 }
 
 function renderMessages() {
@@ -85,8 +108,10 @@ function renderMessages() {
             </span>
             <span class="msg-time">${formatTime(c.last.created_at)}</span>
         </button>` : '';
+    const convs = chatCard + peerCardsHtml();
+    const convBlock = convs ? `<div class="msg-group-title">私信</div>${convs}` : '';
     if (!messages.length) {
-        listEl.innerHTML = chatCard + (chatCard ? '' : '<div class="account-empty">还没有消息～<br>反馈被处理、投稿被审核时会在这里通知你</div>');
+        listEl.innerHTML = convBlock || '<div class="account-empty">还没有消息～<br>反馈被处理、投稿被审核时会在这里通知你</div>';
         return;
     }
     const icons = { feedback: '💬', comment: '💬', submission: '📤', admin: '📢', system: '🔔' };
@@ -95,7 +120,7 @@ function renderMessages() {
         const m = /\n*#item\/([^\s]+)\s*$/.exec(c || '');
         return m ? [c.slice(0, m.index), m[1]] : [c, ''];
     };
-    listEl.innerHTML = chatCard + messages.map(m => {
+    listEl.innerHTML = convBlock + (convBlock ? '<div class="msg-group-title">通知</div>' : '') + messages.map(m => {
         const [text, itemId] = splitLink(m.content);
         return `
         <div class="msg-card ${m.is_read ? '' : 'unread'}" data-msg-id="${escapeHtml(m.id)}">
@@ -125,7 +150,18 @@ async function markMessageRead(id) {
 
 // ==================== 私信 ====================
 // 普通用户：只有一条和栈主的对话；栈主：和每个用户各一条
-const chatState = { open: false, userId: null, user: null, list: [], blocked: false, canReply: false, quote: '', draft: '' };
+const chatState = { open: false, userId: null, peerId: null, user: null, list: [], blocked: false, canReply: false, iBlocked: false, blockedMe: false, quote: '', draft: '' };
+
+// 从用户空间点「私信」：打开和这个用户的对话
+function openPeerChatFromSpace(userId) {
+    pendingPeer = userId;
+    if (currentPage === 'account' && document.getElementById('section-messages').style.display !== 'none') loadMessages();
+    else showPage('account', 'messages');
+}
+
+function openPeerChat(userId) {
+    return openChat(null, '', userId);
+}
 let pendingChatUser = null;
 
 // 栈主从 GM 用户列表打开某人的私信
@@ -169,9 +205,11 @@ async function loadAdminInbox() {
     }
 }
 
-async function openChat(userId, quote) {
+async function openChat(userId, quote, peerId) {
     chatState.open = true;
     chatState.userId = userId || null;
+    chatState.peerId = peerId || null;
+    chatState.user = null;
     chatState.quote = quote || '';
     chatState.list = [];
     chatState.draft = '';
@@ -195,12 +233,19 @@ function startChatPolling() {
         if (document.visibilityState === 'visible') loadChat(true);
     }, 15000);
 }
-const chatSig = () => chatState.list.map(m => m.id + (m.is_read ? 'r' : '')).join(',') + '|' + chatState.blocked + chatState.canReply;
+const chatSig = () => chatState.list.map(m => m.id + (m.is_read ? 'r' : '')).join(',') + '|' + chatState.blocked + chatState.canReply + chatState.iBlocked + chatState.blockedMe;
 
 async function loadChat(silent) {
     const before = chatSig();
     try {
-        if (isAdmin) {
+        if (chatState.peerId) {
+            const data = await api('GET', `/social/dms/${encodeURIComponent(chatState.peerId)}`);
+            chatState.user = data.user;
+            // 统一成 sender 字段：自己发的记为 me
+            chatState.list = data.list.map(m => ({ ...m, sender: m.mine ? 'me' : 'them' }));
+            chatState.iBlocked = data.iBlocked;
+            chatState.blockedMe = data.blockedMe;
+        } else if (isAdmin) {
             const data = await api('GET', `/chats/admin/${encodeURIComponent(chatState.userId)}`);
             chatState.user = data.user;
             chatState.list = data.list;
@@ -241,8 +286,9 @@ function renderChat() {
     const view = document.getElementById('chatView');
     const input = document.getElementById('chatInput');
     if (input) chatState.draft = input.value;
-    const mineSender = isAdmin ? 'admin' : 'user';
-    const title = isAdmin ? (chatState.user ? chatState.user.username : '') : '与栈主的对话';
+    const peer = !!chatState.peerId;
+    const mineSender = peer ? 'me' : (isAdmin ? 'admin' : 'user');
+    const title = peer || isAdmin ? (chatState.user ? chatState.user.username : '') : '与栈主的对话';
     let lastDay = '';
     const bubbles = chatState.list.map(m => {
         const day = new Date(m.created_at * 1000).toDateString();
@@ -259,7 +305,16 @@ function renderChat() {
     }).join('');
 
     let composer;
-    if (!isAdmin && chatState.blocked) {
+    if (peer && chatState.iBlocked) {
+        composer = '<div class="chat-locked">你已拉黑对方 <button class="gm-btn" data-peer-block>取消拉黑</button></div>';
+    } else if (peer && chatState.blockedMe) {
+        composer = '<div class="chat-locked">对方暂时不接收你的私信</div>';
+    } else if (peer) {
+        composer = `<div class="chat-composer"><div class="chat-composer-row">
+            <textarea id="chatInput" maxlength="1000" rows="2" placeholder="发给 ${escapeHtml(title)}…${matchMedia('(pointer: fine)').matches ? '（Ctrl+Enter 发送）' : ''}">${escapeHtml(chatState.draft)}</textarea>
+            <button class="btn btn-primary" data-chat-send>发送</button>
+        </div></div>`;
+    } else if (!isAdmin && chatState.blocked) {
         composer = '<div class="chat-locked">你暂时无法给栈主发送消息</div>';
     } else if (!isAdmin && !chatState.canReply) {
         composer = '<div class="chat-locked">栈主给你发消息后，就可以在这里回复了</div>';
@@ -275,14 +330,19 @@ function renderChat() {
             ${isAdmin && chatState.blocked ? '<div class="chat-hint">对方已被拉黑，不能再给你发消息；你仍然可以给他发</div>' : ''}
         </div>`;
     }
+    const spaceId = peer ? chatState.peerId : (isAdmin && chatState.user && !chatState.user.deleted ? chatState.userId : null);
+    const titleHtml = spaceId
+        ? `<a class="chat-title-link" href="#user/${encodeURIComponent(spaceId)}" title="查看空间">${avatarHtml(chatState.user && chatState.user.avatar, title, 'chat-head-avatar')}${escapeHtml(title)}</a>`
+        : escapeHtml(title);
     view.innerHTML = `
         <div class="chat-head">
             <button class="gm-btn" data-chat-back>← 返回</button>
-            <span class="chat-title">${escapeHtml(title)}${isAdmin && chatState.blocked ? '<span class="chat-blocked-tag">已拉黑</span>' : ''}</span>
-            ${isAdmin && chatState.user && !chatState.user.deleted ? `<span class="chat-head-actions">
+            <span class="chat-title">${titleHtml}${(isAdmin && !peer && chatState.blocked) || (peer && chatState.iBlocked) ? '<span class="chat-blocked-tag">已拉黑</span>' : ''}</span>
+            ${peer ? `<span class="chat-head-actions"><button class="gm-btn${chatState.iBlocked ? '' : ' danger'}" data-peer-block>${chatState.iBlocked ? '取消拉黑' : '拉黑'}</button></span>` : ''}
+            ${!peer && isAdmin && chatState.user && !chatState.user.deleted ? `<span class="chat-head-actions">
                 <button class="gm-btn${chatState.blocked ? '' : ' danger'}" data-chat-block>${chatState.blocked ? '取消拉黑' : '拉黑'}</button>
                 <button class="gm-btn danger" data-chat-clear>删除对话</button>
-            </span>` : (isAdmin ? '<span class="chat-head-actions"><button class="gm-btn danger" data-chat-clear>删除对话</button></span>' : '')}
+            </span>` : (!peer && isAdmin ? '<span class="chat-head-actions"><button class="gm-btn danger" data-chat-clear>删除对话</button></span>' : '')}
         </div>
         <div class="chat-list" id="chatList">${bubbles || '<div class="chat-empty">还没有消息</div>'}</div>
         ${composer}`;
@@ -297,7 +357,8 @@ async function sendChat() {
     const btn = document.querySelector('[data-chat-send]');
     btn.disabled = true;
     try {
-        if (isAdmin) await api('POST', `/chats/admin/${encodeURIComponent(chatState.userId)}`, { content });
+        if (chatState.peerId) await api('POST', `/social/dms/${encodeURIComponent(chatState.peerId)}`, { content });
+        else if (isAdmin) await api('POST', `/chats/admin/${encodeURIComponent(chatState.userId)}`, { content });
         else await api('POST', '/chats/mine', { content, quote: chatState.quote });
         chatState.draft = '';
         chatState.quote = '';
@@ -335,6 +396,17 @@ function setupChatEvents() {
             showExternalWarning(url.dataset.ipUrl, () => window.open(url.dataset.ipUrl, '_blank', 'noopener,noreferrer'));
             return;
         }
+        if (t.closest('[data-peer-block]')) {
+            const to = !chatState.iBlocked;
+            if (to && !confirm(`拉黑「${chatState.user.username}」？\n拉黑后对方不能再给你发私信；你也要先取消拉黑才能给他发。`)) return;
+            try {
+                await api('PUT', `/social/users/${encodeURIComponent(chatState.peerId)}/block`, { blocked: to });
+                chatState.iBlocked = to;
+                showToast(to ? '已拉黑' : '已取消拉黑');
+                renderChat();
+            } catch (err) { showToast(err.message); }
+            return;
+        }
         if (t.closest('[data-chat-block]')) {
             const to = !chatState.blocked;
             const name = chatState.user.username;
@@ -365,6 +437,8 @@ function setupMessageEvents() {
     document.getElementById('msgList').addEventListener('click', async (e) => {
         const openBtn = e.target.closest('[data-chat-open]');
         if (openBtn) { openChat(null); return; }
+        const peerBtn = e.target.closest('[data-peer-open]');
+        if (peerBtn) { openPeerChat(peerBtn.dataset.peerOpen); return; }
         const userBtn = e.target.closest('[data-chat-user]');
         if (userBtn) { openChat(userBtn.dataset.chatUser); return; }
         const replyBtn = e.target.closest('[data-msg-reply]');

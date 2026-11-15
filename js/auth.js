@@ -33,10 +33,15 @@ function updateLoginUI() {
     // 登录状态变化后刷新评论区（显示输入框 / 我的评论可删除等）
     if (currentPage === 'item' && typeof cmState !== 'undefined' && cmState.itemId) loadComments(cmState.itemId);
     if (currentPage === 'addons' && typeof renderAddonsPage === 'function') renderAddonsPage(currentAddonsArg || '');
+    if (currentPage === 'user' && currentUserPageId && typeof renderUserPage === 'function') renderUserPage(currentUserPageId);
     renderUserMenu();
 }
 
-function saveSession(token, username, role, avatar) {
+function saveSession(token, username, role, avatar, id) {
+    if (id !== undefined) {
+        currentUserId = id || '';
+        try { localStorage.setItem('tianji_uid', currentUserId); } catch (e) { }
+    }
     authToken = token;
     currentUsername = username;
     currentRole = role || 'user';
@@ -96,8 +101,10 @@ function clearSession() {
         localStorage.removeItem('tianji_username');
         localStorage.removeItem('tianji_role');
         localStorage.removeItem('tianji_avatar');
+        localStorage.removeItem('tianji_uid');
     } catch (e) { }
     currentAvatar = '';
+    currentUserId = '';
 }
 
 async function tryLogin() {
@@ -109,7 +116,7 @@ async function tryLogin() {
     isAdmin = currentRole === 'admin';
     try {
         const data = await api('GET', '/users/me');
-        saveSession(authToken, data.username, data.role, data.avatar || '');
+        saveSession(authToken, data.username, data.role, data.avatar || '', data.id || '');
     } catch (e) {
         if (e.status === 401) clearSession();
         // 网络错误：保留本地登录状态，稍后再试
@@ -164,7 +171,7 @@ async function submitLogin() {
     authBusy = true;
     try {
         const data = await api('POST', '/users/login', { username, password });
-        saveSession(data.token, data.username || username, data.role, data.avatar || '');
+        saveSession(data.token, data.username || username, data.role, data.avatar || '', data.id || '');
         await afterAuthSuccess(currentRole === 'admin' ? '管理员登录成功' : '登录成功');
     } catch (e) {
         showToast(e.message || '登录失败');
@@ -188,7 +195,7 @@ async function submitRegister() {
     authBusy = true;
     try {
         const data = await api('POST', '/users/register', { username, password });
-        saveSession(data.token, data.username || username, data.role, '');
+        saveSession(data.token, data.username || username, data.role, '', data.id || '');
         await afterAuthSuccess('注册成功，已自动登录');
     } catch (e) {
         showToast(e.message || '注册失败');

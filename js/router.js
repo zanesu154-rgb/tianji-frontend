@@ -3,7 +3,7 @@
 // ==================== 页面切换（带动画） ====================
 let currentPage = 'home';
 let isSwitching = false;
-const ACCOUNT_SECTIONS = ['profile', 'security', 'messages', 'my-submissions', 'danger', 'gm'];
+const ACCOUNT_SECTIONS = ['profile', 'security', 'messages', 'my-submissions', 'danger', 'gm', 'gm-clicks', 'gm-click', 'gm-users'];
 
 // 根据身份填充账户中心、显示/隐藏对应入口
 function fillAccountPage() {
@@ -28,15 +28,20 @@ function fillAccountPage() {
 function sectionAllowed(section) {
     if (!ACCOUNT_SECTIONS.includes(section)) return false;
     const isAdminUser = currentRole === 'admin';
-    if (section === 'gm') return isAdminUser;
+    if (section === 'gm' || section.startsWith('gm-')) return isAdminUser;
     if (['my-submissions', 'danger'].includes(section)) return !isAdminUser;
     return true;
 }
 
-function showAccountSection(section) {
-    if (!sectionAllowed(section)) section = 'profile';
+function showAccountSection(arg) {
+    // arg 形如 "gm-click/<资源id>"：分区 + 子参数
+    let [section, ...rest] = String(arg || 'profile').split('/');
+    let sub = rest.join('/');
+    if (!sectionAllowed(section)) { section = 'profile'; sub = ''; }
+    if (section === 'gm-click' && !sub) section = 'gm-clicks';
+    const navSection = section.startsWith('gm-') ? 'gm' : section;
     document.querySelectorAll('.account-nav-item').forEach(b => {
-        b.classList.toggle('active', b.dataset.section === section);
+        b.classList.toggle('active', b.dataset.section === navSection);
     });
     document.querySelectorAll('.account-section').forEach(sec => {
         sec.style.display = sec.id === 'section-' + section ? 'block' : 'none';
@@ -45,8 +50,12 @@ function showAccountSection(section) {
     if (section === 'messages') loadMessages();
     else if (section === 'my-submissions') loadMySubmissions();
     else if (section === 'gm') loadGmData();
+    else if (section === 'gm-clicks') loadGmClicksPage();
+    else if (section === 'gm-click') loadGmClickItem(sub);
+    else if (section === 'gm-users') loadGmUsersPage();
+    if (section.startsWith('gm-')) window.scrollTo({ top: 0, behavior: 'instant' });
 
-    const hash = section === 'profile' ? '#account' : `#account/${section}`;
+    const hash = section === 'profile' ? '#account' : `#account/${section}${sub ? '/' + encodeURIComponent(sub) : ''}`;
     if (location.hash !== hash) history.replaceState(null, '', hash);
 }
 
@@ -58,7 +67,8 @@ function setTopNavForPage(page) {
     document.getElementById('homeBtn').style.display = onHome ? 'none' : '';
 }
 
-const PAGE_IDS = { home: 'pageHome', account: 'pageAccount', item: 'pageItem', addons: 'pageAddons' };
+const PAGE_IDS = { home: 'pageHome', account: 'pageAccount', item: 'pageItem', addons: 'pageAddons', user: 'pageUser' };
+let currentUserPageId = null;
 let currentAddonsArg = null;
 // 离开主页时记住滚动位置（含两个列表模块内部的滚动），回来时恢复
 let homeScrollState = null;
@@ -89,6 +99,11 @@ function showPage(page, arg) {
             renderItemPage(arg);
             window.scrollTo({ top: 0, behavior: 'instant' });
         }
+        if (page === 'user' && arg && arg !== currentUserPageId) {
+            currentUserPageId = arg;
+            renderUserPage(arg);
+            window.scrollTo({ top: 0, behavior: 'instant' });
+        }
         if (page === 'addons' && (arg || '') !== currentAddonsArg) {
             const sameAddon = (arg || '').split('/')[0] === (currentAddonsArg || '').split('/')[0];
             currentAddonsArg = arg || '';
@@ -108,10 +123,12 @@ function showPage(page, arg) {
     if (currentPage === 'home') saveHomeScroll();
     if (currentPage === 'item') { closeLightbox(); document.title = DEFAULT_TITLE; currentItemId = null; }
     if (currentPage === 'addons') { document.title = DEFAULT_TITLE; currentAddonsArg = null; }
+    if (currentPage === 'user') { document.title = DEFAULT_TITLE; currentUserPageId = null; }
 
     // 详情页内容先渲染，切换动画结束时已经准备好
     if (page === 'item') renderItemPage(arg);
     if (page === 'addons') { currentAddonsArg = arg || ''; renderAddonsPage(currentAddonsArg); }
+    if (page === 'user') { currentUserPageId = arg; renderUserPage(arg); }
 
     isSwitching = true;
     currentPage = page;
@@ -140,7 +157,8 @@ function showPage(page, arg) {
             // 动画期间如果地址又变了（快速点后退），以地址为准
             const r = parseRoute();
             if (r.page !== currentPage || (r.page === 'item' && r.id !== currentItemId)
-                || (r.page === 'addons' && (r.arg || '') !== currentAddonsArg)) routeFromLocation();
+                || (r.page === 'addons' && (r.arg || '') !== currentAddonsArg)
+                || (r.page === 'user' && r.arg !== currentUserPageId)) routeFromLocation();
         }, 340);
     }, 280);
 }
