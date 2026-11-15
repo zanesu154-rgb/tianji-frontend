@@ -51,13 +51,21 @@ function cmText(t) {
     return escapeHtml(t).replace(/https?:\/\/[^\s<>"']+/g, url => `<a data-ip-url="${url}">${url}</a>`);
 }
 
+function cmSpaceLink(c, inner) {
+    return c.uid ? `<a class="cm-space-link" href="#user/${encodeURIComponent(c.uid)}" title="查看 ${escapeHtml(c.username)} 的空间">${inner}</a>` : inner;
+}
+
 function cmAvatar(c) {
+    return cmSpaceLink(c, cmAvatarInner(c));
+}
+
+function cmAvatarInner(c) {
     if (c.avatar) return avatarHtml(c.avatar, c.username, 'cm-avatar' + (c.is_admin ? ' admin' : ''));
     return `<span class="cm-avatar${c.is_admin ? ' admin' : ''}" aria-hidden="true">${escapeHtml((c.username || '?').slice(0, 1))}</span>`;
 }
 
 function cmName(c) {
-    return `<span class="cm-user${c.is_admin ? ' admin' : ''}">${escapeHtml(c.username)}</span>`;
+    return cmSpaceLink(c, `<span class="cm-user${c.is_admin ? ' admin' : ''}">${escapeHtml(c.username)}</span>`);
 }
 
 function cmCanDelete(c) {

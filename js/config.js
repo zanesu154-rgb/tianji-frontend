@@ -15,7 +15,8 @@ let authToken = localStorage.getItem(TOKEN_KEY) || '';
 let isAdmin = false;
 let currentUsername = localStorage.getItem('tianji_username') || '';
 let currentRole = localStorage.getItem('tianji_role') || '';
-let currentAvatar = localStorage.getItem('tianji_avatar') || '';   // 头像 key，空 = 用首字头像
+let currentAvatar = localStorage.getItem('tianji_avatar') || '';
+let currentUserId = localStorage.getItem('tianji_uid') || '';       // 自己的用户 id（用于「我的空间」）   // 头像 key，空 = 用首字头像
 let editingItemId = null;
 let currentCategory = 'all';
 let currentFeedbackItem = { id: '', name: '' };

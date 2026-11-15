@@ -335,7 +335,9 @@ function parseRoute() {
     if (h.startsWith('#item/')) {
         return { page: 'item', id: decodeURIComponent(h.slice(6)) };
     }
-    if (h.startsWith('#account')) return { page: 'account', section: h.split('/')[1] || 'profile' };
+    // section 可以带子参数，比如 gm-click/<资源id>
+    if (h.startsWith('#account')) return { page: 'account', section: decodeURIComponent(h.split('/').slice(1).join('/')) || 'profile' };
+    if (h.startsWith('#user/')) return { page: 'user', arg: decodeURIComponent(h.slice(6)) };
     if (h === '#addons' || h.startsWith('#addons/')) return { page: 'addons', arg: decodeURIComponent(h.slice(7).replace(/^\//, '')) };
     return { page: 'home' };
 }
@@ -367,6 +369,8 @@ function routeFromLocation() {
         showPage('account', r.section);
     } else if (r.page === 'addons') {
         showPage('addons', r.arg);
+    } else if (r.page === 'user') {
+        showPage('user', r.arg);
     } else if (currentPage !== 'home') {
         showPage('home');
     }

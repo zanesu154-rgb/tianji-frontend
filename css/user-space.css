@@ -1,0 +1,91 @@
+/* ==================== 用户空间 ==================== */
+#pageUser {
+    width: 100%; max-width: 880px; margin: 0 auto; padding: 0 1rem 2rem;
+    box-sizing: border-box; flex-direction: column;
+    transition: opacity 0.28s ease, transform 0.28s ease;
+}
+.us-hero-skel { display: flex; gap: 1.2rem; align-items: center; }
+.us-hero-main { display: flex; gap: 1.2rem; align-items: center; }
+.us-avatar { width: 88px; height: 88px; font-size: 2.2rem; box-shadow: 0 0 0 4px var(--bg-card), 0 0 0 5.5px var(--accent-border); }
+.us-hero-text { min-width: 0; flex: 1; }
+.us-name { margin: 0; font-size: 1.5rem; color: var(--text-title, var(--text-main)); display: flex; align-items: center; gap: 0.5rem; word-break: break-all; }
+.us-me { font-size: 0.7rem; font-weight: 600; padding: 0.1rem 0.5rem; border-radius: 999px; background: var(--accent-light); color: var(--accent-text); }
+.us-joined { margin-top: 0.25rem; font-size: 0.82rem; color: var(--text-light); }
+.us-stats { display: flex; gap: 0.3rem 1.3rem; flex-wrap: wrap; margin-top: 0.7rem; font-size: 0.8rem; color: var(--text-light); }
+.us-stats b { font-size: 1.15rem; color: var(--text-main); margin-right: 0.25rem; font-variant-numeric: tabular-nums; }
+.us-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1.2rem; }
+.us-actions .btn { padding: 0.6rem 1.3rem; }
+.us-actions .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+.us-block-btn { color: var(--danger-text, #dc2626); }
+.us-note { margin-top: 0.8rem; font-size: 0.82rem; color: var(--text-light); padding: 0.55rem 0.8rem; border-radius: 10px; background: var(--bg-tag); }
+#pageUser .ip-card + .ip-card { margin-top: 1rem; }
+
+.us-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 0.8rem; }
+.us-card {
+    display: flex; flex-direction: column; text-decoration: none; color: inherit;
+    border: 1px solid var(--border-light); border-radius: 14px; overflow: hidden; background: var(--bg-module);
+    transition: transform 0.15s, border-color 0.15s;
+}
+a.us-card:hover { transform: translateY(-2px); border-color: var(--accent-border); }
+.us-card.pending { opacity: 0.8; }
+.us-card-cover { aspect-ratio: 16 / 9; display: grid; place-items: center; font-size: 2rem; background: var(--bg-tag); overflow: hidden; }
+.us-card-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.us-card-body { padding: 0.6rem 0.75rem 0.7rem; min-width: 0; }
+.us-card-name { font-weight: 600; font-size: 0.9rem; color: var(--text-main); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.us-card-sub { font-size: 0.74rem; color: var(--text-light); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 0.1rem; }
+.us-card-meta { display: flex; gap: 0.4rem; align-items: center; justify-content: space-between; margin-top: 0.45rem; font-size: 0.7rem; color: var(--text-light); }
+.us-tag { padding: 0.05rem 0.45rem; border-radius: 6px; background: var(--bg-tag); color: var(--text-sub); white-space: nowrap; }
+.us-tag.req { background: #ede9fe; color: #5b21b6; }
+[data-theme="dark"] .us-tag.req { background: #2e2650; color: #c4b5fd; }
+
+@media (max-width: 600px) {
+    .us-avatar { width: 72px; height: 72px; font-size: 1.8rem; }
+    .us-name { font-size: 1.25rem; }
+    .us-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
+    .us-actions .btn { flex: 1; }
+}
+
+/* 评论区 / 私信里的空间链接 */
+.cm-space-link { color: inherit; text-decoration: none; display: inline-flex; }
+.cm-space-link:hover .cm-user { text-decoration: underline; }
+.chat-title-link { display: inline-flex; align-items: center; gap: 0.45rem; color: inherit; text-decoration: none; }
+.chat-title-link:hover { text-decoration: underline; }
+.chat-head-avatar { width: 28px; height: 28px; font-size: 0.8rem; }
+.msg-group-title { font-size: 0.78rem; color: var(--text-light); font-weight: 600; margin: 0.4rem 0 0.5rem; letter-spacing: 0.05em; }
+
+/* ==================== GM 详情页 ==================== */
+.gm-title-link { color: inherit; text-decoration: none; }
+.gm-title-link span { font-size: 0.78rem; font-weight: 400; color: var(--accent-text); margin-left: 0.3rem; }
+.gm-title-link:hover span { text-decoration: underline; }
+.gm-more-row {
+    display: block; text-align: center; padding: 0.65rem; margin-top: 0.4rem; border-radius: 10px;
+    color: var(--accent-text); text-decoration: none; font-size: 0.85rem; background: var(--bg-module);
+}
+.gm-more-row:hover { background: var(--bg-hover); }
+a.click-rank-row { color: inherit; text-decoration: none; cursor: pointer; border-radius: 8px; }
+a.click-rank-row:hover { background: var(--bg-hover); }
+.click-rank-go { color: var(--text-light); font-size: 1.1rem; }
+.gm-stat-card.clickable { cursor: pointer; }
+
+.gm-page-head { display: flex; align-items: baseline; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
+.gm-page-head h2 { margin: 0; padding: 0; border: none; }
+.gm-back { font-size: 0.85rem; color: var(--accent-text); text-decoration: none; }
+.gm-back:hover { text-decoration: underline; }
+.gm-page-count { font-size: 0.85rem; font-weight: 400; color: var(--text-light); }
+.gm-page-tools { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.9rem; }
+.gm-search, .gm-select {
+    padding: 0.55rem 0.8rem; border: 1px solid var(--border-input); border-radius: 10px;
+    background: var(--bg-input); color: var(--text-main); font: inherit; font-size: 0.86rem;
+}
+.gm-search { flex: 1; min-width: 180px; }
+.gm-search:focus, .gm-select:focus { outline: none; border-color: var(--accent); }
+#section-gm-click .gm-page-tools { justify-content: space-between; }
+#section-gm-click .gm-chart-wrap { margin: 0.8rem 0 1rem; }
+.gm-field-table { border: 1px solid var(--border-light); border-radius: 12px; overflow: hidden; }
+.gm-field-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; padding: 0.6rem 0.9rem; font-size: 0.86rem; border-top: 1px solid var(--border-light); font-variant-numeric: tabular-nums; }
+.gm-field-row:first-child { border-top: none; }
+.gm-field-row.head { background: var(--bg-module); color: var(--text-light); font-size: 0.78rem; }
+.gm-user-link { display: inline-flex; align-items: center; gap: 0.5rem; color: inherit; text-decoration: none; }
+.gm-user-link:hover .gm-user-name { text-decoration: underline; color: var(--accent-text); }
+.gm-user-avatar { width: 28px; height: 28px; font-size: 0.8rem; }
+.gm-user-stat { font-size: 0.76rem; color: var(--text-light); }

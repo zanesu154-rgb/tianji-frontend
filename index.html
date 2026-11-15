@@ -39,7 +39,7 @@
             var d = document.documentElement, shownAt = 0, done = false, timers = [];
             window.tianjiSplashDone = function () { };
             try {
-                if (/^#(item\/|addons)/.test(location.hash) || sessionStorage.getItem('tianji_splash_seen')) return;
+                if (/^#(item\/|addons|user\/)/.test(location.hash) || sessionStorage.getItem('tianji_splash_seen')) return;
                 sessionStorage.setItem('tianji_splash_seen', '1');
             } catch (e) { return; }
             d.classList.add('splash-armed');
@@ -60,20 +60,21 @@
             timers.push(setTimeout(window.tianjiSplashDone, 12000));   // 兜底：最多 12 秒
         })();
     </script>
-    <link rel="stylesheet" href="css/base.css?v=20261115b">
-    <link rel="stylesheet" href="css/splash.css?v=20261115b">
-    <link rel="stylesheet" href="css/home.css?v=20261115b">
-    <link rel="stylesheet" href="css/nav.css?v=20261115b">
-    <link rel="stylesheet" href="css/account.css?v=20261115b">
-    <link rel="stylesheet" href="css/item-page.css?v=20261115b">
-    <link rel="stylesheet" href="css/layout.css?v=20261115b">
-    <link rel="stylesheet" href="css/gm.css?v=20261115b">
-    <link rel="stylesheet" href="css/features.css?v=20261115b">
-    <link rel="stylesheet" href="css/cards.css?v=20261115b">
-    <link rel="stylesheet" href="css/comments.css?v=20261115b">
-    <link rel="stylesheet" href="css/my-addons.css?v=20261115b">
-    <link rel="stylesheet" href="css/chat.css?v=20261115b">
-    <link rel="stylesheet" href="css/avatar.css?v=20261115b">
+    <link rel="stylesheet" href="css/base.css?v=20261116a">
+    <link rel="stylesheet" href="css/splash.css?v=20261116a">
+    <link rel="stylesheet" href="css/home.css?v=20261116a">
+    <link rel="stylesheet" href="css/nav.css?v=20261116a">
+    <link rel="stylesheet" href="css/account.css?v=20261116a">
+    <link rel="stylesheet" href="css/item-page.css?v=20261116a">
+    <link rel="stylesheet" href="css/layout.css?v=20261116a">
+    <link rel="stylesheet" href="css/gm.css?v=20261116a">
+    <link rel="stylesheet" href="css/features.css?v=20261116a">
+    <link rel="stylesheet" href="css/cards.css?v=20261116a">
+    <link rel="stylesheet" href="css/comments.css?v=20261116a">
+    <link rel="stylesheet" href="css/my-addons.css?v=20261116a">
+    <link rel="stylesheet" href="css/chat.css?v=20261116a">
+    <link rel="stylesheet" href="css/avatar.css?v=20261116a">
+    <link rel="stylesheet" href="css/user-space.css?v=20261116a">
 </head>
 
 
@@ -108,6 +109,10 @@
                         <button class="menu-item" id="menuLoginBtn">
                             <span class="menu-item-icon">👤</span>
                             <span id="menuLoginText">注册 / 登录</span>
+                        </button>
+                        <button class="menu-item" id="menuSpaceBtn" data-menu-user style="display:none;">
+                            <span class="menu-item-icon">🪐</span>
+                            <span>我的空间</span>
                         </button>
                         <button class="menu-item" id="menuMessagesBtn" data-menu-acc-dup style="display:none;">
                             <span class="menu-item-icon">📬</span>
@@ -305,6 +310,12 @@
         <div id="itemPageContent"></div>
     </div>
 
+    <!-- 用户空间：#user/<id> -->
+    <div id="pageUser" style="display:none;">
+        <button class="ip-back" id="userBackBtn">← 返回</button>
+        <div id="userContent"></div>
+    </div>
+
     <!-- 栈主的附加包：#addons 列表 / #addons/<id> 详情 -->
     <div id="pageAddons" style="display:none;">
         <button class="ip-back" id="addonsBackBtn">← 返回</button>
@@ -479,7 +490,7 @@
                             <div class="gm-stat-value" id="gmTodayVisits">-</div>
                             <div class="gm-stat-label">今日访客</div>
                         </div>
-                        <div class="gm-stat-card">
+                        <div class="gm-stat-card clickable" data-gm-go="gm-users" title="查看全部用户">
                             <div class="gm-stat-value" id="gmTotalUsers">-</div>
                             <div class="gm-stat-label">注册用户</div>
                         </div>
@@ -518,7 +529,7 @@
                     <!-- 链接点击统计 -->
                     <div class="gm-section" id="gmClickSection">
                         <div class="gm-section-head">
-                            <h3>链接点击量</h3>
+                            <h3><a class="gm-title-link" href="#account/gm-clicks">链接点击量 <span>查看全部 ›</span></a></h3>
                             <div class="gm-tabs" id="gmClickTabs" style="margin-bottom:0;">
                                 <button class="gm-tab active" data-days="7">近 7 天</button>
                                 <button class="gm-tab" data-days="30">近 30 天</button>
@@ -530,6 +541,7 @@
                             <svg class="gm-chart" id="gmClickChart" viewBox="0 0 600 180" preserveAspectRatio="none"></svg>
                         </div>
                         <div class="click-rank-list" id="gmClickList"></div>
+                        <a class="gm-more-row" id="gmClickMore" href="#account/gm-clicks" style="display:none;"></a>
                     </div>
 
                     <!-- 近 14 天趋势 -->
@@ -543,11 +555,70 @@
                     <!-- 用户列表 -->
                     <div class="gm-section">
                         <div class="gm-section-head">
-                            <h3>注册用户列表</h3>
+                            <h3><a class="gm-title-link" href="#account/gm-users">注册用户 <span>查看全部 ›</span></a></h3>
                             <button class="gm-btn" id="gmBroadcastBtn">📢 群发通知</button>
                         </div>
                         <div class="gm-user-list" id="gmUserList">加载中...</div>
+                        <a class="gm-more-row" id="gmUserMore" href="#account/gm-users" style="display:none;"></a>
                     </div>
+                </section>
+
+                <!-- GM：链接点击量详情（全部、可搜索） -->
+                <section class="account-section" id="section-gm-clicks" style="display:none;">
+                    <div class="gm-page-head">
+                        <a class="gm-back" href="#account/gm">← GM 面板</a>
+                        <h2>链接点击量</h2>
+                    </div>
+                    <div class="gm-page-tools">
+                        <input class="gm-search" id="gmClicksSearch" type="search" placeholder="搜索资源名称…">
+                        <div class="gm-tabs" id="gmClicksTabs" style="margin-bottom:0;">
+                            <button class="gm-tab active" data-days="7">近 7 天</button>
+                            <button class="gm-tab" data-days="30">近 30 天</button>
+                            <button class="gm-tab" data-days="0">全部</button>
+                        </div>
+                    </div>
+                    <div class="click-summary" id="gmClicksSummary">加载中...</div>
+                    <div class="click-rank-list" id="gmClicksList"></div>
+                </section>
+
+                <!-- GM：单个资源的点击详情 -->
+                <section class="account-section" id="section-gm-click" style="display:none;">
+                    <div class="gm-page-head">
+                        <a class="gm-back" href="#account/gm-clicks">← 链接点击量</a>
+                        <h2 id="gmClickItemTitle">点击详情</h2>
+                    </div>
+                    <div class="gm-page-tools">
+                        <a class="gm-btn" id="gmClickItemLink" href="#">查看资源页 →</a>
+                        <div class="gm-tabs" id="gmClickItemTabs" style="margin-bottom:0;">
+                            <button class="gm-tab" data-days="7">近 7 天</button>
+                            <button class="gm-tab active" data-days="30">近 30 天</button>
+                            <button class="gm-tab" data-days="0">全部</button>
+                        </div>
+                    </div>
+                    <div class="click-summary" id="gmClickItemSummary">加载中...</div>
+                    <div class="gm-chart-wrap">
+                        <svg class="gm-chart" id="gmClickItemChart" viewBox="0 0 600 180" preserveAspectRatio="none"></svg>
+                    </div>
+                    <div class="gm-field-table" id="gmClickItemFields"></div>
+                </section>
+
+                <!-- GM：全部注册用户（可搜索、排序） -->
+                <section class="account-section" id="section-gm-users" style="display:none;">
+                    <div class="gm-page-head">
+                        <a class="gm-back" href="#account/gm">← GM 面板</a>
+                        <h2>注册用户 <span class="gm-page-count" id="gmUsersCount"></span></h2>
+                    </div>
+                    <div class="gm-page-tools">
+                        <input class="gm-search" id="gmUsersSearch" type="search" placeholder="搜索用户名…">
+                        <select class="gm-select" id="gmUsersSort">
+                            <option value="new">最新注册</option>
+                            <option value="old">最早注册</option>
+                            <option value="subs">投稿最多</option>
+                            <option value="comments">评论最多</option>
+                            <option value="blocked">已拉黑的在前</option>
+                        </select>
+                    </div>
+                    <div class="gm-user-list" id="gmUsersList">加载中...</div>
                 </section>
             </main>
         </div>
@@ -904,25 +975,26 @@
         </div>
     </div>
 
-    <script src="js/config.js?v=20261115b" defer></script>
-    <script src="js/utils.js?v=20261115b" defer></script>
-    <script src="js/data.js?v=20261115b" defer></script>
-    <script src="js/announcement.js?v=20261115b" defer></script>
-    <script src="js/list.js?v=20261115b" defer></script>
-    <script src="js/edit.js?v=20261115b" defer></script>
-    <script src="js/auth.js?v=20261115b" defer></script>
-    <script src="js/messages.js?v=20261115b" defer></script>
-    <script src="js/submissions.js?v=20261115b" defer></script>
-    <script src="js/gm.js?v=20261115b" defer></script>
-    <script src="js/account.js?v=20261115b" defer></script>
-    <script src="js/item-page.js?v=20261115b" defer></script>
-    <script src="js/ratings.js?v=20261115b" defer></script>
-    <script src="js/comments.js?v=20261115b" defer></script>
-    <script src="js/my-addons.js?v=20261115b" defer></script>
-    <script src="js/router.js?v=20261115b" defer></script>
-    <script src="js/sort.js?v=20261115b" defer></script>
-    <script src="js/ui.js?v=20261115b" defer></script>
-    <script src="js/main.js?v=20261115b" defer></script>
+    <script src="js/config.js?v=20261116a" defer></script>
+    <script src="js/utils.js?v=20261116a" defer></script>
+    <script src="js/data.js?v=20261116a" defer></script>
+    <script src="js/announcement.js?v=20261116a" defer></script>
+    <script src="js/list.js?v=20261116a" defer></script>
+    <script src="js/edit.js?v=20261116a" defer></script>
+    <script src="js/auth.js?v=20261116a" defer></script>
+    <script src="js/messages.js?v=20261116a" defer></script>
+    <script src="js/submissions.js?v=20261116a" defer></script>
+    <script src="js/gm.js?v=20261116a" defer></script>
+    <script src="js/account.js?v=20261116a" defer></script>
+    <script src="js/item-page.js?v=20261116a" defer></script>
+    <script src="js/ratings.js?v=20261116a" defer></script>
+    <script src="js/comments.js?v=20261116a" defer></script>
+    <script src="js/my-addons.js?v=20261116a" defer></script>
+    <script src="js/user-space.js?v=20261116a" defer></script>
+    <script src="js/router.js?v=20261116a" defer></script>
+    <script src="js/sort.js?v=20261116a" defer></script>
+    <script src="js/ui.js?v=20261116a" defer></script>
+    <script src="js/main.js?v=20261116a" defer></script>
 </body>
 
 </html>
