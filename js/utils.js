@@ -2,6 +2,20 @@
 
 // ==================== 工具函数 ====================
 // 同时转义引号，保证插入到属性值（value="..."、data-*="..."）里也安全
+// ==================== 头像 ====================
+// key 为空时显示首字头像，颜色按名字固定
+const AVATAR_COLORS = ['#1e4d6b', '#2f7d68', '#9a6a1c', '#7a4fa3', '#b23a2a', '#3c5aa6', '#0f766e', '#a21caf'];
+function avatarUrl(key) {
+    return key ? `${API_BASE}/avatars/${encodeURIComponent(key)}` : '';
+}
+function avatarHtml(key, name, cls = '') {
+    const n = String(name || '?');
+    if (key) return `<img class="avatar ${cls}" src="${avatarUrl(key)}" alt="" loading="lazy" draggable="false">`;
+    let h = 0;
+    for (const ch of n) h = (h * 31 + ch.codePointAt(0)) >>> 0;
+    return `<span class="avatar avatar-letter ${cls}" style="background:${AVATAR_COLORS[h % AVATAR_COLORS.length]}" aria-hidden="true">${escapeHtml(Array.from(n)[0] || '?')}</span>`;
+}
+
 function escapeHtml(text) {
     if (text === null || text === undefined) return '';
     return String(text)

@@ -155,7 +155,7 @@ async function loadAdminInbox() {
         }
         listEl.innerHTML = list.map(c => `
             <button class="chat-entry${c.unread ? ' unread' : ''}" data-chat-user="${escapeHtml(c.user_id)}">
-                <span class="chat-entry-avatar">${escapeHtml((c.username || '?').slice(0, 1))}</span>
+                ${c.avatar ? avatarHtml(c.avatar, c.username, 'chat-entry-avatar') : `<span class="chat-entry-avatar">${escapeHtml((c.username || '?').slice(0, 1))}</span>`}
                 <span class="chat-entry-main">
                     <span class="chat-entry-title">${escapeHtml(c.username)}
                         ${c.blocked ? '<span class="chat-blocked-tag">已拉黑</span>' : ''}

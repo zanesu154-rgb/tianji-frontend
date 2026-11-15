@@ -12,6 +12,7 @@ function fillAccountPage() {
     input.value = currentUsername || '';
     input.disabled = isAdminUser;
     document.getElementById('accountRole').textContent = isAdminUser ? '管理员' : '普通用户';
+    renderAccountAvatar();
     // 隐藏的用户名字段：让密码管理器知道改密/注销表单属于哪个账号
     document.querySelectorAll('.account-username-hint').forEach(el => { el.value = currentUsername || ''; });
     document.getElementById('saveUsernameBtn').style.display = isAdminUser ? 'none' : '';
@@ -52,7 +53,8 @@ function showAccountSection(section) {
 function setTopNavForPage(page) {
     const onHome = page === 'home';
     document.getElementById('searchToggleBtn').style.display = onHome ? '' : 'none';
-    document.querySelector('.menu-wrap').style.display = onHome ? '' : 'none';
+    // 登录后头像菜单在所有页面都显示；未登录时只在主页显示 ☰
+    document.querySelector('.menu-wrap').style.display = (onHome || isLoggedIn()) ? '' : 'none';
     document.getElementById('homeBtn').style.display = onHome ? 'none' : '';
 }
 

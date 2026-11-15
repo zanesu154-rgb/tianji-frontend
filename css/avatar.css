@@ -1,0 +1,47 @@
+/* ==================== 头像 ==================== */
+.avatar { border-radius: 50%; object-fit: cover; flex-shrink: 0; display: inline-block; background: var(--bg-tag); }
+.avatar-letter { display: inline-grid; place-items: center; color: #fff; font-weight: 600; line-height: 1; user-select: none; }
+img.cm-avatar, .avatar.cm-avatar { width: 26px; height: 26px; font-size: 0.78rem; }
+.cm-reply .avatar.cm-avatar { width: 22px; height: 22px; }
+img.chat-entry-avatar { width: 38px; height: 38px; }
+
+/* 右上角：登录后 ☰ 变成头像 */
+#menuToggleBtn.has-avatar { padding: 0; border-radius: 50%; position: relative; }
+#menuToggleIcon { display: inline-flex; align-items: center; justify-content: center; }
+.menu-avatar { width: 32px; height: 32px; font-size: 0.9rem; box-shadow: 0 0 0 2px var(--bg-card), 0 0 0 3.5px var(--accent-border); transition: box-shadow 0.15s; }
+#menuToggleBtn.has-avatar:hover { background: transparent; }
+#menuToggleBtn.has-avatar:hover .menu-avatar { box-shadow: 0 0 0 2px var(--bg-card), 0 0 0 3.5px var(--accent); }
+#menuToggleBtn.has-avatar .nav-dot { top: 1px; right: 1px; }
+
+/* 下拉菜单顶部 */
+.menu-dropdown { min-width: 220px; }
+.menu-profile {
+    width: 100%; display: flex; align-items: center; gap: 0.65rem; text-align: left;
+    border: none; background: var(--bg-module, var(--bg-tag)); border-radius: 10px; cursor: pointer;
+    padding: 0.7rem 0.75rem; margin-bottom: 4px; font: inherit; color: inherit;
+}
+.menu-profile:hover { background: var(--bg-hover); }
+.menu-profile-avatar { width: 42px; height: 42px; font-size: 1.05rem; }
+.menu-profile-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.1rem; }
+.menu-profile-name { font-weight: 600; font-size: 0.95rem; color: var(--text-main); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.menu-profile-role { font-size: 0.72rem; color: var(--text-light); }
+.menu-profile-go { font-size: 0.74rem; color: var(--accent-text); white-space: nowrap; }
+.menu-sep { height: 1px; background: var(--border-light, var(--border)); margin: 4px 6px; }
+.menu-item-danger { color: var(--danger-text, #dc2626); }
+
+/* 个人资料页 */
+.account-avatar-row { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 1.4rem; flex-wrap: wrap; }
+.account-avatar {
+    position: relative; width: 96px; height: 96px; border-radius: 50%; padding: 0; border: none; cursor: pointer;
+    background: none; flex-shrink: 0; overflow: hidden;
+}
+.account-avatar-img { width: 96px; height: 96px; font-size: 2.4rem; }
+.account-avatar-edit {
+    position: absolute; inset: auto 0 0 0; height: 30%; display: grid; place-items: center;
+    background: rgba(0, 0, 0, 0.45); color: #fff; font-size: 0.72rem; opacity: 0; transition: opacity 0.15s;
+}
+.account-avatar:hover .account-avatar-edit, .account-avatar:focus-visible .account-avatar-edit { opacity: 1; }
+.account-avatar-side { flex: 1; min-width: 200px; }
+.account-avatar-name { font-size: 1.15rem; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem; }
+.account-avatar-btns { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
+@media (hover: none) { .account-avatar-edit { opacity: 1; } }

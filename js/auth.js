@@ -33,9 +33,10 @@ function updateLoginUI() {
     // 登录状态变化后刷新评论区（显示输入框 / 我的评论可删除等）
     if (currentPage === 'item' && typeof cmState !== 'undefined' && cmState.itemId) loadComments(cmState.itemId);
     if (currentPage === 'addons' && typeof renderAddonsPage === 'function') renderAddonsPage(currentAddonsArg || '');
+    renderUserMenu();
 }
 
-function saveSession(token, username, role) {
+function saveSession(token, username, role, avatar) {
     authToken = token;
     currentUsername = username;
     currentRole = role || 'user';
@@ -45,6 +46,38 @@ function saveSession(token, username, role) {
         localStorage.setItem('tianji_username', currentUsername);
         localStorage.setItem('tianji_role', currentRole);
     } catch (e) { }
+    if (avatar !== undefined) setCurrentAvatar(avatar);
+}
+
+function setCurrentAvatar(key) {
+    currentAvatar = key || '';
+    try { localStorage.setItem('tianji_avatar', currentAvatar); } catch (e) { }
+    renderUserMenu();
+}
+
+// 右上角：未登录是 ☰，登录后变成头像；下拉菜单顶部显示头像和用户名
+function renderUserMenu() {
+    const btn = document.getElementById('menuToggleBtn');
+    const icon = document.getElementById('menuToggleIcon');
+    const logged = isLoggedIn();
+    btn.classList.toggle('has-avatar', logged);
+    btn.title = logged ? currentUsername : '菜单';
+    icon.innerHTML = logged ? avatarHtml(currentAvatar, currentUsername, 'menu-avatar') : '☰';
+    const head = document.getElementById('menuProfileBtn');
+    head.style.display = logged ? '' : 'none';
+    if (logged) {
+        head.innerHTML = `${avatarHtml(currentAvatar, currentUsername, 'menu-profile-avatar')}
+            <span class="menu-profile-main">
+                <span class="menu-profile-name">${escapeHtml(currentUsername)}</span>
+                <span class="menu-profile-role">${currentRole === 'admin' ? '栈主' : '普通用户'}</span>
+            </span>
+            <span class="menu-profile-go">个人主页 ›</span>`;
+    }
+    document.querySelectorAll('[data-menu-logged]').forEach(el => { el.style.display = logged ? '' : 'none'; });
+    document.querySelectorAll('[data-menu-user]').forEach(el => { el.style.display = logged && currentRole !== 'admin' ? '' : 'none'; });
+    document.querySelectorAll('[data-menu-admin]').forEach(el => { el.style.display = logged && currentRole === 'admin' ? '' : 'none'; });
+    document.getElementById('menuLoginBtn').style.display = logged ? 'none' : '';
+    setTopNavForPage(currentPage);
 }
 
 function clearSession() {
@@ -56,7 +89,9 @@ function clearSession() {
         localStorage.removeItem(TOKEN_KEY);
         localStorage.removeItem('tianji_username');
         localStorage.removeItem('tianji_role');
+        localStorage.removeItem('tianji_avatar');
     } catch (e) { }
+    currentAvatar = '';
 }
 
 async function tryLogin() {
@@ -68,7 +103,7 @@ async function tryLogin() {
     isAdmin = currentRole === 'admin';
     try {
         const data = await api('GET', '/users/me');
-        saveSession(authToken, data.username, data.role);
+        saveSession(authToken, data.username, data.role, data.avatar || '');
     } catch (e) {
         if (e.status === 401) clearSession();
         // 网络错误：保留本地登录状态，稍后再试
@@ -123,7 +158,7 @@ async function submitLogin() {
     authBusy = true;
     try {
         const data = await api('POST', '/users/login', { username, password });
-        saveSession(data.token, data.username || username, data.role);
+        saveSession(data.token, data.username || username, data.role, data.avatar || '');
         await afterAuthSuccess(currentRole === 'admin' ? '管理员登录成功' : '登录成功');
     } catch (e) {
         showToast(e.message || '登录失败');
@@ -147,7 +182,7 @@ async function submitRegister() {
     authBusy = true;
     try {
         const data = await api('POST', '/users/register', { username, password });
-        saveSession(data.token, data.username || username, data.role);
+        saveSession(data.token, data.username || username, data.role, '');
         await afterAuthSuccess('注册成功，已自动登录');
     } catch (e) {
         showToast(e.message || '注册失败');
