@@ -315,11 +315,6 @@ function setupMiscEvents() {
     // 头像菜单：个人主页 / 首页 / 各功能入口 / 退出
     const closeMenu = () => menuDropdown.classList.remove('show');
     document.getElementById('menuProfileBtn').addEventListener('click', () => { closeMenu(); showPage('account', 'profile'); });
-    document.getElementById('menuHomeBtn').addEventListener('click', () => {
-        closeMenu();
-        if (currentPage !== 'home') { history.replaceState(null, '', location.pathname + location.search); showPage('home'); }
-        else window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
     document.getElementById('menuRequestBtn').addEventListener('click', () => { closeMenu(); openSubmitModal('request'); });
     menuDropdown.querySelectorAll('[data-menu-go]').forEach(b => b.addEventListener('click', () => {
         closeMenu();

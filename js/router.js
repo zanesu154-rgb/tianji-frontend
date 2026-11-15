@@ -122,7 +122,7 @@ function showPage(page, arg) {
         leavingEl.classList.remove('page-leaving');
         enteringEl.style.display = 'flex';
         enteringEl.classList.add('page-entering');
-        setTopNavForPage(page);
+        renderUserMenu();   // 顶栏按钮 + 头像菜单随页面变化（内部会调用 setTopNavForPage）
 
         if (page === 'account') {
             fillAccountPage();

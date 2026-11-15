@@ -77,6 +77,12 @@ function renderUserMenu() {
     document.querySelectorAll('[data-menu-user]').forEach(el => { el.style.display = logged && currentRole !== 'admin' ? '' : 'none'; });
     document.querySelectorAll('[data-menu-admin]').forEach(el => { el.style.display = logged && currentRole === 'admin' ? '' : 'none'; });
     document.getElementById('menuLoginBtn').style.display = logged ? 'none' : '';
+    document.getElementById('menuMessagesBtn').style.display = logged ? '' : 'none';
+    // 在账户中心时，左侧（手机上方）已有这些分区，菜单里就不再重复
+    if (currentPage === 'account') {
+        document.querySelectorAll('[data-menu-acc-dup]').forEach(el => { el.style.display = 'none'; });
+    }
+    document.getElementById('menuProfileBtn').classList.toggle('on-account', currentPage === 'account');
     setTopNavForPage(currentPage);
 }
 
