@@ -1,6 +1,78 @@
 // 账户中心：改名、改密码、注销
 
+// ==================== 头像 ====================
+function renderAccountAvatar() {
+    document.getElementById('accountAvatar').innerHTML = avatarHtml(currentAvatar, currentUsername, 'account-avatar-img')
+        + '<span class="account-avatar-edit">更换</span>';
+    document.getElementById('accountAvatarName').textContent = currentUsername || '';
+    document.getElementById('avatarRemoveBtn').style.display = currentAvatar ? '' : 'none';
+}
+
+// 读图 → 居中裁成正方形 → 缩到 256px → 压成 JPEG（太大就降质量）
+function makeAvatarDataUrl(file) {
+    return new Promise((resolve, reject) => {
+        if (!/^image\/(jpeg|png|webp)$/.test(file.type)) { reject(new Error('只支持 JPG / PNG / WebP 图片')); return; }
+        if (file.size > 15 * 1024 * 1024) { reject(new Error('图片太大了（超过 15MB）')); return; }
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => {
+            URL.revokeObjectURL(url);
+            const side = Math.min(img.naturalWidth, img.naturalHeight);
+            if (!side) { reject(new Error('无法读取图片')); return; }
+            const size = Math.min(256, side);
+            const canvas = document.createElement('canvas');
+            canvas.width = canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, size, size);
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(img, (img.naturalWidth - side) / 2, (img.naturalHeight - side) / 2, side, side, 0, 0, size, size);
+            let q = 0.88;
+            let data = canvas.toDataURL('image/jpeg', q);
+            while (data.length > 250 * 1024 && q > 0.4) { q -= 0.12; data = canvas.toDataURL('image/jpeg', q); }
+            resolve(data);
+        };
+        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('无法读取图片')); };
+        img.src = url;
+    });
+}
+
+function setupAvatarEvents() {
+    const input = document.getElementById('avatarFileInput');
+    const pick = () => input.click();
+    document.getElementById('accountAvatar').addEventListener('click', pick);
+    document.getElementById('avatarUploadBtn').addEventListener('click', pick);
+    input.addEventListener('change', async () => {
+        const file = input.files[0];
+        input.value = '';
+        if (!file) return;
+        const btn = document.getElementById('avatarUploadBtn');
+        btn.disabled = true;
+        try {
+            const image = await makeAvatarDataUrl(file);
+            const r = await api('PUT', '/users/me/avatar', { image });
+            setCurrentAvatar(r.avatar);
+            renderAccountAvatar();
+            showToast('头像已更新');
+        } catch (e) {
+            showToast(e.message || '上传失败');
+        } finally {
+            btn.disabled = false;
+        }
+    });
+    document.getElementById('avatarRemoveBtn').addEventListener('click', async () => {
+        if (!confirm('恢复成默认的首字头像吗？')) return;
+        try {
+            await api('DELETE', '/users/me/avatar');
+            setCurrentAvatar('');
+            renderAccountAvatar();
+            showToast('已恢复默认头像');
+        } catch (e) { showToast(e.message); }
+    });
+}
+
 function setupAccountEvents() {
+    setupAvatarEvents();
     document.getElementById('accountLogoutBtn').addEventListener('click', () => {
         if (confirm('确定要退出登录吗？')) logout();
     });

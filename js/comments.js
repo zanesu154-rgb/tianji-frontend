@@ -52,6 +52,7 @@ function cmText(t) {
 }
 
 function cmAvatar(c) {
+    if (c.avatar) return avatarHtml(c.avatar, c.username, 'cm-avatar' + (c.is_admin ? ' admin' : ''));
     return `<span class="cm-avatar${c.is_admin ? ' admin' : ''}" aria-hidden="true">${escapeHtml((c.username || '?').slice(0, 1))}</span>`;
 }
 

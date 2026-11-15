@@ -60,19 +60,20 @@
             timers.push(setTimeout(window.tianjiSplashDone, 12000));   // 兜底：最多 12 秒
         })();
     </script>
-    <link rel="stylesheet" href="css/base.css?v=20261114a">
-    <link rel="stylesheet" href="css/splash.css?v=20261114a">
-    <link rel="stylesheet" href="css/home.css?v=20261114a">
-    <link rel="stylesheet" href="css/nav.css?v=20261114a">
-    <link rel="stylesheet" href="css/account.css?v=20261114a">
-    <link rel="stylesheet" href="css/item-page.css?v=20261114a">
-    <link rel="stylesheet" href="css/layout.css?v=20261114a">
-    <link rel="stylesheet" href="css/gm.css?v=20261114a">
-    <link rel="stylesheet" href="css/features.css?v=20261114a">
-    <link rel="stylesheet" href="css/cards.css?v=20261114a">
-    <link rel="stylesheet" href="css/comments.css?v=20261114a">
-    <link rel="stylesheet" href="css/my-addons.css?v=20261114a">
-    <link rel="stylesheet" href="css/chat.css?v=20261114a">
+    <link rel="stylesheet" href="css/base.css?v=20261115a">
+    <link rel="stylesheet" href="css/splash.css?v=20261115a">
+    <link rel="stylesheet" href="css/home.css?v=20261115a">
+    <link rel="stylesheet" href="css/nav.css?v=20261115a">
+    <link rel="stylesheet" href="css/account.css?v=20261115a">
+    <link rel="stylesheet" href="css/item-page.css?v=20261115a">
+    <link rel="stylesheet" href="css/layout.css?v=20261115a">
+    <link rel="stylesheet" href="css/gm.css?v=20261115a">
+    <link rel="stylesheet" href="css/features.css?v=20261115a">
+    <link rel="stylesheet" href="css/cards.css?v=20261115a">
+    <link rel="stylesheet" href="css/comments.css?v=20261115a">
+    <link rel="stylesheet" href="css/my-addons.css?v=20261115a">
+    <link rel="stylesheet" href="css/chat.css?v=20261115a">
+    <link rel="stylesheet" href="css/avatar.css?v=20261115a">
 </head>
 
 
@@ -99,12 +100,18 @@
                 <button class="nav-icon-btn" id="themeToggleBtn" title="切换主题">🌙</button>
                 <button class="nav-icon-btn home" id="homeBtn" style="display:none;" title="返回主页">🏠</button>
                 <div class="menu-wrap">
-                    <button class="nav-icon-btn" id="menuToggleBtn" title="菜单">☰<span class="nav-dot"
-                            id="menuDot"></span></button>
-                    <div class="menu-dropdown" id="menuDropdown">
+                    <button class="nav-icon-btn" id="menuToggleBtn" title="菜单" aria-haspopup="menu"><span
+                            id="menuToggleIcon">☰</span><span class="nav-dot" id="menuDot"></span></button>
+                    <div class="menu-dropdown" id="menuDropdown" role="menu">
+                        <!-- 登录后：头像 + 用户名，点击进入个人主页 -->
+                        <button class="menu-profile" id="menuProfileBtn" style="display:none;"></button>
                         <button class="menu-item" id="menuLoginBtn">
                             <span class="menu-item-icon">👤</span>
                             <span id="menuLoginText">注册 / 登录</span>
+                        </button>
+                        <button class="menu-item" id="menuHomeBtn" data-menu-logged style="display:none;">
+                            <span class="menu-item-icon">🏠</span>
+                            <span>网站首页</span>
                         </button>
                         <button class="menu-item" id="menuMessagesBtn" style="display:none;">
                             <span class="menu-item-icon">📬</span>
@@ -115,11 +122,32 @@
                             <span class="menu-item-icon">📤</span>
                             <span>投稿资源</span>
                         </button>
+                        <button class="menu-item" id="menuRequestBtn" data-menu-user style="display:none;">
+                            <span class="menu-item-icon">🙋</span>
+                            <span>求汉化</span>
+                        </button>
+                        <button class="menu-item" data-menu-go="my-submissions" data-menu-user style="display:none;">
+                            <span class="menu-item-icon">📝</span>
+                            <span>我的投稿</span>
+                        </button>
+                        <button class="menu-item" data-menu-go="gm" data-menu-admin style="display:none;">
+                            <span class="menu-item-icon">⚙️</span>
+                            <span>GM 面板</span>
+                        </button>
+                        <button class="menu-item" data-menu-go="security" data-menu-logged style="display:none;">
+                            <span class="menu-item-icon">🔐</span>
+                            <span>安全设置</span>
+                        </button>
                         <a class="menu-item" id="menuToolBtn" href="https://zanesu154-rgb.github.io/tianji-turn-addon/"
                             target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
                             <span class="menu-item-icon">🛠️</span>
                             <span>汉化工具</span>
                         </a>
+                        <div class="menu-sep" data-menu-logged style="display:none;"></div>
+                        <button class="menu-item menu-item-danger" id="menuLogoutBtn" data-menu-logged style="display:none;">
+                            <span class="menu-item-icon">🚪</span>
+                            <span>退出登录</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -350,6 +378,18 @@
                 <!-- 个人资料 -->
                 <section class="account-section" id="section-profile">
                     <h2>个人资料</h2>
+                    <div class="account-avatar-row">
+                        <button class="account-avatar" id="accountAvatar" title="更换头像"></button>
+                        <div class="account-avatar-side">
+                            <div class="account-avatar-name" id="accountAvatarName"></div>
+                            <div class="account-avatar-btns">
+                                <button class="btn btn-primary" id="avatarUploadBtn">更换头像</button>
+                                <button class="btn" id="avatarRemoveBtn" style="display:none;">恢复默认</button>
+                            </div>
+                            <div class="account-hint">支持 JPG / PNG / WebP，会自动裁成正方形。没有上传时显示名字首字。</div>
+                        </div>
+                        <input type="file" id="avatarFileInput" accept="image/jpeg,image/png,image/webp" hidden>
+                    </div>
                     <div class="account-field">
                         <label>用户名</label>
                         <form class="account-field-row" autocomplete="off" onsubmit="return false;">
@@ -868,25 +908,25 @@
         </div>
     </div>
 
-    <script src="js/config.js?v=20261114a" defer></script>
-    <script src="js/utils.js?v=20261114a" defer></script>
-    <script src="js/data.js?v=20261114a" defer></script>
-    <script src="js/announcement.js?v=20261114a" defer></script>
-    <script src="js/list.js?v=20261114a" defer></script>
-    <script src="js/edit.js?v=20261114a" defer></script>
-    <script src="js/auth.js?v=20261114a" defer></script>
-    <script src="js/messages.js?v=20261114a" defer></script>
-    <script src="js/submissions.js?v=20261114a" defer></script>
-    <script src="js/gm.js?v=20261114a" defer></script>
-    <script src="js/account.js?v=20261114a" defer></script>
-    <script src="js/item-page.js?v=20261114a" defer></script>
-    <script src="js/ratings.js?v=20261114a" defer></script>
-    <script src="js/comments.js?v=20261114a" defer></script>
-    <script src="js/my-addons.js?v=20261114a" defer></script>
-    <script src="js/router.js?v=20261114a" defer></script>
-    <script src="js/sort.js?v=20261114a" defer></script>
-    <script src="js/ui.js?v=20261114a" defer></script>
-    <script src="js/main.js?v=20261114a" defer></script>
+    <script src="js/config.js?v=20261115a" defer></script>
+    <script src="js/utils.js?v=20261115a" defer></script>
+    <script src="js/data.js?v=20261115a" defer></script>
+    <script src="js/announcement.js?v=20261115a" defer></script>
+    <script src="js/list.js?v=20261115a" defer></script>
+    <script src="js/edit.js?v=20261115a" defer></script>
+    <script src="js/auth.js?v=20261115a" defer></script>
+    <script src="js/messages.js?v=20261115a" defer></script>
+    <script src="js/submissions.js?v=20261115a" defer></script>
+    <script src="js/gm.js?v=20261115a" defer></script>
+    <script src="js/account.js?v=20261115a" defer></script>
+    <script src="js/item-page.js?v=20261115a" defer></script>
+    <script src="js/ratings.js?v=20261115a" defer></script>
+    <script src="js/comments.js?v=20261115a" defer></script>
+    <script src="js/my-addons.js?v=20261115a" defer></script>
+    <script src="js/router.js?v=20261115a" defer></script>
+    <script src="js/sort.js?v=20261115a" defer></script>
+    <script src="js/ui.js?v=20261115a" defer></script>
+    <script src="js/main.js?v=20261115a" defer></script>
 </body>
 
 </html>

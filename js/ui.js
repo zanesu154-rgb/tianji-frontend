@@ -247,7 +247,7 @@ function setupChromeEvents() {
 
     // 点击其他地方关闭菜单
     document.addEventListener('click', (e) => {
-        if (!menuDropdown.contains(e.target) && e.target !== menuToggleBtn) {
+        if (!menuDropdown.contains(e.target) && !menuToggleBtn.contains(e.target)) {
             menuDropdown.classList.remove('show');
         }
     });
@@ -312,6 +312,24 @@ function setupMiscEvents() {
     });
 
     // ========== 菜单：登录/退出 ==========
+    // 头像菜单：个人主页 / 首页 / 各功能入口 / 退出
+    const closeMenu = () => menuDropdown.classList.remove('show');
+    document.getElementById('menuProfileBtn').addEventListener('click', () => { closeMenu(); showPage('account', 'profile'); });
+    document.getElementById('menuHomeBtn').addEventListener('click', () => {
+        closeMenu();
+        if (currentPage !== 'home') { history.replaceState(null, '', location.pathname + location.search); showPage('home'); }
+        else window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    document.getElementById('menuRequestBtn').addEventListener('click', () => { closeMenu(); openSubmitModal('request'); });
+    menuDropdown.querySelectorAll('[data-menu-go]').forEach(b => b.addEventListener('click', () => {
+        closeMenu();
+        showPage('account', b.dataset.menuGo);
+    }));
+    document.getElementById('menuLogoutBtn').addEventListener('click', () => {
+        closeMenu();
+        if (confirm('确定要退出登录吗？')) logout();
+    });
+
     document.getElementById('menuLoginBtn').addEventListener('click', () => {
         menuDropdown.classList.remove('show');
         if (isLoggedIn()) {

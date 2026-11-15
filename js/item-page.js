@@ -363,7 +363,8 @@ function routeFromLocation() {
     if (r.page === 'item') {
         showPage('item', r.id);
     } else if (r.page === 'account') {
-        if (currentPage !== 'account') showPage('account', r.section);
+        // 同在账户中心时只切换分区（比如手动改了网址里的 #account/xxx）
+        showPage('account', r.section);
     } else if (r.page === 'addons') {
         showPage('addons', r.arg);
     } else if (currentPage !== 'home') {
