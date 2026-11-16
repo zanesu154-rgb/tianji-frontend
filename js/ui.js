@@ -159,16 +159,12 @@ function setupChromeEvents() {
             }
         }, { passive: true });
     })();
-    // 公告栏关闭
-    // 公告栏关闭（仅本次会话有效，刷新后重新出现）
-    const annBar = document.getElementById('announcementBar');
-    const annClosed = sessionStorage.getItem('tianji_announcement_closed');
-    if (annClosed === '1') {
-        annBar.style.display = 'none';
-    }
+    // 公告条幅关闭：只在本次打开页面有效，刷新后重新出现
+    document.body.classList.add('has-banner');
     document.getElementById('announcementClose').addEventListener('click', () => {
-        annBar.style.display = 'none';
-        try { sessionStorage.setItem('tianji_announcement_closed', '1'); } catch (e) { }
+        document.getElementById('announcementBar').classList.add('closed');
+        document.body.classList.remove('has-banner');
+        if (announcementTimer) clearTimeout(announcementTimer);
     });
 
     // 模块展开/收起

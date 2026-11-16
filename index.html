@@ -60,21 +60,21 @@
             timers.push(setTimeout(window.tianjiSplashDone, 12000));   // 兜底：最多 12 秒
         })();
     </script>
-    <link rel="stylesheet" href="css/base.css?v=20261116a">
-    <link rel="stylesheet" href="css/splash.css?v=20261116a">
-    <link rel="stylesheet" href="css/home.css?v=20261116a">
-    <link rel="stylesheet" href="css/nav.css?v=20261116a">
-    <link rel="stylesheet" href="css/account.css?v=20261116a">
-    <link rel="stylesheet" href="css/item-page.css?v=20261116a">
-    <link rel="stylesheet" href="css/layout.css?v=20261116a">
-    <link rel="stylesheet" href="css/gm.css?v=20261116a">
-    <link rel="stylesheet" href="css/features.css?v=20261116a">
-    <link rel="stylesheet" href="css/cards.css?v=20261116a">
-    <link rel="stylesheet" href="css/comments.css?v=20261116a">
-    <link rel="stylesheet" href="css/my-addons.css?v=20261116a">
-    <link rel="stylesheet" href="css/chat.css?v=20261116a">
-    <link rel="stylesheet" href="css/avatar.css?v=20261116a">
-    <link rel="stylesheet" href="css/user-space.css?v=20261116a">
+    <link rel="stylesheet" href="css/base.css?v=20261116b">
+    <link rel="stylesheet" href="css/splash.css?v=20261116b">
+    <link rel="stylesheet" href="css/home.css?v=20261116b">
+    <link rel="stylesheet" href="css/nav.css?v=20261116b">
+    <link rel="stylesheet" href="css/account.css?v=20261116b">
+    <link rel="stylesheet" href="css/item-page.css?v=20261116b">
+    <link rel="stylesheet" href="css/layout.css?v=20261116b">
+    <link rel="stylesheet" href="css/gm.css?v=20261116b">
+    <link rel="stylesheet" href="css/features.css?v=20261116b">
+    <link rel="stylesheet" href="css/cards.css?v=20261116b">
+    <link rel="stylesheet" href="css/comments.css?v=20261116b">
+    <link rel="stylesheet" href="css/my-addons.css?v=20261116b">
+    <link rel="stylesheet" href="css/chat.css?v=20261116b">
+    <link rel="stylesheet" href="css/avatar.css?v=20261116b">
+    <link rel="stylesheet" href="css/user-space.css?v=20261116b">
 </head>
 
 
@@ -90,6 +90,20 @@
     </div>
     <!-- ==================== 顶部导航栏（两页共用） ==================== -->
     <header class="top-nav">
+        <!-- 公告：置顶通栏，点 ✕ 本次关闭，刷新后恢复 -->
+        <div class="announce-banner" id="announcementBar" role="region" aria-label="站点公告">
+            <div class="announce-banner-inner">
+                <span class="announcement-icon">📢</span>
+                <div class="announcement-viewport" id="announcementViewport">
+                    <div class="announcement-track" id="announcementTrack">
+                        <div class="announcement-text">加载中...</div>
+                    </div>
+                </div>
+                <button class="announcement-edit" id="announcementEditBtn" style="display:none;"
+                    title="编辑公告">✏️</button>
+                <button class="announcement-close" id="announcementClose" title="关闭公告" aria-label="关闭公告">✕</button>
+            </div>
+        </div>
         <div class="top-nav-inner">
             <div class="top-nav-left">
                 <span class="top-nav-logo">🌌</span>
@@ -171,18 +185,6 @@
     <!-- ==================== 主页 ==================== -->
     <div id="pageHome">
         <div class="app" id="app">
-            <!-- 公告栏 -->
-            <div class="announcement" id="announcementBar">
-                <span class="announcement-icon">📢</span>
-                <div class="announcement-viewport" id="announcementViewport">
-                    <div class="announcement-track" id="announcementTrack">
-                        <div class="announcement-text">加载中...</div>
-                    </div>
-                </div>
-                <button class="announcement-edit" id="announcementEditBtn" style="display:none;"
-                    title="编辑公告">✏️</button>
-                <button class="announcement-close" id="announcementClose" title="关闭">✕</button>
-            </div>
 
             <!-- 赞助按钮 -->
             <div class="top-bar">
@@ -975,26 +977,26 @@
         </div>
     </div>
 
-    <script src="js/config.js?v=20261116a" defer></script>
-    <script src="js/utils.js?v=20261116a" defer></script>
-    <script src="js/data.js?v=20261116a" defer></script>
-    <script src="js/announcement.js?v=20261116a" defer></script>
-    <script src="js/list.js?v=20261116a" defer></script>
-    <script src="js/edit.js?v=20261116a" defer></script>
-    <script src="js/auth.js?v=20261116a" defer></script>
-    <script src="js/messages.js?v=20261116a" defer></script>
-    <script src="js/submissions.js?v=20261116a" defer></script>
-    <script src="js/gm.js?v=20261116a" defer></script>
-    <script src="js/account.js?v=20261116a" defer></script>
-    <script src="js/item-page.js?v=20261116a" defer></script>
-    <script src="js/ratings.js?v=20261116a" defer></script>
-    <script src="js/comments.js?v=20261116a" defer></script>
-    <script src="js/my-addons.js?v=20261116a" defer></script>
-    <script src="js/user-space.js?v=20261116a" defer></script>
-    <script src="js/router.js?v=20261116a" defer></script>
-    <script src="js/sort.js?v=20261116a" defer></script>
-    <script src="js/ui.js?v=20261116a" defer></script>
-    <script src="js/main.js?v=20261116a" defer></script>
+    <script src="js/config.js?v=20261116b" defer></script>
+    <script src="js/utils.js?v=20261116b" defer></script>
+    <script src="js/data.js?v=20261116b" defer></script>
+    <script src="js/announcement.js?v=20261116b" defer></script>
+    <script src="js/list.js?v=20261116b" defer></script>
+    <script src="js/edit.js?v=20261116b" defer></script>
+    <script src="js/auth.js?v=20261116b" defer></script>
+    <script src="js/messages.js?v=20261116b" defer></script>
+    <script src="js/submissions.js?v=20261116b" defer></script>
+    <script src="js/gm.js?v=20261116b" defer></script>
+    <script src="js/account.js?v=20261116b" defer></script>
+    <script src="js/item-page.js?v=20261116b" defer></script>
+    <script src="js/ratings.js?v=20261116b" defer></script>
+    <script src="js/comments.js?v=20261116b" defer></script>
+    <script src="js/my-addons.js?v=20261116b" defer></script>
+    <script src="js/user-space.js?v=20261116b" defer></script>
+    <script src="js/router.js?v=20261116b" defer></script>
+    <script src="js/sort.js?v=20261116b" defer></script>
+    <script src="js/ui.js?v=20261116b" defer></script>
+    <script src="js/main.js?v=20261116b" defer></script>
 </body>
 
 </html>
