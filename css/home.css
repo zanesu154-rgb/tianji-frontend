@@ -1,17 +1,30 @@
 /* 主页：公告栏、列表模块、条目卡片、弹窗、页脚 */
-/* ==================== 公告栏 ==================== */
-.announcement {
+/* ==================== 公告条幅（置顶通栏，在顶部导航栏里） ==================== */
+.announce-banner {
     background: var(--announce-bg);
-    border: 1px solid var(--announce-border);
-    border-radius: 12px;
-    padding: 0.6rem 1rem;
-    margin-bottom: 1rem;
-    font-size: 0.85rem;
+    border-bottom: 1px solid var(--announce-border);
     color: var(--announce-text);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    overflow: hidden;
+    max-height: 3rem;
+    transition: max-height 0.25s ease, opacity 0.2s ease;
+}
+.announce-banner.closed { max-height: 0; opacity: 0; border-bottom-width: 0; }
+.announce-banner-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0.45rem 1.2rem;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    line-height: 1.5;
+    gap: 0.55rem;
+}
+/* 条幅占了导航栏上方的高度，内容整体往下让一点 */
+body.has-banner { padding-top: calc(5rem + 2.2rem); }
+/* 文字超长时右侧淡出，滚动时不会显得被硬切 */
+.announce-banner .announcement-viewport {
+    -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 24px), transparent);
+    mask-image: linear-gradient(90deg, #000 calc(100% - 24px), transparent);
 }
 
 .announcement-icon {
@@ -63,16 +76,18 @@
     background: transparent;
     border: none;
     color: inherit;
-    opacity: 0.5;
+    opacity: 0.6;
     cursor: pointer;
     font-size: 1rem;
-    padding: 0 0.2rem;
+    padding: 0.15rem 0.35rem;
+    border-radius: 6px;
     line-height: 1;
     flex-shrink: 0;
 }
 
 .announcement-close:hover {
     opacity: 1;
+    background: rgba(0, 0, 0, 0.06);
 }
 
 .announcement-edit {
