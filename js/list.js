@@ -55,6 +55,8 @@ function render() {
     renderList('pendingList', filteredPending, false);
     renderList('doneList', visibleDone, true);
     updatePager(pageCount, filteredDone.length);
+    renderFeatured(allDone);
+    updateProgressChips(doing.length, todo.length);
     updateViewSwitch();
 
     updateModuleStyles();
@@ -119,7 +121,8 @@ function renderList(containerId, list, isDoneSection) {
     }
 
     // 拖动排序只在列表视图 + 默认排序下可用；展开编辑链接只在列表视图
-    const canDrag = isAdmin && (!isDoneSection || (view === 'list' && currentSort === 'default'));
+    // 展示区按时间 / 热门 / 评分自动排序，只有待汉化区可以拖动排序
+    const canDrag = isAdmin && !isDoneSection;
     const canExpand = isAdmin && view === 'list';
 
     let html = '';
@@ -201,12 +204,21 @@ function updatePager(pageCount, totalItems) {
     }
     pager.style.display = '';
     const btn = (n, label, extra = '') => `<button class="pager-btn${n === donePage ? ' active' : ''}${extra}" data-page="${n}"${n === donePage ? ' aria-current="page"' : ''}>${label}</button>`;
+    // 手机上中间是一个页码下拉框，可以直接选任意一页
+    const options = Array.from({ length: pageCount }, (_, i) => `<option value="${i + 1}"${i + 1 === donePage ? ' selected' : ''}>第 ${i + 1} / ${pageCount} 页</option>`).join('');
     pager.innerHTML = `
-        <button class="pager-btn pager-nav" data-page="${donePage - 1}" ${donePage === 1 ? 'disabled' : ''} aria-label="上一页">‹ 上一页</button>
-        <span class="pager-nums">${pagerNumbers(donePage, pageCount).map(n => n === '…' ? '<span class="pager-gap">…</span>' : btn(n, n)).join('')}</span>
-        <span class="pager-mini">${donePage} / ${pageCount}</span>
-        <button class="pager-btn pager-nav" data-page="${donePage + 1}" ${donePage === pageCount ? 'disabled' : ''} aria-label="下一页">下一页 ›</button>
-        <span class="pager-info">共 ${totalItems} 个</span>`;
+        <div class="pager-row">
+            <button class="pager-btn pager-first" data-page="1" ${donePage === 1 ? 'disabled' : ''} title="回到第一页">« 第一页</button>
+            <button class="pager-btn pager-nav" data-page="${donePage - 1}" ${donePage === 1 ? 'disabled' : ''} aria-label="上一页">‹ 上一页</button>
+            <span class="pager-nums">${pagerNumbers(donePage, pageCount).map(n => n === '…' ? '<span class="pager-gap">…</span>' : btn(n, n)).join('')}</span>
+            <select class="pager-select" aria-label="选择页码">${options}</select>
+            <button class="pager-btn pager-nav" data-page="${donePage + 1}" ${donePage === pageCount ? 'disabled' : ''} aria-label="下一页">下一页 ›</button>
+        </div>
+        <div class="pager-jump">
+            <span class="pager-info">共 ${totalItems} 个 · ${pageCount} 页</span>
+            <label>跳至 <input class="pager-input" type="number" min="1" max="${pageCount}" inputmode="numeric" placeholder="${donePage}"> 页</label>
+            <button class="pager-btn pager-go">跳转</button>
+        </div>`;
 }
 
 function goDonePage(n) {
@@ -395,9 +407,25 @@ function setupListEvents() {
         const b = e.target.closest('.view-btn');
         if (b) setDoneView(b.dataset.view);
     });
-    document.getElementById('donePager').addEventListener('click', (e) => {
+    const pagerEl = document.getElementById('donePager');
+    const jumpTo = () => {
+        const input = pagerEl.querySelector('.pager-input');
+        const max = Number(input.max);
+        const n = Math.round(Number(input.value));
+        if (!input.value || !Number.isFinite(n)) { input.focus(); return; }
+        if (n < 1 || n > max) { showToast(`页码范围是 1 – ${max}`); input.select(); return; }
+        goDonePage(n);
+    };
+    pagerEl.addEventListener('click', (e) => {
+        if (e.target.closest('.pager-go')) { jumpTo(); return; }
         const b = e.target.closest('[data-page]');
         if (b && !b.disabled) goDonePage(Number(b.dataset.page));
+    });
+    pagerEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && e.target.classList.contains('pager-input')) { e.preventDefault(); jumpTo(); }
+    });
+    pagerEl.addEventListener('change', (e) => {
+        if (e.target.classList.contains('pager-select')) goDonePage(Number(e.target.value));
     });
 
     document.getElementById('editStatus').addEventListener('change', syncEditTranslatedField);

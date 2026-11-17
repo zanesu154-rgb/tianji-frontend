@@ -441,7 +441,8 @@
 }
 
 /* ==================== 展示区分页 ==================== */
-.pager { display: flex; align-items: center; justify-content: center; gap: 0.4rem; flex-wrap: wrap; margin: 0.4rem 0 1rem; }
+.pager { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; margin: 0.4rem 0 1rem; }
+.pager-row { display: flex; align-items: center; justify-content: center; gap: 0.4rem; flex-wrap: wrap; }
 .pager-nums { display: inline-flex; gap: 0.3rem; align-items: center; }
 .pager-btn {
     min-width: 36px; height: 36px; padding: 0 0.6rem; border-radius: 10px; font: inherit; font-size: 0.86rem;
@@ -452,14 +453,33 @@
 .pager-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; cursor: default; }
 .pager-btn[disabled] { opacity: 0.4; cursor: not-allowed; }
 .pager-gap { color: var(--text-light); padding: 0 0.15rem; }
-.pager-info { font-size: 0.78rem; color: var(--text-light); margin-left: 0.3rem; }
-.pager-mini { display: none; font-size: 0.86rem; color: var(--text-sub); font-variant-numeric: tabular-nums; }
+.pager-select {
+    display: none; height: 40px; padding: 0 0.6rem; border-radius: 10px; font: inherit; font-size: 0.86rem;
+    border: 1px solid var(--border); background: var(--bg-card); color: var(--text-main);
+}
+.pager-jump { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--text-light); flex-wrap: wrap; justify-content: center; }
+.pager-jump label { display: inline-flex; align-items: center; gap: 0.35rem; }
+.pager-input {
+    width: 3.6rem; height: 32px; padding: 0 0.4rem; text-align: center; border-radius: 8px; font: inherit; font-size: 0.84rem;
+    border: 1px solid var(--border-input, var(--border)); background: var(--bg-input, var(--bg-card)); color: var(--text-main);
+    -moz-appearance: textfield;
+}
+.pager-input::-webkit-outer-spin-button, .pager-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.pager-input:focus { outline: none; border-color: var(--accent); }
+.pager-go { height: 32px; min-width: 0; }
 @media (max-width: 600px) {
-    /* 手机：只留 上一页 · 3 / 12 · 下一页 */
-    .pager-nums, .pager-info { display: none; }
-    .pager-mini { display: inline; padding: 0 0.6rem; }
+    /* 手机：« · ‹ · [第 3 / 12 页 ▾] · › ；页码下拉可选任意一页 */
     .pager { padding: 0 0.6rem; }
-    .pager-btn.pager-nav { flex: 1; max-width: 9rem; height: 40px; }
+    .pager-row { flex-wrap: nowrap; width: 100%; }
+    .pager-nums, .pager-jump label, .pager-go { display: none; }
+    .pager-select { display: inline-block; flex: 1; min-width: 0; }
+    .pager-btn.pager-nav, .pager-btn.pager-first { height: 40px; padding: 0 0.7rem; }
+    .pager-first { font-size: 0; }
+    .pager-first::before { content: '«'; font-size: 0.95rem; }
+    .pager-nav[aria-label="上一页"] { font-size: 0; }
+    .pager-nav[aria-label="上一页"]::before { content: '‹'; font-size: 1.05rem; }
+    .pager-nav[aria-label="下一页"] { font-size: 0; }
+    .pager-nav[aria-label="下一页"]::before { content: '›'; font-size: 1.05rem; }
 }
 
 /* 管理员：跳到底部导入 */

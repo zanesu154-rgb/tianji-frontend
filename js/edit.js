@@ -20,6 +20,7 @@ function openEditModal(id) {
     document.getElementById('editAuthor').value = item.author || '佚名';
     document.getElementById('editDescription').value = item.description || '';
     document.getElementById('editDetailDesc').value = item.detailDesc || '';
+    document.getElementById('editFeatured').checked = !!item.featured;
     document.getElementById('editCategory').value = item.category || 'addon';
     document.getElementById('editStatus').value = item.status || STATUS.TODO;
     document.getElementById('editImages').value = item.images || '';
@@ -59,6 +60,9 @@ async function saveEditModal() {
         images: document.getElementById('editImages').value.trim(),
         ...Object.fromEntries(EDIT_VERSION_FIELDS.map(([elId, key]) => [key, document.getElementById(elId).value.trim()]))
     };
+    // 推荐只在勾选状态变化时提交（保留原来的加入时间，轮播顺序不变）
+    const wantFeatured = document.getElementById('editFeatured').checked;
+    if (wantFeatured !== !!item.featured) fields.featured = wantFeatured ? true : 0;
 
     try {
         const row = await apiUpdate(editingItemId, fields);

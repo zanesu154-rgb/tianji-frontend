@@ -18,6 +18,7 @@ function setupEvents() {
     setupCommentEvents();
     setupMyAddonsEvents();
     setupUserSpaceEvents();
+    setupFeaturedEvents();
 }
 
 // ==================== 初始化 ====================

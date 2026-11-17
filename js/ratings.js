@@ -1,8 +1,8 @@
-// 排序（默认 / 热门 / 最新 / 评分）与评分
+// 排序（最新 / 热门 / 评分）与评分
 
 const SORT_KEY = 'tianji_sort';
 const VOTER_KEY = 'tianji_voter_id';
-const SORT_MODES = ['default', 'hot', 'new', 'rating'];
+const SORT_MODES = ['new', 'hot', 'rating'];   // 默认按最新
 const SORT_HINTS = {
     hot: '按近 30 天点击量',
     new: '按最近更新（本站更新汉化或原作者更新，取较新的）',
@@ -15,9 +15,9 @@ const RATING_PRIOR = 5;
 let currentSort = (() => {
     try {
         const v = localStorage.getItem(SORT_KEY);
-        return SORT_MODES.includes(v) ? v : 'default';
+        return SORT_MODES.includes(v) ? v : 'new';
     } catch (e) {
-        return 'default';
+        return 'new';
     }
 })();
 let myRatings = {};   // { itemId: 我的评分 }
@@ -54,7 +54,6 @@ function bayesRating(item, mean) {
 }
 
 function sortDoneItems(list) {
-    if (currentSort === 'default') return list;
     const order = new Map(list.map((it, i) => [it.id, i]));
     const tie = (a, b) => order.get(a.id) - order.get(b.id);   // 同分时保持默认顺序
     const arr = list.slice();
@@ -78,10 +77,7 @@ function updateSortBar() {
         c.classList.toggle('active', active);
         c.setAttribute('aria-selected', active ? 'true' : 'false');
     });
-    let hint = SORT_HINTS[currentSort] || '';
-    if (isAdmin && (currentSort !== 'default' || doneView !== 'list')) {
-        hint += (hint ? '　' : '') + '拖动排序需要「默认」排序 + 列表视图';
-    }
+    const hint = SORT_HINTS[currentSort] || '';
     document.getElementById('sortHint').textContent = hint;
 }
 
