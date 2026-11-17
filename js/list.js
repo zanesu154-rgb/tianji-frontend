@@ -42,17 +42,19 @@ function render() {
     // 访客看不到待汉化模块
     document.getElementById('pendingModule').style.display = isAdmin ? '' : 'none';
 
-    // 展示区分批显示：筛选条件变化时回到第一批
+    // 展示区分页：筛选条件变化时回到第 1 页
     const viewKey = [searchQuery, currentCategory, currentSort, doneView].join('|');
     if (viewKey !== lastDoneViewKey) {
-        doneShown = DONE_PAGE_SIZE;
+        donePage = 1;
         lastDoneViewKey = viewKey;
     }
-    const visibleDone = filteredDone.slice(0, doneShown);
+    const pageCount = Math.max(1, Math.ceil(filteredDone.length / DONE_PAGE_SIZE));
+    if (donePage > pageCount) donePage = pageCount;
+    const visibleDone = filteredDone.slice((donePage - 1) * DONE_PAGE_SIZE, donePage * DONE_PAGE_SIZE);
 
     renderList('pendingList', filteredPending, false);
     renderList('doneList', visibleDone, true);
-    updateLoadMore(filteredDone.length - visibleDone.length);
+    updatePager(pageCount, filteredDone.length);
     updateViewSwitch();
 
     updateModuleStyles();
@@ -176,14 +178,45 @@ function renderList(containerId, list, isDoneSection) {
 }
 
 // ---------- 视图切换与分批显示 ----------
-function updateLoadMore(remaining) {
-    const btn = document.getElementById('doneMore');
-    if (remaining > 0) {
-        btn.textContent = `显示更多（还有 ${remaining} 个）`;
-        btn.style.display = '';
-    } else {
-        btn.style.display = 'none';
+// 页码：1 … 4 5 [6] 7 8 … 20，两头加上一页 / 下一页
+function pagerNumbers(cur, total) {
+    const set = new Set([1, total, cur - 1, cur, cur + 1]);
+    if (cur <= 3) [2, 3, 4].forEach(n => set.add(n));
+    if (cur >= total - 2) [total - 1, total - 2, total - 3].forEach(n => set.add(n));
+    const nums = [...set].filter(n => n >= 1 && n <= total).sort((a, b) => a - b);
+    const out = [];
+    nums.forEach((n, i) => {
+        if (i && n - nums[i - 1] > 1) out.push('…');
+        out.push(n);
+    });
+    return out;
+}
+
+function updatePager(pageCount, totalItems) {
+    const pager = document.getElementById('donePager');
+    if (pageCount <= 1) {
+        pager.style.display = 'none';
+        pager.innerHTML = '';
+        return;
     }
+    pager.style.display = '';
+    const btn = (n, label, extra = '') => `<button class="pager-btn${n === donePage ? ' active' : ''}${extra}" data-page="${n}"${n === donePage ? ' aria-current="page"' : ''}>${label}</button>`;
+    pager.innerHTML = `
+        <button class="pager-btn pager-nav" data-page="${donePage - 1}" ${donePage === 1 ? 'disabled' : ''} aria-label="上一页">‹ 上一页</button>
+        <span class="pager-nums">${pagerNumbers(donePage, pageCount).map(n => n === '…' ? '<span class="pager-gap">…</span>' : btn(n, n)).join('')}</span>
+        <span class="pager-mini">${donePage} / ${pageCount}</span>
+        <button class="pager-btn pager-nav" data-page="${donePage + 1}" ${donePage === pageCount ? 'disabled' : ''} aria-label="下一页">下一页 ›</button>
+        <span class="pager-info">共 ${totalItems} 个</span>`;
+}
+
+function goDonePage(n) {
+    if (!Number.isFinite(n) || n < 1 || n === donePage) return;
+    donePage = n;
+    render();
+    // 回到展示区开头（导航栏常驻，留出它的高度）
+    const mod = document.getElementById('doneModule');
+    const top = mod.getBoundingClientRect().top + window.scrollY - (document.querySelector('.top-nav').offsetHeight + 12);
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
 }
 
 function updateViewSwitch() {
@@ -292,8 +325,12 @@ function toggleExpand(id) {
 
     const isOpening = !item.expanded;
     item.expanded = isOpening;
+    const btn = itemEl.querySelector('.expand-btn');
+    if (btn) btn.textContent = isOpening ? '▲' : '▼';
 
     if (isOpening) {
+        // 同一时间只展开一个：先收起其他已展开的
+        items.filter(i => i.expanded && i.id !== id).forEach(i => toggleExpand(i.id));
         // 1. 先注入内容（如果还没注入过）
         if (!detailsEl.dataset.loaded) {
             detailsEl.innerHTML = buildDetailsHtml(item);
@@ -358,9 +395,9 @@ function setupListEvents() {
         const b = e.target.closest('.view-btn');
         if (b) setDoneView(b.dataset.view);
     });
-    document.getElementById('doneMore').addEventListener('click', () => {
-        doneShown += DONE_PAGE_SIZE;
-        render();
+    document.getElementById('donePager').addEventListener('click', (e) => {
+        const b = e.target.closest('[data-page]');
+        if (b && !b.disabled) goDonePage(Number(b.dataset.page));
     });
 
     document.getElementById('editStatus').addEventListener('change', syncEditTranslatedField);

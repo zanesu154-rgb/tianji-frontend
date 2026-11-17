@@ -89,6 +89,7 @@ function renderUserMenu() {
     }
     document.getElementById('menuProfileBtn').classList.toggle('on-account', currentPage === 'account');
     setTopNavForPage(currentPage);
+    if (window.updateJumpImport) window.updateJumpImport();
 }
 
 function clearSession() {

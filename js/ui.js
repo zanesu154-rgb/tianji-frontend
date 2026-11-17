@@ -115,49 +115,45 @@ function setupChromeEvents() {
     }, { passive: true });
 
     // ========== 顶栏滚动隐藏/显示 ==========
-    (function setupTopNavScroll() {
-        const topNav = document.querySelector('.top-nav');
-        if (!topNav) return;
+    // 导航栏高度写进 CSS 变量，吸顶元素（附加包页的标签等）据此避开导航栏
+    const syncNavHeight = () => document.documentElement.style.setProperty('--nav-h', document.querySelector('.top-nav').offsetHeight + 'px');
+    syncNavHeight();
+    window.addEventListener('resize', syncNavHeight);
+    document.getElementById('announcementBar').addEventListener('transitionend', syncNavHeight);
+    if ('ResizeObserver' in window) new ResizeObserver(syncNavHeight).observe(document.querySelector('.top-nav'));
 
-        let lastScrollY = window.scrollY;
-        let ticking = false;
-        const THRESHOLD = 8;       // 滚动多少像素才触发（防止抖动）
-        const TOP_OFFSET = 60;     // 页面顶部多少像素内始终显示
-
-        function onScroll() {
-            const currentY = window.scrollY;
-
-            // 页面靠近顶部时始终显示
-            if (currentY <= TOP_OFFSET) {
-                topNav.classList.remove('hidden');
-                lastScrollY = currentY;
-                return;
-            }
-
-            const delta = currentY - lastScrollY;
-
-            if (Math.abs(delta) < THRESHOLD) return;
-
-            if (delta > 0) {
-                // 向下滚动 → 隐藏
-                topNav.classList.add('hidden');
-            } else {
-                // 向上滚动 → 显示
-                topNav.classList.remove('hidden');
-            }
-
-            lastScrollY = currentY;
-        }
-
+    // 导航栏常驻（不再随滚动隐藏）。
+    // 打开的头像 / ☰ 菜单在页面滚动时自动收起
+    (function closeMenuOnScroll() {
+        const dd = document.getElementById('menuDropdown');
+        let openY = 0;
+        // 菜单打开时记下当时的滚动位置
+        new MutationObserver(() => { if (dd.classList.contains('show')) openY = window.scrollY; })
+            .observe(dd, { attributes: true, attributeFilter: ['class'] });
         window.addEventListener('scroll', () => {
-            if (!ticking) {
-                window.requestAnimationFrame(() => {
-                    onScroll();
-                    ticking = false;
-                });
-                ticking = true;
-            }
+            if (dd.classList.contains('show') && Math.abs(window.scrollY - openY) > 12) dd.classList.remove('show');
         }, { passive: true });
+    })();
+
+    // 管理员：右下角「⬇ 导入」直达底部工具栏；工具栏已经在屏幕里时自动隐藏
+    (function setupJumpImport() {
+        const btn = document.getElementById('jumpImportBtn');
+        const bar = document.getElementById('adminToolbar');
+        let barVisible = false;
+        const update = () => {
+            btn.style.display = isAdmin && currentPage === 'home' && !barVisible && bar.style.display !== 'none' ? '' : 'none';
+        };
+        if ('IntersectionObserver' in window) {
+            new IntersectionObserver(entries => { barVisible = entries[0].isIntersecting; update(); }).observe(bar);
+        }
+        window.updateJumpImport = update;
+        btn.addEventListener('click', () => {
+            bar.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            bar.classList.remove('flash');
+            void bar.offsetWidth;
+            bar.classList.add('flash');
+        });
+        update();
     })();
     // 公告条幅关闭：只在本次打开页面有效，刷新后重新出现
     document.body.classList.add('has-banner');

@@ -439,3 +439,40 @@
     font-size: 0.6rem;
     padding: 0.2rem 0.35rem;
 }
+
+/* ==================== 展示区分页 ==================== */
+.pager { display: flex; align-items: center; justify-content: center; gap: 0.4rem; flex-wrap: wrap; margin: 0.4rem 0 1rem; }
+.pager-nums { display: inline-flex; gap: 0.3rem; align-items: center; }
+.pager-btn {
+    min-width: 36px; height: 36px; padding: 0 0.6rem; border-radius: 10px; font: inherit; font-size: 0.86rem;
+    border: 1px solid var(--border); background: var(--bg-card); color: var(--text-sub); cursor: pointer;
+    font-variant-numeric: tabular-nums; transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.pager-btn:hover:not([disabled]):not(.active) { border-color: var(--accent); color: var(--accent-text); background: var(--accent-light); }
+.pager-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; cursor: default; }
+.pager-btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+.pager-gap { color: var(--text-light); padding: 0 0.15rem; }
+.pager-info { font-size: 0.78rem; color: var(--text-light); margin-left: 0.3rem; }
+.pager-mini { display: none; font-size: 0.86rem; color: var(--text-sub); font-variant-numeric: tabular-nums; }
+@media (max-width: 600px) {
+    /* 手机：只留 上一页 · 3 / 12 · 下一页 */
+    .pager-nums, .pager-info { display: none; }
+    .pager-mini { display: inline; padding: 0 0.6rem; }
+    .pager { padding: 0 0.6rem; }
+    .pager-btn.pager-nav { flex: 1; max-width: 9rem; height: 40px; }
+}
+
+/* 管理员：跳到底部导入 */
+.jump-import-btn {
+    position: fixed; right: max(1rem, env(safe-area-inset-right)); bottom: max(1.2rem, env(safe-area-inset-bottom));
+    z-index: 90; border: none; border-radius: 999px; padding: 0.7rem 1.1rem; font: inherit; font-size: 0.88rem; font-weight: 600;
+    background: var(--accent); color: #fff; cursor: pointer; box-shadow: 0 6px 20px rgba(0, 30, 60, 0.22);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+.jump-import-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0, 30, 60, 0.28); }
+#adminToolbar { scroll-margin-top: calc(var(--nav-h, 64px) + 1rem); }
+#adminToolbar.flash { animation: toolbar-flash 1.2s ease; }
+@keyframes toolbar-flash {
+    0%, 100% { box-shadow: none; }
+    30% { box-shadow: 0 0 0 3px var(--accent); }
+}
