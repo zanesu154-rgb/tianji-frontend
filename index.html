@@ -60,21 +60,22 @@
             timers.push(setTimeout(window.tianjiSplashDone, 12000));   // 兜底：最多 12 秒
         })();
     </script>
-    <link rel="stylesheet" href="css/base.css?v=20261117a">
-    <link rel="stylesheet" href="css/splash.css?v=20261117a">
-    <link rel="stylesheet" href="css/home.css?v=20261117a">
-    <link rel="stylesheet" href="css/nav.css?v=20261117a">
-    <link rel="stylesheet" href="css/account.css?v=20261117a">
-    <link rel="stylesheet" href="css/item-page.css?v=20261117a">
-    <link rel="stylesheet" href="css/layout.css?v=20261117a">
-    <link rel="stylesheet" href="css/gm.css?v=20261117a">
-    <link rel="stylesheet" href="css/features.css?v=20261117a">
-    <link rel="stylesheet" href="css/cards.css?v=20261117a">
-    <link rel="stylesheet" href="css/comments.css?v=20261117a">
-    <link rel="stylesheet" href="css/my-addons.css?v=20261117a">
-    <link rel="stylesheet" href="css/chat.css?v=20261117a">
-    <link rel="stylesheet" href="css/avatar.css?v=20261117a">
-    <link rel="stylesheet" href="css/user-space.css?v=20261117a">
+    <link rel="stylesheet" href="css/base.css?v=20261117b">
+    <link rel="stylesheet" href="css/splash.css?v=20261117b">
+    <link rel="stylesheet" href="css/home.css?v=20261117b">
+    <link rel="stylesheet" href="css/nav.css?v=20261117b">
+    <link rel="stylesheet" href="css/account.css?v=20261117b">
+    <link rel="stylesheet" href="css/item-page.css?v=20261117b">
+    <link rel="stylesheet" href="css/layout.css?v=20261117b">
+    <link rel="stylesheet" href="css/gm.css?v=20261117b">
+    <link rel="stylesheet" href="css/features.css?v=20261117b">
+    <link rel="stylesheet" href="css/cards.css?v=20261117b">
+    <link rel="stylesheet" href="css/comments.css?v=20261117b">
+    <link rel="stylesheet" href="css/my-addons.css?v=20261117b">
+    <link rel="stylesheet" href="css/chat.css?v=20261117b">
+    <link rel="stylesheet" href="css/avatar.css?v=20261117b">
+    <link rel="stylesheet" href="css/user-space.css?v=20261117b">
+    <link rel="stylesheet" href="css/featured.css?v=20261117b">
 </head>
 
 
@@ -207,6 +208,9 @@
                 <button class="archive-menu-item" data-category="map">地图</button>
             </div>
 
+            <!-- 栈主推荐：首页大图轮播（搜索时、翻到第 2 页以后隐藏） -->
+            <section class="featured" id="featuredHero" style="display:none;" aria-roledescription="carousel" aria-label="栈主推荐"></section>
+
             <!-- 模块区 -->
             <div class="modules-container" id="modulesContainer">
                 <!-- 待汉化模块 -->
@@ -214,6 +218,7 @@
                     <div class="module-header">
                         <div class="module-title">
                             <span class="emoji">📋</span> 待汉化 / 汉化中 <span class="badge" id="pendingCount">0</span>
+                            <span class="progress-split" id="pendingSplit"></span>
                         </div>
                         <button class="module-toggle" id="pendingToggle" data-module="pending" title="展开/收起">▼</button>
                     </div>
@@ -225,6 +230,7 @@
                     <div class="module-header">
                         <div class="module-title">
                             <span class="emoji">✅</span> 展示区 <span class="badge" id="doneCount">0</span>
+                            <span class="doing-chip" id="doingChip" style="display:none;" title="正在汉化中的资源"></span>
                         </div>
                         <div class="module-header-right">
                             <button class="archive-btn" id="archiveBtn" title="筛选">
@@ -244,9 +250,8 @@
                         </div>
                     </div>
                     <div class="sort-bar" id="sortBar" role="tablist" aria-label="排序方式">
-                        <button class="sort-chip active" data-sort="default" role="tab">默认</button>
+                        <button class="sort-chip active" data-sort="new" role="tab">🕒 最新</button>
                         <button class="sort-chip" data-sort="hot" role="tab">🔥 热门</button>
-                        <button class="sort-chip" data-sort="new" role="tab">🕒 最新</button>
                         <button class="sort-chip" data-sort="rating" role="tab">⭐ 评分</button>
                         <span class="sort-hint" id="sortHint"></span>
                     </div>
@@ -744,6 +749,10 @@
                 <label>描述 <span class="field-hint">（详情页显示在简介下方，可写玩法、内容、注意事项等）</span></label>
                 <textarea id="editDetailDesc" maxlength="10000" placeholder="选填，支持换行，网址会自动变成链接" style="min-height:110px;"></textarea>
             </div>
+            <label class="featured-check" id="editFeaturedWrap">
+                <input type="checkbox" id="editFeatured">
+                <span>⭐ 栈主推荐 <span class="field-hint">（放进首页大图轮播，建议配一张图片）</span></span>
+            </label>
             <div class="modal-field">
                 <label>图片链接（每行一个，第一张作为封面）</label>
                 <textarea id="editImages" autocomplete="off" placeholder="https://.../cover.png&#10;https://.../screenshot1.png" style="min-height:70px;font-size:0.8rem;"></textarea>
@@ -980,26 +989,27 @@
         </div>
     </div>
 
-    <script src="js/config.js?v=20261117a" defer></script>
-    <script src="js/utils.js?v=20261117a" defer></script>
-    <script src="js/data.js?v=20261117a" defer></script>
-    <script src="js/announcement.js?v=20261117a" defer></script>
-    <script src="js/list.js?v=20261117a" defer></script>
-    <script src="js/edit.js?v=20261117a" defer></script>
-    <script src="js/auth.js?v=20261117a" defer></script>
-    <script src="js/messages.js?v=20261117a" defer></script>
-    <script src="js/submissions.js?v=20261117a" defer></script>
-    <script src="js/gm.js?v=20261117a" defer></script>
-    <script src="js/account.js?v=20261117a" defer></script>
-    <script src="js/item-page.js?v=20261117a" defer></script>
-    <script src="js/ratings.js?v=20261117a" defer></script>
-    <script src="js/comments.js?v=20261117a" defer></script>
-    <script src="js/my-addons.js?v=20261117a" defer></script>
-    <script src="js/user-space.js?v=20261117a" defer></script>
-    <script src="js/router.js?v=20261117a" defer></script>
-    <script src="js/sort.js?v=20261117a" defer></script>
-    <script src="js/ui.js?v=20261117a" defer></script>
-    <script src="js/main.js?v=20261117a" defer></script>
+    <script src="js/config.js?v=20261117b" defer></script>
+    <script src="js/utils.js?v=20261117b" defer></script>
+    <script src="js/data.js?v=20261117b" defer></script>
+    <script src="js/announcement.js?v=20261117b" defer></script>
+    <script src="js/list.js?v=20261117b" defer></script>
+    <script src="js/edit.js?v=20261117b" defer></script>
+    <script src="js/auth.js?v=20261117b" defer></script>
+    <script src="js/messages.js?v=20261117b" defer></script>
+    <script src="js/submissions.js?v=20261117b" defer></script>
+    <script src="js/gm.js?v=20261117b" defer></script>
+    <script src="js/account.js?v=20261117b" defer></script>
+    <script src="js/item-page.js?v=20261117b" defer></script>
+    <script src="js/ratings.js?v=20261117b" defer></script>
+    <script src="js/comments.js?v=20261117b" defer></script>
+    <script src="js/my-addons.js?v=20261117b" defer></script>
+    <script src="js/user-space.js?v=20261117b" defer></script>
+    <script src="js/featured.js?v=20261117b" defer></script>
+    <script src="js/router.js?v=20261117b" defer></script>
+    <script src="js/sort.js?v=20261117b" defer></script>
+    <script src="js/ui.js?v=20261117b" defer></script>
+    <script src="js/main.js?v=20261117b" defer></script>
 </body>
 
 </html>
