@@ -47,7 +47,7 @@ function applyTheme(theme) {
 
 // 展示区显示方式：grid 网格 / list 列表（记住访客的选择）
 const VIEW_KEY = 'tianji_view';
-const DONE_PAGE_SIZE = 24;   // 展示区每批显示的数量
+const DONE_PAGE_SIZE = 24;   // 展示区每页显示的数量
 let doneView = (() => {
     try {
         const v = localStorage.getItem(VIEW_KEY);
@@ -56,5 +56,5 @@ let doneView = (() => {
         return 'grid';
     }
 })();
-let doneShown = DONE_PAGE_SIZE;
+let donePage = 1;   // 展示区当前页
 let lastDoneViewKey = '';
