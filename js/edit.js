@@ -161,7 +161,7 @@ function openLink(id, field) {
     // 走风险提醒；确认访问才算一次「跳转」，在提醒框里复制算一次「复制」
     showExternalWarning(url, () => {
         trackClick(id, field, 'open');
-        window.open(url, '_blank', 'noopener,noreferrer');
+        openExternal(url);
     }, () => trackClick(id, field, 'copy'));
 }
 

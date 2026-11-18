@@ -1,0 +1,20 @@
+{
+  "name": "tianji-app",
+  "private": true,
+  "version": "1.0.0",
+  "description": "天际译栈安卓 App：Capacitor 外壳，直接打开线上网站",
+  "scripts": {
+    "icons": "capacitor-assets generate --android --iconBackgroundColor \"#0d2238\" --iconBackgroundColorDark \"#0d2238\" --splashBackgroundColor \"#0d2238\" --splashBackgroundColorDark \"#0d2238\""
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/app": "^6.0.0",
+    "@capacitor/app-launcher": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/share": "^6.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.0",
+    "@capacitor/cli": "^6.0.0"
+  }
+}

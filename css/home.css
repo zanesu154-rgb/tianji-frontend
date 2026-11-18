@@ -1119,3 +1119,15 @@ body.is-sorting * {
     background: #4a2535;
     box-shadow: 0 4px 12px rgba(255, 158, 200, 0.1);
 }
+
+/* 底部：下载 App + B站主页 */
+.footer-links { display: flex; gap: 0.7rem; flex-wrap: wrap; justify-content: center; }
+.footer-app {
+    display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.65rem 1.5rem;
+    background: var(--accent-light); border: 1px solid var(--accent-border); border-radius: 60px;
+    color: var(--accent-text); font-size: 0.9rem; font-weight: 500; text-decoration: none; transition: all 0.2s ease;
+}
+.footer-app:hover { background: var(--bg-hover); transform: translateY(-1px); }
+/* 在 App 里不显示「下载 App」 */
+html.in-app .footer-app { display: none; }
+#appVersionLabel:not(:empty)::before { content: '· '; }

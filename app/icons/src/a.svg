@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d2238"/><stop offset="0.55" stop-color="#16405f"/><stop offset="1" stop-color="#2a6f8f"/>
+    </linearGradient>
+    <linearGradient id="b1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f4d58d"/><stop offset="1" stop-color="#e8b04b"/></linearGradient>
+    <linearGradient id="b2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9fd8e8"/><stop offset="1" stop-color="#5fb3cf"/></linearGradient>
+    <linearGradient id="b3" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f2f5f9"/><stop offset="1" stop-color="#cdd8e4"/></linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#fff6d6" stop-opacity="0.9"/><stop offset="1" stop-color="#fff6d6" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <!-- 星点 -->
+  <g fill="#ffffff">
+    <circle cx="190" cy="210" r="7" opacity="0.8"/><circle cx="300" cy="140" r="4" opacity="0.6"/>
+    <circle cx="820" cy="250" r="6" opacity="0.7"/><circle cx="880" cy="420" r="4" opacity="0.5"/>
+    <circle cx="150" cy="420" r="4" opacity="0.5"/><circle cx="700" cy="150" r="3.5" opacity="0.6"/>
+  </g>
+  <!-- 天际弧线 -->
+  <path d="M -40 860 Q 512 640 1064 860" fill="none" stroke="#7cc4dc" stroke-width="10" opacity="0.35"/>
+  <!-- 书栈：三本书叠成「栈」 -->
+  <g transform="translate(512 600)">
+    <g transform="rotate(-4)">
+      <rect x="-250" y="70" width="500" height="92" rx="20" fill="url(#b3)"/>
+      <rect x="-250" y="70" width="40" height="92" rx="14" fill="#9fb2c6"/>
+      <rect x="-190" y="100" width="300" height="10" rx="5" fill="#9fb2c6" opacity="0.7"/>
+      <rect x="-190" y="122" width="200" height="10" rx="5" fill="#9fb2c6" opacity="0.5"/>
+    </g>
+    <g transform="rotate(3)">
+      <rect x="-225" y="-28" width="450" height="88" rx="20" fill="url(#b2)"/>
+      <rect x="-225" y="-28" width="38" height="88" rx="14" fill="#3e8fae"/>
+      <rect x="-165" y="0" width="260" height="10" rx="5" fill="#ffffff" opacity="0.55"/>
+      <rect x="-165" y="22" width="170" height="10" rx="5" fill="#ffffff" opacity="0.4"/>
+    </g>
+    <g transform="rotate(-2)">
+      <rect x="-195" y="-118" width="390" height="82" rx="20" fill="url(#b1)"/>
+      <rect x="-195" y="-118" width="36" height="82" rx="13" fill="#c98a24"/>
+      <rect x="-140" y="-92" width="220" height="10" rx="5" fill="#ffffff" opacity="0.6"/>
+      <rect x="-140" y="-70" width="140" height="10" rx="5" fill="#ffffff" opacity="0.45"/>
+    </g>
+  </g>
+  <!-- 顶上的星：天际 -->
+  <circle cx="512" cy="330" r="150" fill="url(#glow)"/>
+  <path d="M512 225 L536 306 L617 330 L536 354 L512 435 L488 354 L407 330 L488 306 Z" fill="#fff3c4"/>
+</svg>

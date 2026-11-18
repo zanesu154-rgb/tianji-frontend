@@ -413,7 +413,7 @@ function setupChatEvents() {
         }
         const url = t.closest('[data-ip-url]');
         if (url) {
-            showExternalWarning(url.dataset.ipUrl, () => window.open(url.dataset.ipUrl, '_blank', 'noopener,noreferrer'));
+            showExternalWarning(url.dataset.ipUrl, () => openExternal(url.dataset.ipUrl));
             return;
         }
         if (t.closest('[data-peer-block]')) {

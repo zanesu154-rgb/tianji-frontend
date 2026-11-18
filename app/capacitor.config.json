@@ -1,0 +1,14 @@
+{
+  "appId": "io.github.zanesu154.tianji",
+  "appName": "天际译栈",
+  "webDir": "www",
+  "server": {
+    "url": "https://zanesu154-rgb.github.io/tianji-frontend/",
+    "androidScheme": "https",
+    "errorPath": "offline.html"
+  },
+  "android": {
+    "allowMixedContent": false,
+    "backgroundColor": "#0d2238"
+  }
+}

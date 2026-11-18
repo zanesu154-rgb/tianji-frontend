@@ -19,6 +19,7 @@ function setupEvents() {
     setupMyAddonsEvents();
     setupUserSpaceEvents();
     setupFeaturedEvents();
+    setupAppShell();
 }
 
 // ==================== 初始化 ====================

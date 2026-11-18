@@ -300,7 +300,7 @@ function shareItem(item) {
             ? `<img src="${escapeHtml(cover)}" alt="" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'🌌'}))">`
             : '<span>🌌</span>'}</div>`;
     document.getElementById('shareUrl').textContent = shareTarget.url;
-    document.getElementById('shareSystemBtn').style.display = navigator.share ? '' : 'none';
+    document.getElementById('shareSystemBtn').style.display = canSystemShare() ? '' : 'none';
     document.getElementById('shareModal').classList.add('show');
 }
 
@@ -321,10 +321,10 @@ function setupShareEvents() {
         }
     });
     document.getElementById('shareSystemBtn').addEventListener('click', async () => {
-        if (!shareTarget || !navigator.share) return;
+        if (!shareTarget || !canSystemShare()) return;
         try {
             // 只传 url，不传 text：接收方（QQ 等）才会把它当作链接卡片
-            await navigator.share({ url: shareTarget.url });
+            await systemShare(shareTarget.url, shareTarget.title);
             closeShareModal();
         } catch (e) {
             if (!e || e.name !== 'AbortError') showToast('当前浏览器不支持系统分享，请复制链接');
@@ -428,7 +428,7 @@ function setupItemPageEvents() {
         const url = t.closest('[data-ip-url]');
         if (url) {
             const href = url.dataset.ipUrl;
-            showExternalWarning(href, () => window.open(href, '_blank', 'noopener,noreferrer'));
+            showExternalWarning(href, () => openExternal(href));
             return;
         }
 
