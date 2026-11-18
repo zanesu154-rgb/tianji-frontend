@@ -114,13 +114,18 @@ function renderMessages() {
         listEl.innerHTML = convBlock || '<div class="account-empty">还没有消息～<br>反馈被处理、投稿被审核时会在这里通知你</div>';
         return;
     }
-    const icons = { feedback: '💬', comment: '💬', submission: '📤', admin: '📢', system: '🔔' };
-    // 消息末尾的 #item/<id> 变成「查看」按钮
-    const splitLink = c => {
-        const m = /\n*#item\/([^\s]+)\s*$/.exec(c || '');
-        return m ? [c.slice(0, m.index), m[1]] : [c, ''];
-    };
-    listEl.innerHTML = convBlock + (convBlock ? '<div class="msg-group-title">通知</div>' : '') + messages.map(m => {
+    listEl.innerHTML = convBlock + (convBlock ? '<div class="msg-group-title">通知</div>' : '') + messages.map(noticeCardHtml).join('');
+}
+
+// 消息末尾的 #item/<id> 变成「查看」按钮
+function splitLink(c) {
+    const m = /\n*#item\/([^\s]+)\s*$/.exec(c || '');
+    return m ? [c.slice(0, m.index), m[1]] : [c, ''];
+}
+
+const NOTICE_ICONS = { feedback: '💬', comment: '💬', submission: '📤', admin: '📢', system: '🔔' };
+function noticeCardHtml(m) {
+    const icons = NOTICE_ICONS;
         const [text, itemId] = splitLink(m.content);
         return `
         <div class="msg-card ${m.is_read ? '' : 'unread'}" data-msg-id="${escapeHtml(m.id)}">
@@ -136,7 +141,6 @@ function renderMessages() {
                 <button class="gm-btn danger" data-msg-delete="${escapeHtml(m.id)}">删除</button>
             </div>
         </div>`;
-    }).join('');
 }
 
 async function markMessageRead(id) {
@@ -144,7 +148,7 @@ async function markMessageRead(id) {
     if (!m || m.is_read) return;
     m.is_read = 1;
     setUnread(unreadCount - 1);
-    if (!chatState.open) renderMessages();
+    if (!chatState.open) rerenderMessageList();
     try { await api('PUT', `/messages/${encodeURIComponent(id)}/read`); } catch (e) { }
 }
 
@@ -179,30 +183,46 @@ function closeChatView() {
     document.getElementById('msgToolbar').style.display = isAdmin ? 'none' : '';
 }
 
+// 栈主的消息页：私信对话 + 系统通知（比如「3 人测试通过」）
+let adminConvs = [];
 async function loadAdminInbox() {
     const listEl = document.getElementById('msgList');
     document.getElementById('msgToolbar').style.display = 'none';
     try {
-        const list = await api('GET', '/chats/admin');
-        setUnread(list.reduce((n, c) => n + c.unread, 0));
-        if (!list.length) {
-            listEl.innerHTML = '<div class="account-empty">还没有私信～<br>在 GM 面板的用户列表里点「私信」给用户发消息，对方可以直接回复你</div>';
-            return;
-        }
-        listEl.innerHTML = list.map(c => `
-            <button class="chat-entry${c.unread ? ' unread' : ''}" data-chat-user="${escapeHtml(c.user_id)}">
-                ${c.avatar ? avatarHtml(c.avatar, c.username, 'chat-entry-avatar') : `<span class="chat-entry-avatar">${escapeHtml((c.username || '?').slice(0, 1))}</span>`}
-                <span class="chat-entry-main">
-                    <span class="chat-entry-title">${escapeHtml(c.username)}
-                        ${c.blocked ? '<span class="chat-blocked-tag">已拉黑</span>' : ''}
-                        ${c.unread ? `<span class="chat-unread">${c.unread}</span>` : ''}</span>
-                    <span class="chat-entry-last">${c.last_sender === 'admin' ? '我：' : ''}${escapeHtml(c.last_content)}</span>
-                </span>
-                <span class="msg-time">${formatTime(c.last_at)}</span>
-            </button>`).join('');
+        const [convs, notices] = await Promise.all([api('GET', '/chats/admin'), api('GET', '/messages').catch(() => ({ list: [] }))]);
+        adminConvs = convs;
+        messages = notices.list || [];
+        renderAdminInbox();
     } catch (e) {
         listEl.innerHTML = `<div class="account-empty">${escapeHtml(e.message || '加载失败')}</div>`;
     }
+}
+
+function renderAdminInbox() {
+    const listEl = document.getElementById('msgList');
+    const noticeUnread = messages.filter(m => !m.is_read).length;
+    setUnread(adminConvs.reduce((n, c) => n + c.unread, 0) + noticeUnread);
+    const convHtml = adminConvs.map(c => `
+        <button class="chat-entry${c.unread ? ' unread' : ''}" data-chat-user="${escapeHtml(c.user_id)}">
+            ${c.avatar ? avatarHtml(c.avatar, c.username, 'chat-entry-avatar') : `<span class="chat-entry-avatar">${escapeHtml((c.username || '?').slice(0, 1))}</span>`}
+            <span class="chat-entry-main">
+                <span class="chat-entry-title">${escapeHtml(c.username)}
+                    ${c.blocked ? '<span class="chat-blocked-tag">已拉黑</span>' : ''}
+                    ${c.unread ? `<span class="chat-unread">${c.unread}</span>` : ''}</span>
+                <span class="chat-entry-last">${c.last_sender === 'admin' ? '我：' : ''}${escapeHtml(c.last_content)}</span>
+            </span>
+            <span class="msg-time">${formatTime(c.last_at)}</span>
+        </button>`).join('');
+    if (!adminConvs.length && !messages.length) {
+        listEl.innerHTML = '<div class="account-empty">还没有消息～<br>在 GM 面板的用户列表里点「私信」给用户发消息，对方可以直接回复你</div>';
+        return;
+    }
+    listEl.innerHTML = (convHtml ? `<div class="msg-group-title">私信</div>${convHtml}` : '')
+        + (messages.length ? `<div class="msg-group-title">通知</div>${messages.map(noticeCardHtml).join('')}` : '');
+}
+
+function rerenderMessageList() {
+    if (isAdmin) renderAdminInbox(); else renderMessages();
 }
 
 async function openChat(userId, quote, peerId) {
@@ -456,7 +476,7 @@ function setupMessageEvents() {
                 const m = messages.find(x => x.id === id);
                 if (m && !m.is_read) setUnread(unreadCount - 1);
                 messages = messages.filter(x => x.id !== id);
-                renderMessages();
+                rerenderMessageList();
             } catch (err) { showToast(err.message); }
             return;
         }
@@ -469,7 +489,7 @@ function setupMessageEvents() {
             await api('PUT', '/messages/read-all');
             messages.forEach(m => { m.is_read = 1; });
             setUnread(chatSummary ? chatSummary.unread : 0);
-            renderMessages();
+            rerenderMessageList();
         } catch (err) { showToast(err.message); }
     });
 
@@ -479,7 +499,7 @@ function setupMessageEvents() {
         try {
             await api('DELETE', '/messages/read');
             messages = messages.filter(m => !m.is_read);
-            renderMessages();
+            rerenderMessageList();
         } catch (err) { showToast(err.message); }
     });
 }

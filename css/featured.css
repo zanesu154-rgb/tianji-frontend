@@ -138,3 +138,49 @@
     .doing-chip { margin-left: 0.25rem; padding: 0.1rem 0.45rem; }
     .archive-btn-label { white-space: nowrap; }
 }
+
+/* ==================== 待测试 ==================== */
+.card-test {
+    position: absolute; top: 0.45rem; left: 0.45rem; z-index: 2;
+    width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center;
+    font-size: 0.8rem; background: rgba(255, 255, 255, 0.92); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+.item.card.is-testing .card-cat { left: calc(0.45rem + 28px); }
+.view-list .card-test { width: 20px; height: 20px; font-size: 0.7rem; top: 0.3rem; left: 0.3rem; }
+.sort-chip-count { font-size: 0.72rem; opacity: 0.75; margin-left: 0.1rem; }
+.sort-chip-count:empty { display: none; }
+
+.ip-tag.testing { background: #fef3c7; color: #92400e; }
+[data-theme="dark"] .ip-tag.testing { background: #3d3214; color: #fcd34d; }
+.ip-testing {
+    margin: 1rem 0 0.4rem; padding: 0.9rem 1.1rem; border-radius: 14px;
+    background: #fffbeb; border: 1px solid #fcd34d; color: #78350f;
+}
+[data-theme="dark"] .ip-testing { background: #2b2312; border-color: #6b5417; color: #fde68a; }
+.ip-testing-head { font-size: 0.98rem; }
+.ip-testing p { margin: 0.35rem 0 0; font-size: 0.86rem; line-height: 1.6; opacity: 0.9; }
+.ip-testing-summary { display: flex; flex-wrap: wrap; gap: 0.3rem 0.5rem; align-items: center; margin-top: 0.55rem; font-size: 0.84rem; }
+.ip-testing-summary:empty { display: none; }
+.ip-testing-summary .sep { opacity: 0.5; }
+.ip-testing-summary .mine { flex-basis: 100%; font-size: 0.78rem; opacity: 0.8; }
+.ip-testing-actions { margin-top: 0.75rem; }
+.ip-testing-actions .btn { padding: 0.55rem 1.2rem; }
+
+.cm-tag.test-ok { background: #dcfce7; color: #166534; }
+.cm-tag.test-missing, .cm-tag.test-wrong { background: #fef3c7; color: #92400e; }
+[data-theme="dark"] .cm-tag.test-ok { background: #14301f; color: #86efac; }
+[data-theme="dark"] .cm-tag.test-missing, [data-theme="dark"] .cm-tag.test-wrong { background: #3d3214; color: #fcd34d; }
+
+.test-modal { max-width: 460px; }
+.test-modal-hint { margin: -0.2rem 0 0.8rem; color: var(--text-sub); font-size: 0.88rem; }
+.test-options { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.9rem; }
+.test-option {
+    display: flex; gap: 0.7rem; align-items: center; padding: 0.7rem 0.85rem; border-radius: 12px; cursor: pointer;
+    border: 1.5px solid var(--border); background: var(--bg-card); transition: border-color 0.15s, background 0.15s;
+}
+.test-option input { accent-color: var(--accent); width: 17px; height: 17px; flex-shrink: 0; margin: 0; }
+.test-option span { display: flex; flex-direction: column; gap: 0.1rem; }
+.test-option b { font-size: 0.9rem; color: var(--text-main); font-weight: 600; }
+.test-option small { font-size: 0.76rem; color: var(--text-light); }
+.test-option:has(input:checked) { border-color: var(--accent); background: var(--accent-light); }
+.test-modal-note { font-size: 0.76rem; color: var(--text-light); margin: -0.3rem 0 0.8rem; }

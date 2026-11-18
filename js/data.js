@@ -68,7 +68,8 @@ function mapItemRow(r) {
         ratingAvg: Number(r.rating_avg) || 0,
         ratingCount: Number(r.rating_count) || 0,
         wantCount: Number(r.want_count) || 0,
-        featured: Number(r.featured) || 0,              // 栈主推荐（>0 为加入推荐的时间）            // 汉化请求「想要」人数（仅管理员接口返回）
+        featured: Number(r.featured) || 0,
+        testing: Number(r.testing) === 1,                // 待测试（已上架，但还在测试中）              // 栈主推荐（>0 为加入推荐的时间）            // 汉化请求「想要」人数（仅管理员接口返回）
         clicks: r.clicks || null,          // 仅管理员接口返回
         expanded: false
     };

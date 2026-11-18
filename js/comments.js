@@ -140,7 +140,8 @@ function cmFloorHtml(c, replies) {
     const toggle = others ? `<button class="cm-thread-toggle" data-cm-thread="${escapeHtml(c.id)}">${threadOpen ? '收起讨论' : `展开 ${others} 条讨论`}</button>` : '';
     return `<div class="cm-floor${c.is_feedback ? ' feedback' : ''}${resolved ? ' resolved' : ''}" data-cm-id="${escapeHtml(c.id)}">
         <div class="cm-head">${cmAvatar(c)}${cmName(c)}
-            ${c.is_feedback ? (resolved ? '<span class="cm-tag done">✓ 已处理</span>' : '<span class="cm-tag fb">反馈</span>') : ''}
+            ${c.report ? `<span class="cm-tag test-${c.report}">${TEST_REPORT_LABELS[c.report] || ''}</span>` : ''}
+            ${c.is_feedback ? (resolved ? '<span class="cm-tag done">✓ 已处理</span>' : (c.report ? '' : '<span class="cm-tag fb">反馈</span>')) : ''}
             <span class="cm-time" title="${escapeHtml(new Date(c.created_at * 1000).toLocaleString())}">${formatTime(c.created_at)}</span></div>
         <div class="cm-content">${cmText(c.content)}</div>
         ${cmActionsHtml(c, true)}

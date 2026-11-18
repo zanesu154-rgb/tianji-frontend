@@ -34,7 +34,10 @@ function render() {
     const allDone = items.filter(i => i.status === STATUS.DONE);
 
     const filteredPending = filterItems(sortedPending);             // 待汉化：只搜索
-    const filteredDone = sortDoneItems(filterDoneItems(allDone));   // 已汉化：搜索 + 分类 + 排序
+    // 已汉化：搜索 + 分类 + 排序；「🧪 测试」标签只看待测试的
+    const filteredDone = sortDoneItems(filterDoneItems(currentSort === 'testing' ? allDone.filter(i => i.testing) : allDone));
+    const testingTotal = allDone.filter(i => i.testing).length;
+    document.getElementById('testingCount').textContent = testingTotal || '';
 
     document.getElementById('pendingCount').textContent = allPending.length;
     document.getElementById('doneCount').textContent = allDone.length;
@@ -115,7 +118,8 @@ function renderList(containerId, list, isDoneSection) {
     container.classList.toggle('view-list', view === 'list');
 
     if (!list.length) {
-        let msg = searchQuery ? '没有匹配的搜索结果' : (isDoneSection ? '暂无已汉化项目' : '还没有项目');
+        let msg = searchQuery ? '没有匹配的搜索结果'
+            : (isDoneSection ? (currentSort === 'testing' ? '现在没有待测试的汉化' : '暂无已汉化项目') : '还没有项目');
         container.innerHTML = `<div class="empty-msg">${msg}</div>`;
         return;
     }
@@ -157,10 +161,11 @@ function renderList(containerId, list, isDoneSection) {
                     ${item.expanded ? 'data-loaded="1" style="max-height:none"' : ''}>${item.expanded ? buildDetailsHtml(item) : ''}</div>` : '';
 
         html += `
-            <div class="item card${isDone ? '' : ' pending'}" data-id="${id}">
+            <div class="item card${isDone ? '' : ' pending'}${isDoneSection && item.testing ? ' is-testing' : ''}" data-id="${id}">
                 <div class="card-cover cat-${cat}${cover ? '' : ' no-img'}">
                     ${cover ? `<img src="${escapeHtml(cover)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('no-img'); this.remove()">` : ''}
                     <span class="card-cover-ph" aria-hidden="true">${CATEGORY_EMOJI[cat] || '🧩'}</span>
+                    ${isDoneSection && item.testing ? '<span class="card-test" title="待测试：汉化还在测试中">🧪</span>' : ''}
                     ${isDoneSection ? `<span class="card-cat">${CATEGORY_LABELS[cat] || '附加包'}</span>` : ''}
                     ${isDoneSection && item.mcVersion ? `<span class="card-ver" title="适用版本 ${escapeHtml(item.mcVersion)}">${escapeHtml(item.mcVersion)}</span>` : ''}
                 </div>
