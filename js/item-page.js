@@ -130,6 +130,7 @@ function buildItemPageHtml(item) {
         <article class="ip-card">
             ${gallery}
             <div class="ip-tags">
+                ${isDone && item.testing ? '<span class="ip-tag testing">🧪 待测试</span>' : ''}
                 <span class="ip-tag">${CATEGORY_EMOJI[cat] || ''} ${CATEGORY_LABELS[cat] || '附加包'}</span>
                 ${versionChip(item.mcVersion, 'mc', '适用版本')}
                 ${!isDone ? `<span class="ip-tag muted">${STATUS_LABELS[item.status] || ''}</span>` : ''}
@@ -145,6 +146,16 @@ function buildItemPageHtml(item) {
             </div>
 
             ${item.translationVersion ? `<div class="ip-ver-row">${versionChip(item.translationVersion, 'trans', '汉化版本')}</div>` : ''}
+
+            ${isDone && item.testing ? `<div class="ip-testing" id="ipTesting">
+                <div class="ip-testing-head">🧪 <b>这个汉化还在测试中</b></div>
+                <p>可能有没汉化或翻译不准的地方。玩过之后欢迎告诉栈主，3 人测试通过后就会转为正式版。</p>
+                <div class="ip-testing-summary" id="ipTestSummary"></div>
+                <div class="ip-testing-actions">
+                    ${isAdmin ? '<button class="btn btn-primary" data-ip-promote>✅ 测试通过，转为已汉化</button>'
+                        : '<button class="btn btn-primary" data-ip-test>📝 提交测试反馈</button>'}
+                </div>
+            </div>` : ''}
 
             <section class="ip-section">
                 <h2>简介</h2>
@@ -203,6 +214,7 @@ async function renderItemPage(id) {
     itemPageImageIdx = 0;
     root.innerHTML = buildItemPageHtml(item);
     if (document.getElementById('ipComments')) loadComments(item.id);
+    if (document.getElementById('ipTesting')) loadTestSummary(item.id);
 }
 
 // 直接打开分享链接时列表可能还没加载，用单独请求到的条目兜底，保证页面上的按钮立即可用
@@ -428,6 +440,8 @@ function setupItemPageEvents() {
         if (t.closest('[data-ip-share]')) { shareItem(item); return; }
         if (t.closest('[data-ip-feedback]')) { focusCommentBox(true); return; }
         if (t.closest('[data-ip-edit]')) { openEditModal(item.id); return; }
+        if (t.closest('[data-ip-test]')) { openTestReport(item.id); return; }
+        if (t.closest('[data-ip-promote]')) { promoteTesting(item); return; }
     });
 
     // 大图查看

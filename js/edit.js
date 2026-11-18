@@ -22,7 +22,8 @@ function openEditModal(id) {
     document.getElementById('editDetailDesc').value = item.detailDesc || '';
     document.getElementById('editFeatured').checked = !!item.featured;
     document.getElementById('editCategory').value = item.category || 'addon';
-    document.getElementById('editStatus').value = item.status || STATUS.TODO;
+    // 「待测试」= 已汉化 + 测试标记
+    document.getElementById('editStatus').value = item.status === STATUS.DONE && item.testing ? 'testing' : (item.status || STATUS.TODO);
     document.getElementById('editImages').value = item.images || '';
     EDIT_VERSION_FIELDS.forEach(([elId, key]) => {
         document.getElementById(elId).value = item[key] || '';
@@ -35,7 +36,8 @@ function openEditModal(id) {
 
 // 只有「已汉化」状态才需要填写中文译名
 function syncEditTranslatedField() {
-    const isDone = document.getElementById('editStatus').value === STATUS.DONE;
+    const v = document.getElementById('editStatus').value;
+    const isDone = v === STATUS.DONE || v === 'testing';
     document.getElementById('editTranslatedField').style.display = isDone ? 'block' : 'none';
 }
 
@@ -55,12 +57,14 @@ async function saveEditModal() {
         description: document.getElementById('editDescription').value.trim(),
         detailDesc: document.getElementById('editDetailDesc').value.trim(),
         category: document.getElementById('editCategory').value,
-        status: document.getElementById('editStatus').value,
+        status: document.getElementById('editStatus').value === 'testing' ? STATUS.DONE : document.getElementById('editStatus').value,
         translated: document.getElementById('editTranslated').value.trim(),
         images: document.getElementById('editImages').value.trim(),
         ...Object.fromEntries(EDIT_VERSION_FIELDS.map(([elId, key]) => [key, document.getElementById(elId).value.trim()]))
     };
     // 推荐只在勾选状态变化时提交（保留原来的加入时间，轮播顺序不变）
+    const wantTesting = document.getElementById('editStatus').value === 'testing';
+    if (wantTesting !== !!item.testing) fields.testing = wantTesting ? 1 : 0;
     const wantFeatured = document.getElementById('editFeatured').checked;
     if (wantFeatured !== !!item.featured) fields.featured = wantFeatured ? true : 0;
 

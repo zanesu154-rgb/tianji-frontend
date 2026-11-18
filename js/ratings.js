@@ -2,11 +2,12 @@
 
 const SORT_KEY = 'tianji_sort';
 const VOTER_KEY = 'tianji_voter_id';
-const SORT_MODES = ['new', 'hot', 'rating'];   // 默认按最新
+const SORT_MODES = ['new', 'hot', 'rating', 'testing'];   // 默认按最新；testing = 只看待测试的
 const SORT_HINTS = {
     hot: '按近 30 天点击量',
     new: '按最近更新（本站更新汉化或原作者更新，取较新的）',
-    rating: '按评分（评分人数少时向全站平均靠拢）'
+    rating: '按评分（评分人数少时向全站平均靠拢）',
+    testing: '正在测试中的汉化，玩过后欢迎反馈哪里没汉化或翻译不准'
 };
 // 评分排序的先验权重：相当于每个资源先有 5 个「全站平均分」的虚拟评分，
 // 评分人数少时分数向全站平均靠拢，1 个人打 5 星不会排在多人一致好评的资源前面
@@ -59,7 +60,7 @@ function sortDoneItems(list) {
     const arr = list.slice();
     if (currentSort === 'hot') {
         arr.sort((a, b) => (b.hot || 0) - (a.hot || 0) || tie(a, b));
-    } else if (currentSort === 'new') {
+    } else if (currentSort === 'new' || currentSort === 'testing') {
         arr.sort((a, b) => lastUpdatedSec(b) - lastUpdatedSec(a) || tie(a, b));
     } else if (currentSort === 'rating') {
         const rated = items.filter(i => i.status === STATUS.DONE && i.ratingCount);
@@ -101,7 +102,7 @@ function itemStatBadges(item) {
     if (currentSort === 'hot' && item.hot) {
         html += `<span class="item-stat hot" title="近 30 天点击 ${item.hot} 次">🔥 ${item.hot}</span>`;
     }
-    if (currentSort === 'new') {
+    if (currentSort === 'new' || currentSort === 'testing') {
         const t = lastUpdatedSec(item);
         if (t) html += `<span class="item-stat" title="最近更新 ${fmtDate(t)}">${fmtShortDate(t)}</span>`;
     }

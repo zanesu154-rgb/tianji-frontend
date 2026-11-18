@@ -60,22 +60,22 @@
             timers.push(setTimeout(window.tianjiSplashDone, 12000));   // 兜底：最多 12 秒
         })();
     </script>
-    <link rel="stylesheet" href="css/base.css?v=20261118b">
-    <link rel="stylesheet" href="css/splash.css?v=20261118b">
-    <link rel="stylesheet" href="css/home.css?v=20261118b">
-    <link rel="stylesheet" href="css/nav.css?v=20261118b">
-    <link rel="stylesheet" href="css/account.css?v=20261118b">
-    <link rel="stylesheet" href="css/item-page.css?v=20261118b">
-    <link rel="stylesheet" href="css/layout.css?v=20261118b">
-    <link rel="stylesheet" href="css/gm.css?v=20261118b">
-    <link rel="stylesheet" href="css/features.css?v=20261118b">
-    <link rel="stylesheet" href="css/cards.css?v=20261118b">
-    <link rel="stylesheet" href="css/comments.css?v=20261118b">
-    <link rel="stylesheet" href="css/my-addons.css?v=20261118b">
-    <link rel="stylesheet" href="css/chat.css?v=20261118b">
-    <link rel="stylesheet" href="css/avatar.css?v=20261118b">
-    <link rel="stylesheet" href="css/user-space.css?v=20261118b">
-    <link rel="stylesheet" href="css/featured.css?v=20261118b">
+    <link rel="stylesheet" href="css/base.css?v=20261118c">
+    <link rel="stylesheet" href="css/splash.css?v=20261118c">
+    <link rel="stylesheet" href="css/home.css?v=20261118c">
+    <link rel="stylesheet" href="css/nav.css?v=20261118c">
+    <link rel="stylesheet" href="css/account.css?v=20261118c">
+    <link rel="stylesheet" href="css/item-page.css?v=20261118c">
+    <link rel="stylesheet" href="css/layout.css?v=20261118c">
+    <link rel="stylesheet" href="css/gm.css?v=20261118c">
+    <link rel="stylesheet" href="css/features.css?v=20261118c">
+    <link rel="stylesheet" href="css/cards.css?v=20261118c">
+    <link rel="stylesheet" href="css/comments.css?v=20261118c">
+    <link rel="stylesheet" href="css/my-addons.css?v=20261118c">
+    <link rel="stylesheet" href="css/chat.css?v=20261118c">
+    <link rel="stylesheet" href="css/avatar.css?v=20261118c">
+    <link rel="stylesheet" href="css/user-space.css?v=20261118c">
+    <link rel="stylesheet" href="css/featured.css?v=20261118c">
 </head>
 
 
@@ -229,7 +229,7 @@
                 <div class="module" id="doneModule">
                     <div class="module-header">
                         <div class="module-title">
-                            <span class="emoji">✅</span> 展示区 <span class="badge" id="doneCount">0</span>
+                            <span class="emoji">📚</span> 资源区 <span class="badge" id="doneCount">0</span>
                             <span class="doing-chip" id="doingChip" style="display:none;" title="正在汉化中的资源"></span>
                         </div>
                         <div class="module-header-right">
@@ -253,6 +253,7 @@
                         <button class="sort-chip active" data-sort="new" role="tab">🕒 最新</button>
                         <button class="sort-chip" data-sort="hot" role="tab">🔥 热门</button>
                         <button class="sort-chip" data-sort="rating" role="tab">⭐ 评分</button>
+                        <button class="sort-chip sort-chip-test" data-sort="testing" role="tab">🧪 测试 <span class="sort-chip-count" id="testingCount"></span></button>
                         <span class="sort-hint" id="sortHint"></span>
                     </div>
                     <div class="module-body view-grid" id="doneList">
@@ -738,6 +739,7 @@
                         <option value="todo">待汉化</option>
                         <option value="doing">汉化中</option>
                         <option value="done">已汉化（展示）</option>
+                        <option value="testing">🧪 待测试（展示，带测试标记）</option>
                     </select>
                 </div>
             </div>
@@ -989,27 +991,28 @@
         </div>
     </div>
 
-    <script src="js/config.js?v=20261118b" defer></script>
-    <script src="js/utils.js?v=20261118b" defer></script>
-    <script src="js/data.js?v=20261118b" defer></script>
-    <script src="js/announcement.js?v=20261118b" defer></script>
-    <script src="js/list.js?v=20261118b" defer></script>
-    <script src="js/edit.js?v=20261118b" defer></script>
-    <script src="js/auth.js?v=20261118b" defer></script>
-    <script src="js/messages.js?v=20261118b" defer></script>
-    <script src="js/submissions.js?v=20261118b" defer></script>
-    <script src="js/gm.js?v=20261118b" defer></script>
-    <script src="js/account.js?v=20261118b" defer></script>
-    <script src="js/item-page.js?v=20261118b" defer></script>
-    <script src="js/ratings.js?v=20261118b" defer></script>
-    <script src="js/comments.js?v=20261118b" defer></script>
-    <script src="js/my-addons.js?v=20261118b" defer></script>
-    <script src="js/user-space.js?v=20261118b" defer></script>
-    <script src="js/featured.js?v=20261118b" defer></script>
-    <script src="js/router.js?v=20261118b" defer></script>
-    <script src="js/sort.js?v=20261118b" defer></script>
-    <script src="js/ui.js?v=20261118b" defer></script>
-    <script src="js/main.js?v=20261118b" defer></script>
+    <script src="js/config.js?v=20261118c" defer></script>
+    <script src="js/utils.js?v=20261118c" defer></script>
+    <script src="js/data.js?v=20261118c" defer></script>
+    <script src="js/announcement.js?v=20261118c" defer></script>
+    <script src="js/list.js?v=20261118c" defer></script>
+    <script src="js/edit.js?v=20261118c" defer></script>
+    <script src="js/auth.js?v=20261118c" defer></script>
+    <script src="js/messages.js?v=20261118c" defer></script>
+    <script src="js/submissions.js?v=20261118c" defer></script>
+    <script src="js/gm.js?v=20261118c" defer></script>
+    <script src="js/account.js?v=20261118c" defer></script>
+    <script src="js/item-page.js?v=20261118c" defer></script>
+    <script src="js/ratings.js?v=20261118c" defer></script>
+    <script src="js/comments.js?v=20261118c" defer></script>
+    <script src="js/my-addons.js?v=20261118c" defer></script>
+    <script src="js/user-space.js?v=20261118c" defer></script>
+    <script src="js/featured.js?v=20261118c" defer></script>
+    <script src="js/testing.js?v=20261118c" defer></script>
+    <script src="js/router.js?v=20261118c" defer></script>
+    <script src="js/sort.js?v=20261118c" defer></script>
+    <script src="js/ui.js?v=20261118c" defer></script>
+    <script src="js/main.js?v=20261118c" defer></script>
 </body>
 
 </html>

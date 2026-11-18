@@ -16,7 +16,8 @@ function featuredSlideHtml(item, i) {
     const meta = [
         `<span>${CATEGORY_EMOJI[item.category] || '🧩'} ${CATEGORY_LABELS[item.category] || '附加包'}</span>`,
         item.mcVersion ? `<span>适用 ${escapeHtml(item.mcVersion)}</span>` : '',
-        item.ratingCount ? `<span>★ ${item.ratingAvg.toFixed(1)}</span>` : ''
+        item.ratingCount ? `<span>★ ${item.ratingAvg.toFixed(1)}</span>` : '',
+        item.testing ? '<span>🧪 测试中</span>' : ''
     ].join('');
     return `<a class="ft-slide${cover ? '' : ' no-cover'} cat-${escapeHtml(item.category || 'addon')}" href="#item/${encodeURIComponent(item.id)}"
             role="group" aria-roledescription="slide" aria-label="${i + 1} / ${ft.list.length}：${escapeHtml(name)}" data-ft-index="${i}" draggable="false">
