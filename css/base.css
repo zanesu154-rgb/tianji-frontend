@@ -83,6 +83,19 @@
     padding: 0;
 }
 
+/* 去掉手机上点按钮时浏览器默认的蓝色 / 灰色方框，改用按下时的轻微缩放反馈 */
+* { -webkit-tap-highlight-color: transparent; }
+button, a, [role="button"], .item.card, label { -webkit-touch-callout: none; }
+@media (hover: none) {
+    button:active:not([disabled]), a.btn:active, .sponsor-btn:active, .myaddons-btn:active,
+    .sort-chip:active, .pager-btn:active:not([disabled]), .gm-btn:active, .menu-item:active {
+        transform: scale(0.96);
+        transition: transform 0.08s ease;
+    }
+}
+/* 鼠标点击不出现焦点框，键盘 Tab 时保留（无障碍） */
+:focus:not(:focus-visible) { outline: none; }
+
 body {
     background: var(--bg-page);
     color: var(--text-main);
