@@ -127,25 +127,51 @@ function setupFeaturedEvents() {
     box.addEventListener('focusin', () => { ft.paused = true; });
     box.addEventListener('focusout', () => { ft.paused = false; });
 
-    // 手机左右滑动；滑动时不触发点击
-    let start = null;
+    // 手机左右滑动：轮播跟着手指走，松手后超过 1/5 宽度（或快速一划）就翻页，否则弹回。
+    // 用 touch 事件 + 横向时 preventDefault：pointer 事件在手机上一横滑就会被浏览器的页面滚动接管（pointercancel）
+    let touch = null;
     let swiped = false;
-    box.addEventListener('pointerdown', (e) => {
-        if (e.pointerType === 'mouse' || ft.list.length < 2) return;
-        start = { x: e.clientX, y: e.clientY };
+    const track = () => document.getElementById('ftTrack');
+    box.addEventListener('touchstart', (e) => {
+        if (ft.list.length < 2 || e.touches.length !== 1) return;
+        const t = e.touches[0];
+        touch = { x: t.clientX, y: t.clientY, t: Date.now(), dir: null, dx: 0, w: box.clientWidth };
         swiped = false;
-    });
-    box.addEventListener('pointerup', (e) => {
-        if (!start) return;
-        const dx = e.clientX - start.x, dy = e.clientY - start.y;
-        start = null;
-        if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) {
-            swiped = true;
-            showFeatured(ft.index + (dx < 0 ? 1 : -1));
-            startFeatured();
+        ft.paused = true;
+    }, { passive: true });
+    box.addEventListener('touchmove', (e) => {
+        if (!touch) return;
+        const t = e.touches[0];
+        const dx = t.clientX - touch.x, dy = t.clientY - touch.y;
+        if (!touch.dir) {
+            if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+            touch.dir = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
         }
-    });
-    box.addEventListener('pointercancel', () => { start = null; });
+        if (touch.dir !== 'x') return;   // 竖向：交给页面滚动
+        e.preventDefault();
+        const last = ft.list.length - 1;
+        // 第一张往右 / 最后一张往左时加阻力
+        const edge = (ft.index === 0 && dx > 0) || (ft.index === last && dx < 0);
+        touch.dx = edge ? dx * 0.35 : dx;
+        const tr = track();
+        tr.style.transition = 'none';
+        tr.style.transform = `translateX(calc(${-ft.index * 100}% + ${touch.dx}px))`;
+    }, { passive: false });
+    const endTouch = () => {
+        if (!touch) return;
+        const { dir, dx, w, t } = touch;
+        touch = null;
+        ft.paused = false;
+        track().style.transition = '';
+        if (dir !== 'x') { return; }
+        swiped = true;
+        const fast = Math.abs(dx) > 30 && Date.now() - t < 250;
+        if (Math.abs(dx) > w / 5 || fast) showFeatured(ft.index + (dx < 0 ? 1 : -1));
+        else showFeatured(ft.index);
+        startFeatured();
+    };
+    box.addEventListener('touchend', endTouch);
+    box.addEventListener('touchcancel', endTouch);
 
     box.addEventListener('click', async (e) => {
         if (swiped) { e.preventDefault(); swiped = false; return; }
