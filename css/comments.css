@@ -144,3 +144,9 @@
 .gm-recent-comments .gm-feedback-list { margin-top: 0.5rem; }
 a.gm-feedback-item-name { color: inherit; text-decoration: underline; }
 a.gm-btn { text-decoration: none; display: inline-block; }
+
+/* 置顶评论 */
+.cm-tag.pin { background: #dbeafe; color: #1e40af; margin-right: 0.1rem; }
+[data-theme="dark"] .cm-tag.pin { background: #1e3a5f; color: #93c5fd; }
+.cm-floor.pinned { background: var(--accent-light); border-radius: 12px; padding: 0.8rem 0.8rem; margin: 0.3rem 0; border-top-color: transparent; }
+.cm-floor.pinned + .cm-floor { border-top-color: transparent; }

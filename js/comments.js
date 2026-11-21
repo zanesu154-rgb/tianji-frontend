@@ -105,6 +105,7 @@ function cmActionsHtml(c, floor) {
             ? `<button class="cm-act" data-cm-reopen="${escapeHtml(c.id)}">重新打开</button>`
             : `<button class="cm-act strong" data-cm-resolve="${escapeHtml(c.id)}">✓ 标记已处理</button>`);
     }
+    if (isAdmin && floor) btns.push(`<button class="cm-act" data-cm-pin="${escapeHtml(c.id)}" data-pin="${c.pinned ? 0 : 1}">${c.pinned ? '取消置顶' : '📌 置顶'}</button>`);
     if (cmCanDelete(c)) btns.push(`<button class="cm-act danger" data-cm-delete="${escapeHtml(c.id)}">删除</button>`);
     if (floor && c.is_feedback && c.status === 'resolved') btns.push(`<button class="cm-act" data-cm-fold="${escapeHtml(c.id)}">收起</button>`);
     return btns.length ? `<div class="cm-actions">${btns.join('')}</div>` : '';
@@ -122,7 +123,7 @@ function cmReplyHtml(r) {
 
 function cmFloorHtml(c, replies) {
     const resolved = c.is_feedback && c.status === 'resolved';
-    if (resolved && !cmState.openFloors.has(c.id)) {
+    if (resolved && !c.pinned && !cmState.openFloors.has(c.id)) {
         const snippet = c.content.length > 40 ? c.content.slice(0, 40) + '…' : c.content;
         return `<div class="cm-floor folded" data-cm-id="${escapeHtml(c.id)}">
             <button class="cm-folded-bar" data-cm-unfold="${escapeHtml(c.id)}">
@@ -138,8 +139,8 @@ function cmFloorHtml(c, replies) {
     const threadOpen = cmState.openThreads.has(c.id) || replies.some(r => !r.is_admin && r.id === cmState.replyTo);
     const shown = threadOpen ? replies : adminReplies;
     const toggle = others ? `<button class="cm-thread-toggle" data-cm-thread="${escapeHtml(c.id)}">${threadOpen ? '收起讨论' : `展开 ${others} 条讨论`}</button>` : '';
-    return `<div class="cm-floor${c.is_feedback ? ' feedback' : ''}${resolved ? ' resolved' : ''}" data-cm-id="${escapeHtml(c.id)}">
-        <div class="cm-head">${cmAvatar(c)}${cmName(c)}
+    return `<div class="cm-floor${c.is_feedback ? ' feedback' : ''}${resolved ? ' resolved' : ''}${c.pinned ? ' pinned' : ''}" data-cm-id="${escapeHtml(c.id)}">
+        <div class="cm-head">${c.pinned ? '<span class="cm-tag pin">📌 置顶</span>' : ''}${cmAvatar(c)}${cmName(c)}
             ${c.report ? `<span class="cm-tag test-${c.report}">${TEST_REPORT_LABELS[c.report] || ''}</span>` : ''}
             ${c.is_feedback ? (resolved ? '<span class="cm-tag done">✓ 已处理</span>' : (c.report ? '' : '<span class="cm-tag fb">反馈</span>')) : ''}
             <span class="cm-time" title="${escapeHtml(new Date(c.created_at * 1000).toLocaleString())}">${formatTime(c.created_at)}</span></div>
@@ -161,7 +162,9 @@ function renderComments() {
     const fb = document.getElementById('cmIsFeedback');
     if (fb) cmState.isFeedback = fb.checked;
 
-    const floors = cmState.list.filter(c => !c.parent_id).sort((a, b) => b.created_at - a.created_at);
+    // 置顶的楼层在最前（后置顶的更靠前），其余按时间倒序
+    const floors = cmState.list.filter(c => !c.parent_id)
+        .sort((a, b) => ((b.pinned || 0) - (a.pinned || 0)) || (b.created_at - a.created_at));
     const byParent = {};
     cmState.list.filter(c => c.parent_id).forEach(r => (byParent[r.parent_id] = byParent[r.parent_id] || []).push(r));
     Object.values(byParent).forEach(arr => arr.sort((a, b) => a.created_at - b.created_at));
@@ -291,6 +294,15 @@ function setupCommentEvents() {
                 await api('PUT', `/comments/${encodeURIComponent(el.dataset.cmResolve)}/resolve`, { reply: reply.trim() });
                 cmState.openFloors.delete(el.dataset.cmResolve);
                 showToast('已标记为已处理');
+                loadComments(cmState.itemId);
+            } catch (err) { showToast(err.message); }
+            return;
+        }
+        if ((el = get('[data-cm-pin]'))) {
+            const on = el.dataset.pin === '1';
+            try {
+                await api('PUT', `/comments/${encodeURIComponent(el.dataset.cmPin)}/pin`, { pinned: on });
+                showToast(on ? '已置顶' : '已取消置顶');
                 loadComments(cmState.itemId);
             } catch (err) { showToast(err.message); }
             return;

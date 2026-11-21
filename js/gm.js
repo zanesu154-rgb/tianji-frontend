@@ -313,7 +313,7 @@ function gmCommentCardHtml(c, isFeedback) {
                 <span>👤 ${escapeHtml(c.username)}</span>
                 <span>📦 <a class="gm-feedback-item-name" href="#item/${encodeURIComponent(c.item_id)}">${escapeHtml(c.item_name || '已删除的资源')}</a></span>
                 <span>🕐 ${escapeHtml(new Date(c.created_at * 1000).toLocaleString())}</span>
-                ${!isFeedback && Number(c.is_feedback) === 1 ? '<span class="cm-tag fb">反馈</span>' : ''}
+                ${!isFeedback && Number(c.pinned) ? '<span class="cm-tag pin">📌 置顶</span>' : ''}
                 ${!isFeedback && c.parent_id ? '<span class="cm-tag">回复</span>' : ''}
                 ${c.report ? `<span class="cm-tag test-${escapeHtml(c.report)}">${escapeHtml(TEST_REPORT_LABELS[c.report] || '测试反馈')}</span>` : ''}
                 ${String(c.user_id || '').startsWith('guest:') ? '<span class="cm-tag">未登录</span>' : ''}
@@ -324,6 +324,7 @@ function gmCommentCardHtml(c, isFeedback) {
             <div class="gm-feedback-actions">
                 <a class="gm-btn" href="#item/${encodeURIComponent(c.item_id)}">查看</a>
                 ${isFeedback && !resolved ? `<button class="gm-btn" data-cm-gm-resolve="${escapeHtml(c.id)}">回复并处理</button>` : ''}
+                ${!isFeedback && !c.parent_id ? `<button class="gm-btn" data-cm-gm-pin="${escapeHtml(c.id)}" data-pin="${Number(c.pinned) ? 0 : 1}">${Number(c.pinned) ? '取消置顶' : '📌 置顶'}</button>` : ''}
                 <button class="gm-btn danger" data-cm-gm-delete="${escapeHtml(c.id)}">删除</button>
             </div>
         </div>`;
@@ -411,9 +412,11 @@ function renderGmFeedbackPage() {
 
 // ---------- 评论管理页：全部 / 反馈楼层 / 测试报告 ----------
 let gmCmBoard = 'all';
+// 评论里不含反馈（反馈在反馈管理页）
 const GM_CM_FILTERS = {
     all: () => true,
-    feedback: c => Number(c.is_feedback) === 1 && !c.parent_id,
+    pinned: c => Number(c.pinned) > 0,
+    reply: c => !!c.parent_id,
     test: c => !!c.report
 };
 async function loadGmCommentsPage() {
@@ -673,6 +676,16 @@ function setupGmEvents() {
             try {
                 await api('PUT', `/comments/${encodeURIComponent(r.dataset.cmGmResolve)}/resolve`, { reply: reply.trim() });
                 showToast('已处理');
+                refreshGmComments();
+            } catch (err) { showToast(err.message); }
+            return;
+        }
+        const pin = e.target.closest('[data-cm-gm-pin]');
+        if (pin) {
+            const on = pin.dataset.pin === '1';
+            try {
+                await api('PUT', `/comments/${encodeURIComponent(pin.dataset.cmGmPin)}/pin`, { pinned: on });
+                showToast(on ? '已置顶' : '已取消置顶');
                 refreshGmComments();
             } catch (err) { showToast(err.message); }
             return;
