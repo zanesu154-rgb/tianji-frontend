@@ -78,14 +78,22 @@ async function loadMessages() {
 let peerConversations = [];
 let pendingPeer = null;
 
+// 对话列表里「最后一条」的预览
+function lastPreview(content, recalled, mine, otherName = '对方') {
+    if (recalled) return mine ? '你撤回了一条消息' : `${otherName}撤回了一条消息`;
+    return (mine ? '我：' : '') + escapeHtml(content);
+}
+const shortName = n => [...String(n)].length > 8 ? [...String(n)].slice(0, 8).join('') + '…' : n;
+const chatNameHtml = name => `<span class="chat-name">${escapeHtml(name)}</span>`;
+
 // 用户之间的对话入口
 function peerCardsHtml() {
     return peerConversations.map(c => `
         <button class="chat-entry${c.unread ? ' unread' : ''}" data-peer-open="${escapeHtml(c.user_id)}">
             ${avatarHtml(c.avatar, c.username, 'chat-entry-avatar')}
             <span class="chat-entry-main">
-                <span class="chat-entry-title">${escapeHtml(c.username)}${c.unread ? `<span class="chat-unread">${c.unread}</span>` : ''}</span>
-                <span class="chat-entry-last">${c.last_mine ? '我：' : ''}${escapeHtml(c.last_content)}</span>
+                <span class="chat-entry-title">${chatNameHtml(c.username)}${c.unread ? `<span class="chat-unread">${c.unread}</span>` : ''}</span>
+                <span class="chat-entry-last">${lastPreview(c.last_content, c.last_recalled, c.last_mine)}</span>
             </span>
             <span class="msg-time">${formatTime(c.last_at)}</span>
         </button>`).join('');
@@ -104,7 +112,7 @@ function renderMessages() {
             <span class="chat-entry-avatar">栈</span>
             <span class="chat-entry-main">
                 <span class="chat-entry-title">与栈主的对话${c.unread ? `<span class="chat-unread">${c.unread}</span>` : ''}</span>
-                <span class="chat-entry-last">${c.last.sender === 'user' ? '我：' : ''}${escapeHtml(c.last.content)}</span>
+                <span class="chat-entry-last">${lastPreview(c.last.content, c.last.recalled, c.last.sender === 'user', '栈主')}</span>
             </span>
             <span class="msg-time">${formatTime(c.last.created_at)}</span>
         </button>` : '';
@@ -206,10 +214,10 @@ function renderAdminInbox() {
         <button class="chat-entry${c.unread ? ' unread' : ''}" data-chat-user="${escapeHtml(c.user_id)}">
             ${c.avatar ? avatarHtml(c.avatar, c.username, 'chat-entry-avatar') : `<span class="chat-entry-avatar">${escapeHtml((c.username || '?').slice(0, 1))}</span>`}
             <span class="chat-entry-main">
-                <span class="chat-entry-title">${escapeHtml(c.username)}
+                <span class="chat-entry-title">${chatNameHtml(c.username)}
                     ${c.blocked ? '<span class="chat-blocked-tag">已拉黑</span>' : ''}
                     ${c.unread ? `<span class="chat-unread">${c.unread}</span>` : ''}</span>
-                <span class="chat-entry-last">${c.last_sender === 'admin' ? '我：' : ''}${escapeHtml(c.last_content)}</span>
+                <span class="chat-entry-last">${lastPreview(c.last_content, c.last_recalled, c.last_sender === 'admin')}</span>
             </span>
             <span class="msg-time">${formatTime(c.last_at)}</span>
         </button>`).join('');
@@ -253,7 +261,7 @@ function startChatPolling() {
         if (document.visibilityState === 'visible') loadChat(true);
     }, 15000);
 }
-const chatSig = () => chatState.list.map(m => m.id + (m.is_read ? 'r' : '')).join(',') + '|' + chatState.blocked + chatState.canReply + chatState.iBlocked + chatState.blockedMe;
+const chatSig = () => chatState.list.map(m => m.id + (m.is_read ? 'r' : '') + (m.recalled ? 'x' : '')).join(',') + '|' + chatState.blocked + chatState.canReply + chatState.iBlocked + chatState.blockedMe;
 
 async function loadChat(silent) {
     const before = chatSig();
@@ -302,6 +310,27 @@ function chatTime(ts) {
     return `${d.getMonth() + 1}/${d.getDate()} ${hm}`;
 }
 
+// 撤回：普通用户 2 分钟内；栈主发的不限时
+const RECALL_SECONDS = 120;
+function canRecall(m) {
+    if (!chatState.peerId && isAdmin) return true;
+    return Date.now() / 1000 - Number(m.created_at) < RECALL_SECONDS;
+}
+async function recallChat(id) {
+    const url = chatState.peerId ? `/social/dms/recall/${encodeURIComponent(id)}`
+        : (isAdmin ? `/chats/admin/recall/${encodeURIComponent(id)}` : `/chats/mine/recall/${encodeURIComponent(id)}`);
+    try {
+        await api('POST', url);
+        const m = chatState.list.find(x => x.id === id);
+        if (m) { m.recalled = true; m.content = ''; }
+        renderChat();
+        showToast('已撤回');
+    } catch (e) {
+        showToast(e.message || '撤回失败');
+        loadChat(true);
+    }
+}
+
 function renderChat() {
     const view = document.getElementById('chatView');
     const input = document.getElementById('chatInput');
@@ -315,11 +344,17 @@ function renderChat() {
         const sep = day !== lastDay ? `<div class="chat-day">${escapeHtml(new Date(m.created_at * 1000).toLocaleDateString())}</div>` : '';
         lastDay = day;
         const mine = m.sender === mineSender;
-        return `${sep}<div class="chat-row${mine ? ' mine' : ''}">
+        if (Number(m.recalled) === 1 || m.recalled === true) {
+            const who = mine ? '你' : (peer ? '对方' : (isAdmin ? '对方' : '栈主'));
+            return `${sep}<div class="chat-recalled">${who}撤回了一条消息</div>`;
+        }
+        const recall = mine && canRecall(m)
+            ? `<button class="chat-recall" data-chat-recall="${escapeHtml(m.id)}" title="撤回这条消息">撤回</button>` : '';
+        return `${sep}<div class="chat-row${mine ? ' mine' : ''}" data-msg-id="${escapeHtml(m.id)}">
             <div class="chat-bubble">
                 ${m.quote ? `<div class="chat-quote">回复「${escapeHtml(m.quote)}」</div>` : ''}
                 <div class="chat-text">${linkifyText(m.content)}</div>
-                <div class="chat-meta">${chatTime(m.created_at)}${mine && m.is_read ? ' · 已读' : ''}</div>
+                <div class="chat-meta">${chatTime(m.created_at)}${mine && m.is_read ? ' · 已读' : ''}${recall}</div>
             </div>
         </div>`;
     }).join('');
@@ -331,7 +366,7 @@ function renderChat() {
         composer = '<div class="chat-locked">对方暂时不接收你的私信</div>';
     } else if (peer) {
         composer = `<div class="chat-composer"><div class="chat-composer-row">
-            <textarea id="chatInput" maxlength="1000" rows="2" placeholder="发给 ${escapeHtml(title)}…${matchMedia('(pointer: fine)').matches ? '（Ctrl+Enter 发送）' : ''}">${escapeHtml(chatState.draft)}</textarea>
+            <textarea id="chatInput" maxlength="1000" rows="2" placeholder="发给 ${escapeHtml(shortName(title))}…${matchMedia('(pointer: fine)').matches ? '（Ctrl+Enter 发送）' : ''}">${escapeHtml(chatState.draft)}</textarea>
             <button class="btn btn-primary" data-chat-send>发送</button>
         </div></div>`;
     } else if (!isAdmin && chatState.blocked) {
@@ -344,7 +379,7 @@ function renderChat() {
         composer = `<div class="chat-composer">
             ${chatState.quote ? `<div class="chat-quote-bar">回复「${escapeHtml(chatState.quote)}」<button data-chat-unquote title="取消引用">✕</button></div>` : ''}
             <div class="chat-composer-row">
-                <textarea id="chatInput" maxlength="${isAdmin ? 2000 : 1000}" rows="2" placeholder="${isAdmin ? '回复 ' + escapeHtml(title) + '…' : '回复栈主…'}${matchMedia('(pointer: fine)').matches ? '（Ctrl+Enter 发送）' : ''}">${escapeHtml(chatState.draft)}</textarea>
+                <textarea id="chatInput" maxlength="${isAdmin ? 2000 : 1000}" rows="2" placeholder="${isAdmin ? '回复 ' + escapeHtml(shortName(title)) + '…' : '回复栈主…'}${matchMedia('(pointer: fine)').matches ? '（Ctrl+Enter 发送）' : ''}">${escapeHtml(chatState.draft)}</textarea>
                 <button class="btn btn-primary" data-chat-send>发送</button>
             </div>
             ${isAdmin && chatState.blocked ? '<div class="chat-hint">对方已被拉黑，不能再给你发消息；你仍然可以给他发</div>' : ''}
@@ -352,8 +387,8 @@ function renderChat() {
     }
     const spaceId = peer ? chatState.peerId : (isAdmin && chatState.user && !chatState.user.deleted ? chatState.userId : null);
     const titleHtml = spaceId
-        ? `<a class="chat-title-link" href="#user/${encodeURIComponent(spaceId)}" title="查看空间">${avatarHtml(chatState.user && chatState.user.avatar, title, 'chat-head-avatar')}${escapeHtml(title)}</a>`
-        : escapeHtml(title);
+        ? `<a class="chat-title-link" href="#user/${encodeURIComponent(spaceId)}" title="查看 ${escapeHtml(title)} 的空间">${avatarHtml(chatState.user && chatState.user.avatar, title, 'chat-head-avatar')}${chatNameHtml(title)}</a>`
+        : chatNameHtml(title);
     view.innerHTML = `
         <div class="chat-head">
             <button class="gm-btn" data-chat-back>← 返回</button>
@@ -394,6 +429,29 @@ async function sendChat() {
 
 function setupChatEvents() {
     const view = document.getElementById('chatView');
+    // 长按（手机）/ 右键（电脑）自己的消息 → 显示「撤回」
+    const showActions = row => {
+        if (!row || !row.querySelector('.chat-recall')) return false;
+        view.querySelectorAll('.chat-row.show-actions').forEach(r => r !== row && r.classList.remove('show-actions'));
+        row.classList.add('show-actions');
+        return true;
+    };
+    let pressTimer = null;
+    view.addEventListener('touchstart', (e) => {
+        const row = e.target.closest('.chat-row.mine');
+        if (!row || e.target.closest('a, button')) return;
+        pressTimer = setTimeout(() => {
+            pressTimer = null;
+            if (showActions(row) && navigator.vibrate) navigator.vibrate(15);
+        }, 450);
+    }, { passive: true });
+    const cancelPress = () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } };
+    view.addEventListener('touchend', cancelPress);
+    view.addEventListener('touchmove', cancelPress, { passive: true });
+    view.addEventListener('contextmenu', (e) => {
+        const row = e.target.closest('.chat-row.mine');
+        if (row && !e.target.closest('a') && showActions(row)) e.preventDefault();
+    });
     view.addEventListener('keydown', (e) => {
         if (e.target.id === 'chatInput' && e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
             e.preventDefault();
@@ -403,6 +461,10 @@ function setupChatEvents() {
     view.addEventListener('click', async (e) => {
         const t = e.target;
         if (t.closest('[data-chat-send]')) { sendChat(); return; }
+        const rc = t.closest('[data-chat-recall]');
+        if (rc) { recallChat(rc.dataset.chatRecall); return; }
+        // 点别处收起「撤回」按钮
+        view.querySelectorAll('.chat-row.show-actions').forEach(r => { if (!r.contains(t)) r.classList.remove('show-actions'); });
         if (t.closest('[data-chat-back]')) { loadMessages(); return; }
         if (t.closest('[data-chat-unquote]')) {
             const input = document.getElementById('chatInput');

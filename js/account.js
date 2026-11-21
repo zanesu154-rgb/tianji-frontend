@@ -87,6 +87,8 @@ function setupAccountEvents() {
         const newName = input.value.trim();
         if (!newName) { showToast('用户名不能为空'); return; }
         if (newName === currentUsername) { showToast('用户名没有变化'); return; }
+        const nameErr = usernameError(newName);
+        if (nameErr) { showToast(nameErr); return; }
 
         const password = prompt('请输入当前密码以确认修改：');
         if (!password) return;
@@ -96,6 +98,7 @@ function setupAccountEvents() {
             saveSession(data.token, data.username, currentRole);
             updateLoginUI();
             input.value = currentUsername;
+            input.dispatchEvent(new Event('input'));
             showToast('用户名修改成功');
         } catch (err) {
             showToast(err.message || '修改失败');

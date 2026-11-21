@@ -127,3 +127,32 @@ function handleSessionExpired() {
     showToast('登录已过期，请重新登录');
     setTimeout(() => { sessionExpiredShown = false; }, 3000);
 }
+
+// ---------- 昵称长度：汉字算 2，字母数字算 1，最多 16 ----------
+const USERNAME_MAX_WIDTH = 16;
+function nameWidth(name) {
+    let w = 0;
+    for (const ch of String(name)) w += ch.charCodeAt(0) > 0xff ? 2 : 1;
+    return w;
+}
+function usernameError(name) {
+    if (name.length < 2) return '用户名至少 2 个字符';
+    if (nameWidth(name) > USERNAME_MAX_WIDTH) return '用户名太长：最多 8 个汉字或 16 个字母';
+    if (!/^[\w一-龥]+$/.test(name)) return '用户名只能包含字母、数字、下划线、中文';
+    return '';
+}
+// 输入框下方实时显示「x / 16」
+function bindNameCounter(input, anchor = input) {
+    const hint = document.createElement('div');
+    hint.className = 'name-counter';
+    anchor.insertAdjacentElement('afterend', hint);
+    const update = () => {
+        const w = nameWidth(input.value.trim());
+        hint.textContent = w ? `${w} / ${USERNAME_MAX_WIDTH}（汉字算 2 个字符）` : '';
+        hint.classList.toggle('over', w > USERNAME_MAX_WIDTH);
+    };
+    input.addEventListener('input', update);
+    input.addEventListener('focus', update);
+    update();
+    return update;
+}

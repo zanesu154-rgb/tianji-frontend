@@ -555,3 +555,30 @@
     font-size: 0.74rem;
     color: var(--text-light);
 }
+
+/* ===== GM 独立列表页：板块切换 + 分页 ===== */
+.gm-preview-count { font-size: 0.8rem; color: var(--text-light); }
+.gm-boards {
+    display: flex; gap: 0.5rem; margin: 0.2rem 0 0.9rem; overflow-x: auto;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.gm-boards::-webkit-scrollbar { display: none; }
+.gm-board {
+    flex: 1 1 0; min-width: max-content; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+    padding: 0.7rem 1rem; border-radius: 12px; border: 1.5px solid var(--border);
+    background: var(--bg-card); color: var(--text-sub); font-size: 0.92rem; font-weight: 600; cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.gm-board:hover { border-color: var(--accent); color: var(--accent-text); }
+.gm-board.active { border-color: var(--accent); background: var(--accent-light); color: var(--accent-text); }
+.gm-board-badge:empty { display: none; }
+.gm-board-badge {
+    min-width: 1.3rem; height: 1.3rem; padding: 0 0.35rem; border-radius: 999px;
+    background: var(--accent); color: #fff; font-size: 0.72rem; line-height: 1.3rem; text-align: center;
+}
+.gm-pager { margin-top: 1rem; }
+@media (max-width: 640px) {
+    .gm-board { flex: 0 0 auto; padding: 0.6rem 0.85rem; font-size: 0.86rem; }
+    .gm-page-tools { flex-wrap: wrap; }
+    .gm-page-tools .gm-search { flex: 1 1 100%; }
+}

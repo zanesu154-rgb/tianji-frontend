@@ -62,3 +62,32 @@
     .chat-list { height: 58vh; }
     .chat-bubble { max-width: 86%; }
 }
+
+/* ===== 长昵称：一行显示，超出省略 ===== */
+.chat-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chat-entry-title { min-width: 0; }
+.chat-entry-title .chat-unread, .chat-entry-title .chat-blocked-tag { flex-shrink: 0; }
+.chat-head { flex-wrap: nowrap; }
+.chat-head > .gm-btn, .chat-head-actions { flex-shrink: 0; }
+.chat-title { overflow: hidden; gap: 0.4rem; }
+.chat-title .chat-blocked-tag { flex-shrink: 0; }
+.chat-title-link { min-width: 0; max-width: 100%; }
+.chat-title-link .chat-head-avatar { flex-shrink: 0; }
+.chat-text { overflow-wrap: anywhere; }
+
+/* ===== 撤回 ===== */
+.chat-recalled { align-self: center; font-size: 0.74rem; color: var(--text-light); padding: 0.15rem 0; }
+.chat-recall {
+    display: none; margin-left: 0.5rem; padding: 0 0.45rem; border: 1px solid currentColor; border-radius: 999px;
+    background: transparent; color: inherit; font: inherit; font-size: 0.68rem; line-height: 1.5; cursor: pointer; opacity: 0.95;
+}
+.chat-row.show-actions .chat-recall { display: inline-block; }
+.chat-row.show-actions .chat-bubble { box-shadow: 0 0 0 3px var(--accent-light); }
+@media (hover: hover) and (pointer: fine) {
+    .chat-row.mine:hover .chat-recall { display: inline-block; }
+}
+.chat-row.mine .chat-bubble { -webkit-touch-callout: none; }
+@media (max-width: 600px) {
+    .chat-head { gap: 0.4rem; padding: 0.55rem 0.6rem; }
+    .chat-head > .gm-btn, .chat-head-actions .gm-btn { padding-left: 0.55rem; padding-right: 0.55rem; }
+}

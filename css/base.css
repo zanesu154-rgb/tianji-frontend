@@ -119,3 +119,8 @@ body {
     flex-direction: column;
     transition: background 0.2s;
 }
+
+/* 昵称长度提示 */
+.name-counter { font-size: 0.74rem; color: var(--text-light); margin-top: 0.3rem; min-height: 0; }
+.name-counter:empty { display: none; }
+.name-counter.over { color: #dc2626; }
