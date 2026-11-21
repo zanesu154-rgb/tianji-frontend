@@ -60,22 +60,22 @@
             timers.push(setTimeout(window.tianjiSplashDone, 12000));   // 兜底：最多 12 秒
         })();
     </script>
-    <link rel="stylesheet" href="css/base.css?v=20261118d">
-    <link rel="stylesheet" href="css/splash.css?v=20261118d">
-    <link rel="stylesheet" href="css/home.css?v=20261118d">
-    <link rel="stylesheet" href="css/nav.css?v=20261118d">
-    <link rel="stylesheet" href="css/account.css?v=20261118d">
-    <link rel="stylesheet" href="css/item-page.css?v=20261118d">
-    <link rel="stylesheet" href="css/layout.css?v=20261118d">
-    <link rel="stylesheet" href="css/gm.css?v=20261118d">
-    <link rel="stylesheet" href="css/features.css?v=20261118d">
-    <link rel="stylesheet" href="css/cards.css?v=20261118d">
-    <link rel="stylesheet" href="css/comments.css?v=20261118d">
-    <link rel="stylesheet" href="css/my-addons.css?v=20261118d">
-    <link rel="stylesheet" href="css/chat.css?v=20261118d">
-    <link rel="stylesheet" href="css/avatar.css?v=20261118d">
-    <link rel="stylesheet" href="css/user-space.css?v=20261118d">
-    <link rel="stylesheet" href="css/featured.css?v=20261118d">
+    <link rel="stylesheet" href="css/base.css?v=20261118e">
+    <link rel="stylesheet" href="css/splash.css?v=20261118e">
+    <link rel="stylesheet" href="css/home.css?v=20261118e">
+    <link rel="stylesheet" href="css/nav.css?v=20261118e">
+    <link rel="stylesheet" href="css/account.css?v=20261118e">
+    <link rel="stylesheet" href="css/item-page.css?v=20261118e">
+    <link rel="stylesheet" href="css/layout.css?v=20261118e">
+    <link rel="stylesheet" href="css/gm.css?v=20261118e">
+    <link rel="stylesheet" href="css/features.css?v=20261118e">
+    <link rel="stylesheet" href="css/cards.css?v=20261118e">
+    <link rel="stylesheet" href="css/comments.css?v=20261118e">
+    <link rel="stylesheet" href="css/my-addons.css?v=20261118e">
+    <link rel="stylesheet" href="css/chat.css?v=20261118e">
+    <link rel="stylesheet" href="css/avatar.css?v=20261118e">
+    <link rel="stylesheet" href="css/user-space.css?v=20261118e">
+    <link rel="stylesheet" href="css/featured.css?v=20261118e">
 </head>
 
 
@@ -302,6 +302,9 @@
 
         <!-- 底部 footer -->
         <footer class="site-footer">
+            <div class="footer-links">
+            <a class="footer-app" id="appDownloadBtn" href="https://github.com/zanesu154-rgb/tianji-frontend/releases/latest"
+                target="_blank" rel="noopener noreferrer" data-no-warn="1">📱 下载安卓 App</a>
             <a class="footer-bili" href="https://space.bilibili.com/3546733697043003" target="_blank"
                 rel="noopener noreferrer">
                 <svg class="bili-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -310,7 +313,8 @@
                 </svg>
                 栈主的B站主页
             </a>
-            <div class="footer-copy">© 2026 天际译栈 · 我的世界基岩版汉化分享</div>
+            </div>
+            <div class="footer-copy">© 2026 天际译栈 · 我的世界基岩版汉化分享 <span id="appVersionLabel"></span></div>
         </footer>
     </div>
     <!-- ==================== 主页结束 ==================== -->
@@ -991,28 +995,29 @@
         </div>
     </div>
 
-    <script src="js/config.js?v=20261118d" defer></script>
-    <script src="js/utils.js?v=20261118d" defer></script>
-    <script src="js/data.js?v=20261118d" defer></script>
-    <script src="js/announcement.js?v=20261118d" defer></script>
-    <script src="js/list.js?v=20261118d" defer></script>
-    <script src="js/edit.js?v=20261118d" defer></script>
-    <script src="js/auth.js?v=20261118d" defer></script>
-    <script src="js/messages.js?v=20261118d" defer></script>
-    <script src="js/submissions.js?v=20261118d" defer></script>
-    <script src="js/gm.js?v=20261118d" defer></script>
-    <script src="js/account.js?v=20261118d" defer></script>
-    <script src="js/item-page.js?v=20261118d" defer></script>
-    <script src="js/ratings.js?v=20261118d" defer></script>
-    <script src="js/comments.js?v=20261118d" defer></script>
-    <script src="js/my-addons.js?v=20261118d" defer></script>
-    <script src="js/user-space.js?v=20261118d" defer></script>
-    <script src="js/featured.js?v=20261118d" defer></script>
-    <script src="js/testing.js?v=20261118d" defer></script>
-    <script src="js/router.js?v=20261118d" defer></script>
-    <script src="js/sort.js?v=20261118d" defer></script>
-    <script src="js/ui.js?v=20261118d" defer></script>
-    <script src="js/main.js?v=20261118d" defer></script>
+    <script src="js/config.js?v=20261118e" defer></script>
+    <script src="js/utils.js?v=20261118e" defer></script>
+    <script src="js/data.js?v=20261118e" defer></script>
+    <script src="js/announcement.js?v=20261118e" defer></script>
+    <script src="js/list.js?v=20261118e" defer></script>
+    <script src="js/edit.js?v=20261118e" defer></script>
+    <script src="js/auth.js?v=20261118e" defer></script>
+    <script src="js/messages.js?v=20261118e" defer></script>
+    <script src="js/submissions.js?v=20261118e" defer></script>
+    <script src="js/gm.js?v=20261118e" defer></script>
+    <script src="js/account.js?v=20261118e" defer></script>
+    <script src="js/item-page.js?v=20261118e" defer></script>
+    <script src="js/ratings.js?v=20261118e" defer></script>
+    <script src="js/comments.js?v=20261118e" defer></script>
+    <script src="js/my-addons.js?v=20261118e" defer></script>
+    <script src="js/user-space.js?v=20261118e" defer></script>
+    <script src="js/featured.js?v=20261118e" defer></script>
+    <script src="js/testing.js?v=20261118e" defer></script>
+    <script src="js/app-shell.js?v=20261118e" defer></script>
+    <script src="js/router.js?v=20261118e" defer></script>
+    <script src="js/sort.js?v=20261118e" defer></script>
+    <script src="js/ui.js?v=20261118e" defer></script>
+    <script src="js/main.js?v=20261118e" defer></script>
 </body>
 
 </html>

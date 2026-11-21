@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1b2f4d"/><stop offset="1" stop-color="#3c5aa6"/></linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <g fill="#ffffff"><circle cx="200" cy="200" r="6" opacity="0.7"/><circle cx="840" cy="180" r="5" opacity="0.6"/><circle cx="880" cy="560" r="4" opacity="0.4"/></g>
+  <!-- 像素方块（等距） -->
+  <g transform="translate(470 560)">
+    <path d="M0 -230 L200 -115 L0 0 L-200 -115 Z" fill="#7cc576"/>
+    <path d="M-200 -115 L0 0 L0 230 L-200 115 Z" fill="#8b5a33"/>
+    <path d="M200 -115 L0 0 L0 230 L200 115 Z" fill="#6b4426"/>
+    <path d="M-200 -115 L0 0 L0 50 L-200 -65 Z" fill="#5fa85a"/>
+    <path d="M200 -115 L0 0 L0 50 L200 -65 Z" fill="#4c8f48"/>
+  </g>
+  <!-- 对话气泡「文」 -->
+  <g transform="translate(700 330)">
+    <path d="M-140 -110 H140 Q180 -110 180 -70 V60 Q180 100 140 100 H-20 L-90 160 L-70 100 H-140 Q-180 100 -180 60 V-70 Q-180 -110 -140 -110 Z" fill="#fff6ec"/>
+    <text x="0" y="-5" text-anchor="middle" dominant-baseline="central" font-family="Noto Sans CJK SC" font-weight="900" font-size="170" fill="#1b2f4d">文</text>
+  </g>
+</svg>

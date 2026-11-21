@@ -741,12 +741,12 @@ function setupMyAddonsEvents() {
         }
         if ((el = get('[data-ma-link]'))) {
             const l = MA.addon.links[Number(el.dataset.maLink)];
-            if (l) showExternalWarning(l.url, () => window.open(l.url, '_blank', 'noopener,noreferrer'));
+            if (l) showExternalWarning(l.url, () => openExternal(l.url));
             return;
         }
         if ((el = get('[data-ip-url]'))) {
             const href = el.dataset.ipUrl;
-            showExternalWarning(href, () => window.open(href, '_blank', 'noopener,noreferrer'));
+            showExternalWarning(href, () => openExternal(href));
             return;
         }
         if (get('[data-ma-edit]')) { maOpenEdit(false); return; }

@@ -8,6 +8,9 @@ function setupChromeEvents() {
         if (!link) return;
         const href = link.href || '';
 
+        // 自己的链接（比如下载 App）不提醒
+        if (link.dataset.noWarn === '1') return;
+
         // 已确认过的直接放行
         if (link.dataset.confirmed === '1') {
             delete link.dataset.confirmed;
