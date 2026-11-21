@@ -75,9 +75,8 @@ function renderGmClicksPage() {
     document.getElementById('gmClicksSummary').textContent = q
         ? `找到 ${rows.length} 个项目（${rangeText}共 ${data.itemCount} 个有点击）`
         : `${rangeText}共 ${data.total} 次点击，涉及 ${data.itemCount} 个项目 · 点任意一行查看详情`;
-    document.getElementById('gmClicksList').innerHTML = rows.length
-        ? rows.map(([r, i]) => clickRowHtml(r, i)).join('')
-        : `<div class="account-empty">${q ? '没有匹配的资源' : '这段时间还没有点击记录'}</div>`;
+    gmPaged('clicks', rows, document.getElementById('gmClicksList'), document.getElementById('gmClicksPager'),
+        ([r, i]) => clickRowHtml(r, i), q ? '没有匹配的资源' : '这段时间还没有点击记录', '个');
 }
 
 // ---------- 单个资源的点击详情 ----------
@@ -122,25 +121,105 @@ async function loadGmStats() {
     }
 }
 
-let gmSubmissions = [];
+// ==================== 通用：GM 列表页分页 ====================
+const GM_PAGE_SIZE = 10;
+const GM_PREVIEW_N = 3;
+const gmPages = {};   // 每个列表页当前页码
+// 渲染一页：rows = 已筛选好的全部数据
+function gmPaged(key, rows, listEl, pagerEl, rowHtml, emptyText, unit = '条') {
+    const pageCount = Math.max(1, Math.ceil(rows.length / GM_PAGE_SIZE));
+    let page = Math.min(gmPages[key] || 1, pageCount);
+    gmPages[key] = page;
+    listEl.innerHTML = rows.length
+        ? rows.slice((page - 1) * GM_PAGE_SIZE, page * GM_PAGE_SIZE).map(rowHtml).join('')
+        : `<div class="account-empty">${emptyText}</div>`;
+    if (pageCount <= 1) { pagerEl.style.display = 'none'; pagerEl.innerHTML = ''; return; }
+    pagerEl.style.display = '';
+    pagerEl.innerHTML = pagerHtml(page, pageCount, rows.length, unit);
+}
+// 换页后回到列表顶部
+function gmGoPage(key, n, render, anchorEl) {
+    if (!Number.isFinite(n) || n < 1 || n === gmPages[key]) return;
+    gmPages[key] = n;
+    render();
+    const top = anchorEl.getBoundingClientRect().top + window.scrollY - (document.querySelector('.top-nav').offsetHeight + 12);
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+}
+const gmMatch = (q, ...vals) => !q || vals.some(v => String(v || '').toLowerCase().includes(q));
+const gmBadge = (el, n) => { const b = el.querySelector('.gm-board-badge'); if (b) b.textContent = n || ''; };
 
+// ==================== 投稿审核 ====================
+let gmSubmissions = [];
+let gmSubKind = 'item';     // item = 成品投稿，request = 汉化请求
+const isRequestSub = s => s.kind === 'request';
+
+function gmSubCard(s) {
+    return subCardHtml(s,
+        s.status === 'pending'
+            ? `<button class="gm-btn" data-sub-review="${escapeHtml(s.id)}">${isRequestSub(s) ? '处理' : '审核'}</button>`
+            : `<button class="gm-btn danger" data-sub-delete="${escapeHtml(s.id)}">删除记录</button>`);
+}
+
+async function fetchGmSubmissions() {
+    gmSubmissions = await api('GET', '/submissions/all');
+    return gmSubmissions;
+}
+
+// 面板预览：最新 3 条待审核
 async function loadGmSubmissions() {
     const listEl = document.getElementById('gmSubList');
     try {
-        gmSubmissions = await api('GET', `/submissions/all?status=${gmSubStatus}`);
-        if (!gmSubmissions.length) {
-            const empty = { pending: '没有待审核的投稿 🎉', approved: '还没有通过的投稿', rejected: '还没有驳回的投稿' };
-            listEl.innerHTML = `<div class="account-empty">${empty[gmSubStatus]}</div>`;
-            return;
-        }
-        listEl.innerHTML = gmSubmissions.map(s => subCardHtml(s,
-            s.status === 'pending'
-                ? `<button class="gm-btn" data-sub-review="${escapeHtml(s.id)}">审核</button>`
-                : `<button class="gm-btn danger" data-sub-delete="${escapeHtml(s.id)}">删除记录</button>`
-        )).join('');
+        await fetchGmSubmissions();
+        const pending = gmSubmissions.filter(s => s.status === 'pending');
+        const req = pending.filter(isRequestSub).length;
+        document.getElementById('gmSubPreviewCount').textContent = pending.length
+            ? `待审核 ${pending.length}（成品 ${pending.length - req} · 请求 ${req}）` : '';
+        listEl.innerHTML = pending.length
+            ? pending.slice(0, GM_PREVIEW_N).map(gmSubCard).join('')
+            : '<div class="account-empty">没有待审核的投稿 🎉</div>';
+        document.getElementById('gmSubMore').textContent = pending.length > GM_PREVIEW_N
+            ? `还有 ${pending.length - GM_PREVIEW_N} 条待审核，进入投稿审核 ›` : '进入投稿审核 ›';
     } catch (e) {
         listEl.innerHTML = `<div class="account-empty">${escapeHtml(e.message || '加载失败')}</div>`;
     }
+}
+
+// 独立页：成品投稿 / 汉化请求 × 待审核 / 已通过 / 已驳回
+async function loadGmSubsPage() {
+    const listEl = document.getElementById('gmSubsList');
+    if (!gmSubmissions.length) listEl.innerHTML = '加载中...';
+    try {
+        await fetchGmSubmissions();
+        renderGmSubsPage();
+    } catch (e) {
+        listEl.innerHTML = `<div class="account-empty">${escapeHtml(e.message || '加载失败')}</div>`;
+    }
+}
+function renderGmSubsPage() {
+    const q = document.getElementById('gmSubsSearch').value.trim().toLowerCase();
+    document.querySelectorAll('#gmSubBoards .gm-board').forEach(b => {
+        const isReq = b.dataset.kind === 'request';
+        b.classList.toggle('active', b.dataset.kind === gmSubKind);
+        gmBadge(b, gmSubmissions.filter(s => s.status === 'pending' && isRequestSub(s) === isReq).length);
+    });
+    const ofKind = gmSubmissions.filter(s => isRequestSub(s) === (gmSubKind === 'request'));
+    document.querySelectorAll('#gmSubTabs .gm-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.status === gmSubStatus);
+        const n = ofKind.filter(s => s.status === t.dataset.status).length;
+        const label = { pending: '待审核', approved: gmSubKind === 'request' ? '已接受' : '已通过', rejected: gmSubKind === 'request' ? '已拒绝' : '已驳回' }[t.dataset.status];
+        t.textContent = n ? `${label} ${n}` : label;
+    });
+    const rows = ofKind.filter(s => s.status === gmSubStatus
+        && gmMatch(q, s.original, s.translated, s.author, s.username, s.description));
+    const what = gmSubKind === 'request' ? '汉化请求' : '投稿';
+    const empty = q ? '没有匹配的记录'
+        : { pending: `没有待审核的${what} 🎉`, approved: `还没有${gmSubKind === 'request' ? '接受' : '通过'}的${what}`, rejected: `还没有${gmSubKind === 'request' ? '拒绝' : '驳回'}的${what}` }[gmSubStatus];
+    gmPaged('subs', rows, document.getElementById('gmSubsList'), document.getElementById('gmSubsPager'), gmSubCard, empty);
+}
+function refreshGmSubs() {
+    loadGmSubmissions().then(() => {
+        if (document.getElementById('section-gm-subs').style.display !== 'none') renderGmSubsPage();
+    });
 }
 
 const REVIEW_FIELDS = {
@@ -199,7 +278,7 @@ async function approveSubmission() {
         const wasRequest = reviewingSubmission.kind === 'request';
         closeReviewModal();
         showToast(wasRequest ? '已接受，已加入待汉化列表' : '已通过并上架');
-        loadGmSubmissions();
+        refreshGmSubs();
         loadGmStats();
         await loadItems(false);
         render();
@@ -217,7 +296,7 @@ async function rejectSubmission() {
         const wasRequest = reviewingSubmission.kind === 'request';
         closeReviewModal();
         showToast(wasRequest ? '已拒绝' : '已驳回');
-        loadGmSubmissions();
+        refreshGmSubs();
         loadGmStats();
     } catch (e) {
         showToast(e.message || '操作失败');
@@ -236,6 +315,8 @@ function gmCommentCardHtml(c, isFeedback) {
                 <span>🕐 ${escapeHtml(new Date(c.created_at * 1000).toLocaleString())}</span>
                 ${!isFeedback && Number(c.is_feedback) === 1 ? '<span class="cm-tag fb">反馈</span>' : ''}
                 ${!isFeedback && c.parent_id ? '<span class="cm-tag">回复</span>' : ''}
+                ${c.report ? `<span class="cm-tag test-${escapeHtml(c.report)}">${escapeHtml(TEST_REPORT_LABELS[c.report] || '测试反馈')}</span>` : ''}
+                ${String(c.user_id || '').startsWith('guest:') ? '<span class="cm-tag">未登录</span>' : ''}
                 ${resolved ? '<span style="color:#16a34a;">✅ 已处理</span>' : ''}
                 ${replies ? `<span>💬 ${replies} 条回复${Number(c.admin_replies) ? '（含栈主）' : ''}</span>` : ''}
             </div>
@@ -248,45 +329,121 @@ function gmCommentCardHtml(c, isFeedback) {
         </div>`;
 }
 
+// 旧版私下反馈（只有栈主能看到）
+function gmOldFeedbackHtml(f) {
+    const resolved = f.status === 'resolved';
+    return `
+        <div class="gm-feedback-card ${resolved ? 'resolved' : ''}">
+            <div class="gm-feedback-meta">
+                <span class="cm-tag">旧反馈 · 仅你可见</span>
+                <span>👤 ${escapeHtml(f.username)}</span>
+                <span>📦 <span class="gm-feedback-item-name">${escapeHtml(f.item_name)}</span></span>
+                <span>🕐 ${escapeHtml(new Date(f.created_at * 1000).toLocaleString())}</span>
+                ${resolved ? '<span style="color:#16a34a;">✅ 已处理</span>' : ''}
+            </div>
+            <div class="gm-feedback-content">${escapeHtml(f.content)}</div>
+            ${f.reply ? `<div class="gm-feedback-reply">回复：${escapeHtml(f.reply)}</div>` : ''}
+            <div class="gm-feedback-actions">
+                ${!resolved ? `<button class="gm-btn" data-fb-resolve="${escapeHtml(f.id)}">回复并处理</button>` : ''}
+                <button class="gm-btn danger" data-fb-delete="${escapeHtml(f.id)}">删除</button>
+            </div>
+        </div>`;
+}
+
+// 反馈统一成一个列表：评论区反馈楼层 + 旧反馈
+let gmFeedbackAll = [];
+let gmRecentAll = [];
+async function fetchGmFeedback() {
+    const [cm, old] = await Promise.all([api('GET', '/comments/admin'), api('GET', '/feedback/all')]);
+    gmFeedbackAll = [
+        ...cm.feedback.map(c => ({ ...c, _old: false, _open: c.status !== 'resolved' })),
+        ...old.map(f => ({ ...f, _old: true, _open: f.status === 'pending' }))
+    ].sort((a, b) => (b._open - a._open) || (b.created_at - a.created_at));
+    gmRecentAll = cm.recent;
+}
+const gmFbHtml = f => f._old ? gmOldFeedbackHtml(f) : gmCommentCardHtml(f, true);
+
+// 面板预览：反馈 3 条（待处理优先）+ 最近评论 3 条
 async function loadGmFeedback() {
     const listEl = document.getElementById('gmFeedbackList');
-    const countEl = document.getElementById('gmFeedbackCount');
     const recentEl = document.getElementById('gmRecentComments');
     try {
-        const [cm, old] = await Promise.all([api('GET', '/comments/admin'), api('GET', '/feedback/all')]);
-        const openCount = cm.feedback.filter(f => f.status === 'open').length + old.filter(f => f.status === 'pending').length;
-        countEl.textContent = `（待处理 ${openCount} / 共 ${cm.feedback.length + old.length}）`;
-        document.getElementById('gmRecentCount').textContent = cm.recent.length || '';
-        recentEl.innerHTML = cm.recent.length
-            ? cm.recent.map(c => gmCommentCardHtml(c, false)).join('')
+        await fetchGmFeedback();
+        const open = gmFeedbackAll.filter(f => f._open);
+        document.getElementById('gmFeedbackCount').textContent = gmFeedbackAll.length ? `待处理 ${open.length} / 共 ${gmFeedbackAll.length}` : '';
+        listEl.innerHTML = open.length
+            ? open.slice(0, GM_PREVIEW_N).map(gmFbHtml).join('')
+            : `<div class="account-empty">${gmFeedbackAll.length ? '反馈都处理完了 🎉' : '暂无反馈'}</div>`;
+        document.getElementById('gmFeedbackMore').textContent = open.length > GM_PREVIEW_N
+            ? `还有 ${open.length - GM_PREVIEW_N} 条待处理，进入反馈管理 ›` : '进入反馈管理 ›';
+        document.getElementById('gmRecentCount').textContent = gmRecentAll.length ? `共 ${gmRecentAll.length} 条` : '';
+        recentEl.innerHTML = gmRecentAll.length
+            ? gmRecentAll.slice(0, GM_PREVIEW_N).map(c => gmCommentCardHtml(c, false)).join('')
             : '<div class="account-empty">还没有评论</div>';
-        if (!cm.feedback.length && !old.length) {
-            listEl.innerHTML = '<div class="account-empty">暂无反馈</div>';
-            return;
-        }
-        const oldHtml = old.map(f => {
-            const resolved = f.status === 'resolved';
-            return `
-                <div class="gm-feedback-card ${resolved ? 'resolved' : ''}">
-                    <div class="gm-feedback-meta">
-                        <span class="cm-tag">旧反馈 · 仅你可见</span>
-                        <span>👤 ${escapeHtml(f.username)}</span>
-                        <span>📦 <span class="gm-feedback-item-name">${escapeHtml(f.item_name)}</span></span>
-                        <span>🕐 ${escapeHtml(new Date(f.created_at * 1000).toLocaleString())}</span>
-                        ${resolved ? '<span style="color:#16a34a;">✅ 已处理</span>' : ''}
-                    </div>
-                    <div class="gm-feedback-content">${escapeHtml(f.content)}</div>
-                    ${f.reply ? `<div class="gm-feedback-reply">回复：${escapeHtml(f.reply)}</div>` : ''}
-                    <div class="gm-feedback-actions">
-                        ${!resolved ? `<button class="gm-btn" data-fb-resolve="${escapeHtml(f.id)}">回复并处理</button>` : ''}
-                        <button class="gm-btn danger" data-fb-delete="${escapeHtml(f.id)}">删除</button>
-                    </div>
-                </div>`;
-        }).join('');
-        listEl.innerHTML = cm.feedback.map(c => gmCommentCardHtml(c, true)).join('') + oldHtml;
     } catch (e) {
         listEl.innerHTML = `<div class="account-empty">${escapeHtml(e.message || '加载失败')}</div>`;
     }
+}
+
+// ---------- 反馈管理页：待处理 / 已处理 ----------
+let gmFbBoard = 'open';
+async function loadGmFeedbackPage() {
+    const listEl = document.getElementById('gmFbList');
+    if (!gmFeedbackAll.length) listEl.innerHTML = '加载中...';
+    try {
+        await fetchGmFeedback();
+        renderGmFeedbackPage();
+    } catch (e) {
+        listEl.innerHTML = `<div class="account-empty">${escapeHtml(e.message || '加载失败')}</div>`;
+    }
+}
+function renderGmFeedbackPage() {
+    const q = document.getElementById('gmFbSearch').value.trim().toLowerCase();
+    document.querySelectorAll('#gmFbBoards .gm-board').forEach(b => {
+        b.classList.toggle('active', b.dataset.fb === gmFbBoard);
+        gmBadge(b, gmFeedbackAll.filter(f => f._open === (b.dataset.fb === 'open')).length);
+    });
+    const rows = gmFeedbackAll.filter(f => f._open === (gmFbBoard === 'open')
+        && gmMatch(q, f.item_name, f.username, f.content));
+    gmPaged('fb', rows, document.getElementById('gmFbList'), document.getElementById('gmFbPager'), gmFbHtml,
+        q ? '没有匹配的反馈' : (gmFbBoard === 'open' ? '没有待处理的反馈 🎉' : '还没有已处理的反馈'));
+}
+
+// ---------- 评论管理页：全部 / 反馈楼层 / 测试报告 ----------
+let gmCmBoard = 'all';
+const GM_CM_FILTERS = {
+    all: () => true,
+    feedback: c => Number(c.is_feedback) === 1 && !c.parent_id,
+    test: c => !!c.report
+};
+async function loadGmCommentsPage() {
+    const listEl = document.getElementById('gmCmList');
+    if (!gmRecentAll.length) listEl.innerHTML = '加载中...';
+    try {
+        await fetchGmFeedback();
+        renderGmCommentsPage();
+    } catch (e) {
+        listEl.innerHTML = `<div class="account-empty">${escapeHtml(e.message || '加载失败')}</div>`;
+    }
+}
+function renderGmCommentsPage() {
+    const q = document.getElementById('gmCmSearch').value.trim().toLowerCase();
+    document.querySelectorAll('#gmCmBoards .gm-board').forEach(b => {
+        b.classList.toggle('active', b.dataset.cm === gmCmBoard);
+        gmBadge(b, gmRecentAll.filter(GM_CM_FILTERS[b.dataset.cm]).length);
+    });
+    const rows = gmRecentAll.filter(c => GM_CM_FILTERS[gmCmBoard](c) && gmMatch(q, c.item_name, c.username, c.content));
+    gmPaged('cm', rows, document.getElementById('gmCmList'), document.getElementById('gmCmPager'),
+        c => gmCommentCardHtml(c, false), q ? '没有匹配的评论' : '这里还没有评论');
+}
+
+// 处理 / 删除后刷新面板和当前打开的页面
+function refreshGmComments() {
+    loadGmFeedback().then(() => {
+        if (document.getElementById('section-gm-feedback').style.display !== 'none') renderGmFeedbackPage();
+        if (document.getElementById('section-gm-comments').style.display !== 'none') renderGmCommentsPage();
+    });
+    loadGmStats();
 }
 
 // 用户行：用户名可点击进入空间
@@ -355,9 +512,8 @@ function renderGmUsersPage() {
     }[sort];
     rows = rows.slice().sort(by);
     document.getElementById('gmUsersCount').textContent = q ? `${rows.length} / ${gmUsersCache.length}` : `共 ${gmUsersCache.length} 位`;
-    document.getElementById('gmUsersList').innerHTML = rows.length
-        ? rows.map(gmUserRowHtml).join('')
-        : `<div class="account-empty">${q ? '没有匹配的用户' : '暂无注册用户'}</div>`;
+    gmPaged('users', rows, document.getElementById('gmUsersList'), document.getElementById('gmUsersPager'),
+        gmUserRowHtml, q ? '没有匹配的用户' : '暂无注册用户', '位');
 }
 
 function renderVisitChart(trend, svgId = 'gmChart', unit = '位访客') {
@@ -444,15 +600,8 @@ function setupGmEvents() {
         loadGmClicks();
     });
 
-    document.getElementById('gmSubTabs').addEventListener('click', (e) => {
-        const tab = e.target.closest('.gm-tab');
-        if (!tab) return;
-        gmSubStatus = tab.dataset.status;
-        document.querySelectorAll('#gmSubTabs .gm-tab').forEach(t => t.classList.toggle('active', t === tab));
-        loadGmSubmissions();
-    });
-
-    document.getElementById('gmSubList').addEventListener('click', async (e) => {
+    // ---------- 投稿审核页 ----------
+    const onSubAction = async (e) => {
         const reviewBtn = e.target.closest('[data-sub-review]');
         if (reviewBtn) { openReviewModal(reviewBtn.dataset.subReview); return; }
         const delBtn = e.target.closest('[data-sub-delete]');
@@ -460,16 +609,55 @@ function setupGmEvents() {
             if (!confirm('删除这条投稿记录？（已上架的项目不受影响）')) return;
             try {
                 await api('DELETE', `/submissions/${encodeURIComponent(delBtn.dataset.subDelete)}`);
-                loadGmSubmissions();
+                refreshGmSubs();
             } catch (err) { showToast(err.message); }
         }
+    };
+    document.getElementById('gmSubList').addEventListener('click', onSubAction);
+    document.getElementById('gmSubsList').addEventListener('click', onSubAction);
+    document.getElementById('gmSubBoards').addEventListener('click', (e) => {
+        const b = e.target.closest('.gm-board');
+        if (!b || b.dataset.kind === gmSubKind) return;
+        gmSubKind = b.dataset.kind;
+        gmSubStatus = 'pending';
+        gmPages.subs = 1;
+        renderGmSubsPage();
     });
+    document.getElementById('gmSubTabs').addEventListener('click', (e) => {
+        const tab = e.target.closest('.gm-tab');
+        if (!tab) return;
+        gmSubStatus = tab.dataset.status;
+        gmPages.subs = 1;
+        renderGmSubsPage();
+    });
+    document.getElementById('gmSubsSearch').addEventListener('input', () => { gmPages.subs = 1; renderGmSubsPage(); });
 
-    document.querySelectorAll('[data-gm-jump]').forEach(card => {
-        card.addEventListener('click', () => {
-            const target = document.getElementById(card.dataset.gmJump);
-            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
+    // ---------- 反馈 / 评论管理页 ----------
+    document.getElementById('gmFbBoards').addEventListener('click', (e) => {
+        const b = e.target.closest('.gm-board');
+        if (!b) return;
+        gmFbBoard = b.dataset.fb;
+        gmPages.fb = 1;
+        renderGmFeedbackPage();
+    });
+    document.getElementById('gmFbSearch').addEventListener('input', () => { gmPages.fb = 1; renderGmFeedbackPage(); });
+    document.getElementById('gmCmBoards').addEventListener('click', (e) => {
+        const b = e.target.closest('.gm-board');
+        if (!b) return;
+        gmCmBoard = b.dataset.cm;
+        gmPages.cm = 1;
+        renderGmCommentsPage();
+    });
+    document.getElementById('gmCmSearch').addEventListener('input', () => { gmPages.cm = 1; renderGmCommentsPage(); });
+
+    // ---------- 各列表页的分页条 ----------
+    [['subs', 'gmSubsPager', 'gmSubsList', () => renderGmSubsPage()],
+     ['fb', 'gmFbPager', 'gmFbList', () => renderGmFeedbackPage()],
+     ['cm', 'gmCmPager', 'gmCmList', () => renderGmCommentsPage()],
+     ['users', 'gmUsersPager', 'gmUsersList', () => renderGmUsersPage()],
+     ['clicks', 'gmClicksPager', 'gmClicksList', () => renderGmClicksPage()]
+    ].forEach(([key, pagerId, listId, render]) => {
+        bindPager(document.getElementById(pagerId), n => gmGoPage(key, n, render, document.getElementById(listId).closest('section')));
     });
 
     document.getElementById('reviewApproveBtn').addEventListener('click', approveSubmission);
@@ -485,8 +673,7 @@ function setupGmEvents() {
             try {
                 await api('PUT', `/comments/${encodeURIComponent(r.dataset.cmGmResolve)}/resolve`, { reply: reply.trim() });
                 showToast('已处理');
-                loadGmFeedback();
-                loadGmStats();
+                refreshGmComments();
             } catch (err) { showToast(err.message); }
             return;
         }
@@ -496,15 +683,11 @@ function setupGmEvents() {
             try {
                 await api('DELETE', `/comments/${encodeURIComponent(d.dataset.cmGmDelete)}`);
                 showToast('已删除');
-                loadGmFeedback();
-                loadGmStats();
+                refreshGmComments();
             } catch (err) { showToast(err.message); }
         }
     };
-    document.getElementById('gmFeedbackList').addEventListener('click', onGmComment);
-    document.getElementById('gmRecentComments').addEventListener('click', onGmComment);
-
-    document.getElementById('gmFeedbackList').addEventListener('click', async (e) => {
+    const onOldFeedback = async (e) => {
         const resolveBtn = e.target.closest('[data-fb-resolve]');
         if (resolveBtn) {
             const reply = prompt('回复反馈人（可留空，会通过站内消息通知对方）：', '');
@@ -512,8 +695,7 @@ function setupGmEvents() {
             try {
                 await api('PUT', `/feedback/${encodeURIComponent(resolveBtn.dataset.fbResolve)}/resolve`, { reply: reply.trim() });
                 showToast('已处理');
-                loadGmFeedback();
-                loadGmStats();
+                refreshGmComments();
             } catch (err) { showToast(err.message); }
             return;
         }
@@ -522,10 +704,14 @@ function setupGmEvents() {
             if (!confirm('确定删除这条反馈吗？')) return;
             try {
                 await api('DELETE', `/feedback/${encodeURIComponent(deleteBtn.dataset.fbDelete)}`);
-                loadGmFeedback();
-                loadGmStats();
+                refreshGmComments();
             } catch (err) { showToast(err.message); }
         }
+    };
+    ['gmFeedbackList', 'gmRecentComments', 'gmFbList', 'gmCmList'].forEach(id => {
+        const el = document.getElementById(id);
+        el.addEventListener('click', onGmComment);
+        el.addEventListener('click', onOldFeedback);
     });
 
     document.getElementById('gmBroadcastBtn').addEventListener('click', () => openCompose('all'));
@@ -544,15 +730,15 @@ function setupGmEvents() {
         gmClicksPageDays = Number(tab.dataset.days);
         loadGmClicksPage();
     });
-    document.getElementById('gmClicksSearch').addEventListener('input', renderGmClicksPage);
+    document.getElementById('gmClicksSearch').addEventListener('input', () => { gmPages.clicks = 1; renderGmClicksPage(); });
     document.getElementById('gmClickItemTabs').addEventListener('click', (e) => {
         const tab = e.target.closest('.gm-tab');
         if (!tab) return;
         gmClickItemDays = Number(tab.dataset.days);
         loadGmClickItem();
     });
-    document.getElementById('gmUsersSearch').addEventListener('input', renderGmUsersPage);
-    document.getElementById('gmUsersSort').addEventListener('change', renderGmUsersPage);
+    document.getElementById('gmUsersSearch').addEventListener('input', () => { gmPages.users = 1; renderGmUsersPage(); });
+    document.getElementById('gmUsersSort').addEventListener('change', () => { gmPages.users = 1; renderGmUsersPage(); });
     document.getElementById('gmUsersList').addEventListener('click', onGmUserAction);
 
     document.getElementById('gmUserList').addEventListener('click', onGmUserAction);

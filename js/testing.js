@@ -34,7 +34,7 @@ function ensureTestModal() {
                 <label id="testContentLabel">补充说明 <span class="field-hint">（选填）</span></label>
                 <textarea id="testContent" maxlength="500" placeholder="在哪里看到的？比如：第二章 NPC 对话、合成台物品名…"></textarea>
             </div>
-            <p class="test-modal-note">反馈会显示在评论区；栈主处理后会通知你。</p>
+            <p class="test-modal-note" id="testModalNote"></p>
             <div class="modal-actions">
                 <button class="btn" data-test-close>取消</button>
                 <button class="btn btn-primary" id="testSubmitBtn">提交</button>
@@ -46,6 +46,7 @@ function ensureTestModal() {
     m.addEventListener('pointerdown', e => { down = e.target === m; });
     m.addEventListener('click', e => {
         if ((e.target === m && down) || e.target.closest('[data-test-close]')) m.classList.remove('show');
+        if (e.target.closest('[data-test-login]')) { m.classList.remove('show'); openLoginModal(); }
         down = false;
     });
     m.addEventListener('change', e => {
@@ -59,12 +60,12 @@ function ensureTestModal() {
 }
 
 function openTestReport(itemId) {
-    if (!isLoggedIn()) {
-        showToast('登录后才能提交测试反馈');
-        openLoginModal();
-        return;
-    }
+    if (isAdmin) { showToast('栈主不需要提交测试反馈'); return; }
     ensureTestModal();
+    // 游客也能提交；登录的话栈主处理后会收到通知
+    document.getElementById('testModalNote').innerHTML = isLoggedIn()
+        ? '反馈会显示在评论区；栈主处理后会通知你。'
+        : '不用登录也能提交 👍 测试通过只计数；报告的问题会以「游客」身份显示在评论区。<a href="javascript:void 0" data-test-login>登录</a>后提交，栈主处理时会通知你。';
     testItemId = itemId;
     document.querySelectorAll('#testModal input[name=testResult]').forEach(r => { r.checked = r.value === testMine; });
     document.getElementById('testContent').value = '';
@@ -82,9 +83,10 @@ async function submitTestReport() {
     const btn = document.getElementById('testSubmitBtn');
     btn.disabled = true;
     try {
-        await api('POST', '/comments', { itemId: testItemId, report: sel.value, content });
+        if (isLoggedIn()) await api('POST', '/comments', { itemId: testItemId, report: sel.value, content });
+        else await api('POST', '/comments/guest-report', { itemId: testItemId, report: sel.value, content });
         document.getElementById('testModal').classList.remove('show');
-        showToast(sel.value === 'ok' ? '感谢测试！' : '反馈已提交，栈主处理后会通知你');
+        showToast(sel.value === 'ok' ? '感谢测试！' : (isLoggedIn() ? '反馈已提交，栈主处理后会通知你' : '反馈已提交，感谢！'));
         loadTestSummary(testItemId);
         if (typeof loadComments === 'function') loadComments(testItemId);
     } catch (e) {

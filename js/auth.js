@@ -129,6 +129,7 @@ function openLoginModal() {
     document.getElementById('loginUsername').value = '';
     document.getElementById('loginPassword').value = '';
     document.getElementById('registerUsername').value = '';
+    document.getElementById('registerUsername').dispatchEvent(new Event('input'));
     document.getElementById('registerPassword').value = '';
     document.getElementById('registerConfirm').value = '';
     switchAuthTab('login');
@@ -188,8 +189,8 @@ async function submitRegister() {
     const confirm = document.getElementById('registerConfirm').value;
 
     if (!username || !password || !confirm) { showToast('请填写完整'); return; }
-    if (username.length < 2 || username.length > 20) { showToast('用户名长度 2-20 个字符'); return; }
-    if (!/^[\w一-龥]+$/.test(username)) { showToast('用户名只能包含字母、数字、下划线、中文'); return; }
+    const nameErr = usernameError(username);
+    if (nameErr) { showToast(nameErr); return; }
     if (password !== confirm) { showToast('两次输入的密码不一致'); return; }
     if (password.length < 6) { showToast('密码至少 6 位'); return; }
 

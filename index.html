@@ -60,22 +60,22 @@
             timers.push(setTimeout(window.tianjiSplashDone, 12000));   // 兜底：最多 12 秒
         })();
     </script>
-    <link rel="stylesheet" href="css/base.css?v=20261118e">
-    <link rel="stylesheet" href="css/splash.css?v=20261118e">
-    <link rel="stylesheet" href="css/home.css?v=20261118e">
-    <link rel="stylesheet" href="css/nav.css?v=20261118e">
-    <link rel="stylesheet" href="css/account.css?v=20261118e">
-    <link rel="stylesheet" href="css/item-page.css?v=20261118e">
-    <link rel="stylesheet" href="css/layout.css?v=20261118e">
-    <link rel="stylesheet" href="css/gm.css?v=20261118e">
-    <link rel="stylesheet" href="css/features.css?v=20261118e">
-    <link rel="stylesheet" href="css/cards.css?v=20261118e">
-    <link rel="stylesheet" href="css/comments.css?v=20261118e">
-    <link rel="stylesheet" href="css/my-addons.css?v=20261118e">
-    <link rel="stylesheet" href="css/chat.css?v=20261118e">
-    <link rel="stylesheet" href="css/avatar.css?v=20261118e">
-    <link rel="stylesheet" href="css/user-space.css?v=20261118e">
-    <link rel="stylesheet" href="css/featured.css?v=20261118e">
+    <link rel="stylesheet" href="css/base.css?v=20261121a">
+    <link rel="stylesheet" href="css/splash.css?v=20261121a">
+    <link rel="stylesheet" href="css/home.css?v=20261121a">
+    <link rel="stylesheet" href="css/nav.css?v=20261121a">
+    <link rel="stylesheet" href="css/account.css?v=20261121a">
+    <link rel="stylesheet" href="css/item-page.css?v=20261121a">
+    <link rel="stylesheet" href="css/layout.css?v=20261121a">
+    <link rel="stylesheet" href="css/gm.css?v=20261121a">
+    <link rel="stylesheet" href="css/features.css?v=20261121a">
+    <link rel="stylesheet" href="css/cards.css?v=20261121a">
+    <link rel="stylesheet" href="css/comments.css?v=20261121a">
+    <link rel="stylesheet" href="css/my-addons.css?v=20261121a">
+    <link rel="stylesheet" href="css/chat.css?v=20261121a">
+    <link rel="stylesheet" href="css/avatar.css?v=20261121a">
+    <link rel="stylesheet" href="css/user-space.css?v=20261121a">
+    <link rel="stylesheet" href="css/featured.css?v=20261121a">
 </head>
 
 
@@ -509,36 +509,44 @@
                             <div class="gm-stat-value" id="gmTotalUsers">-</div>
                             <div class="gm-stat-label">注册用户</div>
                         </div>
-                        <div class="gm-stat-card clickable" data-gm-jump="gmSubSection">
+                        <div class="gm-stat-card clickable" data-gm-go="gm-subs" title="进入投稿审核">
                             <div class="gm-stat-value" id="gmPendingSubs">-</div>
                             <div class="gm-stat-label">待审投稿</div>
                         </div>
-                        <div class="gm-stat-card clickable" data-gm-jump="gmFeedbackSection">
+                        <div class="gm-stat-card clickable" data-gm-go="gm-feedback" title="进入反馈管理">
                             <div class="gm-stat-value" id="gmPendingFeedback">-</div>
                             <div class="gm-stat-label">待处理反馈</div>
                         </div>
                     </div>
 
-                    <!-- 投稿审核 -->
+                    <!-- 投稿审核（预览，完整列表在独立页面） -->
                     <div class="gm-section" id="gmSubSection">
-                        <h3>投稿审核</h3>
-                        <div class="gm-tabs" id="gmSubTabs">
-                            <button class="gm-tab active" data-status="pending">待审核</button>
-                            <button class="gm-tab" data-status="approved">已通过</button>
-                            <button class="gm-tab" data-status="rejected">已驳回</button>
+                        <div class="gm-section-head">
+                            <h3><a class="gm-title-link" href="#account/gm-subs">投稿审核 <span>查看全部 ›</span></a></h3>
+                            <span class="gm-preview-count" id="gmSubPreviewCount"></span>
                         </div>
                         <div class="sub-list" id="gmSubList">加载中...</div>
+                        <a class="gm-more-row" id="gmSubMore" href="#account/gm-subs">进入投稿审核 ›</a>
                     </div>
 
-                    <!-- 反馈列表 -->
+                    <!-- 反馈（预览） -->
                     <div class="gm-section" id="gmFeedbackSection">
-                        <h3>收到的反馈 <span id="gmFeedbackCount"
-                                style="font-size:0.8rem;color:var(--text-light);font-weight:400;"></span></h3>
+                        <div class="gm-section-head">
+                            <h3><a class="gm-title-link" href="#account/gm-feedback">收到的反馈 <span>查看全部 ›</span></a></h3>
+                            <span class="gm-preview-count" id="gmFeedbackCount"></span>
+                        </div>
                         <div class="gm-feedback-list" id="gmFeedbackList">加载中...</div>
-                        <details class="gm-recent-comments" id="gmRecentWrap">
-                            <summary>最近评论 <span id="gmRecentCount" class="gm-count-badge"></span></summary>
-                            <div class="gm-feedback-list" id="gmRecentComments"></div>
-                        </details>
+                        <a class="gm-more-row" id="gmFeedbackMore" href="#account/gm-feedback">进入反馈管理 ›</a>
+                    </div>
+
+                    <!-- 评论（预览） -->
+                    <div class="gm-section" id="gmCommentSection">
+                        <div class="gm-section-head">
+                            <h3><a class="gm-title-link" href="#account/gm-comments">最近评论 <span>查看全部 ›</span></a></h3>
+                            <span class="gm-preview-count" id="gmRecentCount"></span>
+                        </div>
+                        <div class="gm-feedback-list" id="gmRecentComments">加载中...</div>
+                        <a class="gm-more-row" id="gmCommentMore" href="#account/gm-comments">进入评论管理 ›</a>
                     </div>
 
                     <!-- 链接点击统计 -->
@@ -594,6 +602,7 @@
                     </div>
                     <div class="click-summary" id="gmClicksSummary">加载中...</div>
                     <div class="click-rank-list" id="gmClicksList"></div>
+                    <div class="pager gm-pager" id="gmClicksPager" style="display:none;"></div>
                 </section>
 
                 <!-- GM：单个资源的点击详情 -->
@@ -634,6 +643,64 @@
                         </select>
                     </div>
                     <div class="gm-user-list" id="gmUsersList">加载中...</div>
+                    <div class="pager gm-pager" id="gmUsersPager" style="display:none;"></div>
+                </section>
+
+                <!-- GM：投稿审核（成品投稿 / 汉化请求 两个板块） -->
+                <section class="account-section" id="section-gm-subs" style="display:none;">
+                    <div class="gm-page-head">
+                        <a class="gm-back" href="#account/gm">← GM 面板</a>
+                        <h2>投稿审核</h2>
+                    </div>
+                    <div class="gm-boards" id="gmSubBoards" role="tablist">
+                        <button class="gm-board active" data-kind="item">📦 成品投稿 <span class="gm-board-badge"></span></button>
+                        <button class="gm-board" data-kind="request">📝 汉化请求 <span class="gm-board-badge"></span></button>
+                    </div>
+                    <div class="gm-page-tools">
+                        <input class="gm-search" id="gmSubsSearch" type="search" placeholder="搜索名称、作者、投稿人…">
+                        <div class="gm-tabs" id="gmSubTabs" style="margin-bottom:0;">
+                            <button class="gm-tab active" data-status="pending">待审核</button>
+                            <button class="gm-tab" data-status="approved">已通过</button>
+                            <button class="gm-tab" data-status="rejected">已驳回</button>
+                        </div>
+                    </div>
+                    <div class="sub-list" id="gmSubsList">加载中...</div>
+                    <div class="pager gm-pager" id="gmSubsPager" style="display:none;"></div>
+                </section>
+
+                <!-- GM：反馈管理 -->
+                <section class="account-section" id="section-gm-feedback" style="display:none;">
+                    <div class="gm-page-head">
+                        <a class="gm-back" href="#account/gm">← GM 面板</a>
+                        <h2>反馈管理</h2>
+                    </div>
+                    <div class="gm-boards" id="gmFbBoards" role="tablist">
+                        <button class="gm-board active" data-fb="open">⏳ 待处理 <span class="gm-board-badge"></span></button>
+                        <button class="gm-board" data-fb="resolved">✅ 已处理 <span class="gm-board-badge"></span></button>
+                    </div>
+                    <div class="gm-page-tools">
+                        <input class="gm-search" id="gmFbSearch" type="search" placeholder="搜索资源名、用户、内容…">
+                    </div>
+                    <div class="gm-feedback-list" id="gmFbList">加载中...</div>
+                    <div class="pager gm-pager" id="gmFbPager" style="display:none;"></div>
+                </section>
+
+                <!-- GM：评论管理 -->
+                <section class="account-section" id="section-gm-comments" style="display:none;">
+                    <div class="gm-page-head">
+                        <a class="gm-back" href="#account/gm">← GM 面板</a>
+                        <h2>评论管理</h2>
+                    </div>
+                    <div class="gm-boards" id="gmCmBoards" role="tablist">
+                        <button class="gm-board active" data-cm="all">💬 全部 <span class="gm-board-badge"></span></button>
+                        <button class="gm-board" data-cm="feedback">🚩 反馈楼层 <span class="gm-board-badge"></span></button>
+                        <button class="gm-board" data-cm="test">🧪 测试报告 <span class="gm-board-badge"></span></button>
+                    </div>
+                    <div class="gm-page-tools">
+                        <input class="gm-search" id="gmCmSearch" type="search" placeholder="搜索资源名、用户、内容…">
+                    </div>
+                    <div class="gm-feedback-list" id="gmCmList">加载中...</div>
+                    <div class="pager gm-pager" id="gmCmPager" style="display:none;"></div>
                 </section>
             </main>
         </div>
@@ -689,7 +756,7 @@
             <form id="panel-register" autocomplete="on" style="display:none;" onsubmit="return false;">
                 <div class="modal-field">
                     <label>用户名</label>
-                    <input type="text" id="registerUsername" placeholder="2-20 个字符，支持中英文" autocomplete="username"
+                    <input type="text" id="registerUsername" placeholder="最多 8 个汉字或 16 个字母" autocomplete="username"
                         name="new-username">
                 </div>
                 <div class="modal-field">
@@ -995,29 +1062,29 @@
         </div>
     </div>
 
-    <script src="js/config.js?v=20261118e" defer></script>
-    <script src="js/utils.js?v=20261118e" defer></script>
-    <script src="js/data.js?v=20261118e" defer></script>
-    <script src="js/announcement.js?v=20261118e" defer></script>
-    <script src="js/list.js?v=20261118e" defer></script>
-    <script src="js/edit.js?v=20261118e" defer></script>
-    <script src="js/auth.js?v=20261118e" defer></script>
-    <script src="js/messages.js?v=20261118e" defer></script>
-    <script src="js/submissions.js?v=20261118e" defer></script>
-    <script src="js/gm.js?v=20261118e" defer></script>
-    <script src="js/account.js?v=20261118e" defer></script>
-    <script src="js/item-page.js?v=20261118e" defer></script>
-    <script src="js/ratings.js?v=20261118e" defer></script>
-    <script src="js/comments.js?v=20261118e" defer></script>
-    <script src="js/my-addons.js?v=20261118e" defer></script>
-    <script src="js/user-space.js?v=20261118e" defer></script>
-    <script src="js/featured.js?v=20261118e" defer></script>
-    <script src="js/testing.js?v=20261118e" defer></script>
-    <script src="js/app-shell.js?v=20261118e" defer></script>
-    <script src="js/router.js?v=20261118e" defer></script>
-    <script src="js/sort.js?v=20261118e" defer></script>
-    <script src="js/ui.js?v=20261118e" defer></script>
-    <script src="js/main.js?v=20261118e" defer></script>
+    <script src="js/config.js?v=20261121a" defer></script>
+    <script src="js/utils.js?v=20261121a" defer></script>
+    <script src="js/data.js?v=20261121a" defer></script>
+    <script src="js/announcement.js?v=20261121a" defer></script>
+    <script src="js/list.js?v=20261121a" defer></script>
+    <script src="js/edit.js?v=20261121a" defer></script>
+    <script src="js/auth.js?v=20261121a" defer></script>
+    <script src="js/messages.js?v=20261121a" defer></script>
+    <script src="js/submissions.js?v=20261121a" defer></script>
+    <script src="js/gm.js?v=20261121a" defer></script>
+    <script src="js/account.js?v=20261121a" defer></script>
+    <script src="js/item-page.js?v=20261121a" defer></script>
+    <script src="js/ratings.js?v=20261121a" defer></script>
+    <script src="js/comments.js?v=20261121a" defer></script>
+    <script src="js/my-addons.js?v=20261121a" defer></script>
+    <script src="js/user-space.js?v=20261121a" defer></script>
+    <script src="js/featured.js?v=20261121a" defer></script>
+    <script src="js/testing.js?v=20261121a" defer></script>
+    <script src="js/app-shell.js?v=20261121a" defer></script>
+    <script src="js/router.js?v=20261121a" defer></script>
+    <script src="js/sort.js?v=20261121a" defer></script>
+    <script src="js/ui.js?v=20261121a" defer></script>
+    <script src="js/main.js?v=20261121a" defer></script>
 </body>
 
 </html>

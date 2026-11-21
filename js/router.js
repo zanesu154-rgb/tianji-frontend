@@ -3,7 +3,7 @@
 // ==================== 页面切换（带动画） ====================
 let currentPage = 'home';
 let isSwitching = false;
-const ACCOUNT_SECTIONS = ['profile', 'security', 'messages', 'my-submissions', 'danger', 'gm', 'gm-clicks', 'gm-click', 'gm-users'];
+const ACCOUNT_SECTIONS = ['profile', 'security', 'messages', 'my-submissions', 'danger', 'gm', 'gm-clicks', 'gm-click', 'gm-users', 'gm-subs', 'gm-feedback', 'gm-comments'];
 
 // 根据身份填充账户中心、显示/隐藏对应入口
 function fillAccountPage() {
@@ -53,6 +53,9 @@ function showAccountSection(arg) {
     else if (section === 'gm-clicks') loadGmClicksPage();
     else if (section === 'gm-click') loadGmClickItem(sub);
     else if (section === 'gm-users') loadGmUsersPage();
+    else if (section === 'gm-subs') loadGmSubsPage();
+    else if (section === 'gm-feedback') loadGmFeedbackPage();
+    else if (section === 'gm-comments') loadGmCommentsPage();
     if (section.startsWith('gm-')) window.scrollTo({ top: 0, behavior: 'instant' });
 
     const hash = section === 'profile' ? '#account' : `#account/${section}${sub ? '/' + encodeURIComponent(sub) : ''}`;

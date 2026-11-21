@@ -20,6 +20,9 @@ function setupEvents() {
     setupUserSpaceEvents();
     setupFeaturedEvents();
     setupAppShell();
+    bindNameCounter(document.getElementById('registerUsername'));
+    const accName = document.getElementById('accountUsername');
+    bindNameCounter(accName, accName.closest('form'));
 }
 
 // ==================== 初始化 ====================
